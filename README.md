@@ -1,2 +1,3 @@
 # Lecture-Notes
-Lecture notes from the courses of mathematical engineering at Politecnico di Milano
+I have been taking notes in $\Latex$ for the past few years. Here you can find the main courses of mathematical engineer.  
+
