@@ -1,0 +1,1044 @@
+
+
+Ci sono modelli di regressione lineari, lineari generalizzati, non lineari ...\\
+
+
+Per ogni unità statistica i \ \ $(y_i, z_{i1},...,z_{ip})$\\
+Osservo $y_i$ dato generato dalla VA Y dipendente e $z_{i1},...,z_{ip}$ dati generati dalle VA $Z_j$ indipendenti, covariate, feature\\
+
+Modellare la Y (ovvero la legge che genera $y_1,...,y_n$) in funzione dei valori delle covariate \\
+
+In generale ci sarà una relazione $t_i=g(z_{i1},...,z_{ip})$\\
+
+Nel caso dei modelli lineari assumiamo $Y=\beta_0+\beta_1Z_1+...+\beta_p Z_p + \eps$\\
+Dove $\beta_j$ sono i parametri incogniti, $Z_j$ sono deterministiche e $\eps$ è l'errore aleatorio\\
+
+Stimeremo i $\beta_j$ in funzione di $Y$ e $\eps$ per due motivi: spiegare e prevedere\\ \\
+
+
+\Lezione{26/04/23}
+
+Osserveremo un set di dati $(y_i,z_{i1},...,z_{ir})$ e dovremo capire se questo è stato generato dalle variabili $Y, Z_i$ del tipo $Y=\beta_0+\beta_1Z_1 + .... + \beta_rZ_r +\eps$\\
+
+Vorremo riuscire a prevedere  $Y = $ variabile dipendente attraverso le $Z_1...Z_r$ variabili indipendenti\\
+
+Mentre $\eps$ è una VA tc $\E{\eps}=0$  e $\var{\eps}=\sigma^2$\\
+$\sigma^2$ sarà il  parametro incognito da stimare
+
+\[
+\E{Y|Z_1...Z_r}=\beta_0+\beta_1Z_1 + ... \beta_rZ_r
+\]
+
+Abbiamo linearità rispetto ai parametri $\beta_i$ quindi potremmo stimare, per esempio, con $Z_2=Z_1^2$, ma non con $Y=sen(\beta_0+\beta_1Z_1)+\eps$\\
+
+
+L'obbiettivo è quello di stimare i parametri incogniti $(\beta_0,...,\beta_r,\sigma^2)$ per diversi motivi:\\
+• \ Spiegare e interpretare la relazione tra $Y$ e $Z_i$\\
+• \ Prevedere il valore di Y in corrispondenza di $Z_i$ (non ancora osservati)\\
+
+Useremo i GOF = indici di "goodness of fit" per valutare la bontà del modello \\
+
+Supponiamo invece di avere più dati:
+\[
+\forall i = 1...n \ \ \ (y_i,z_{i1},...,z_{i\eps}) \ \ \ \eps_i \ iid \ \E{\eps_i}=0 \ \var{\eps_i}=\sigma^2
+\]
+\[
+\vv{y}=\OO\begin{array}{c}
+     y_1  \\
+     \vdots \\
+     y_n
+\end{array}\CC \ \ \ 
+\ZZ=\OO\begin{array}{ccc c}
+     1 & z_{11} &  & z_{1r}  \\
+     \vdots & \vdots & \hdots & \vdots\\
+     1 & z_{n1} &  & z_{nr}
+\end{array}\CC \ \ \
+\vv{\eps}=\OO\begin{array}{c}
+     \eps_1  \\
+     \vdots \\
+     \eps_n
+\end{array}\CC \ \ \ 
+\vv{\beta}=\OO\begin{array}{c}
+     \beta_0  \\
+     \vdots \\
+     \beta_r
+\end{array}\CC
+\]
+
+Possiamo riscriveremo il probelma nel modo seguente:
+\[
+\vv{Y}= \ZZ \vv{\beta} + \vv{\eps}
+\]
+Ovverp $y_i=\Sum{j=0}{r}\beta_iz_{1j} \eps_i = \beta_0 + \beta_1z_{i1}+ ... + \beta_rz_{ir} +\eps_i$\\
+Oss. Di solito avremo $r<<n$\\
+
+Con $r=1$ si dirà regressione lineare semplice \ \ $y=\beta_0 +\beta_1z_i + \eps_i$\\
+Mentre con $r>1$ avremo regressione lineare multipla\\
+Possiamo dividere ulteriormente i casi in base alle Z che possono essere continue, categoriche o miste\\
+
+Se non facessimo ipotesi sulla legge di $\eps$, avremmo la distribuzione di $\sum \beta_iZ_i$, ma non avendo la legge di $\eps$ non possiamo stimare usando la Likelihood\\
+Per stimare $\vv{\beta}, \sigma^2$ useremo il OLS, Ordinary last squared, ovvero stima ai minimi quadrati
+\[
+\vv{y}\in \R^n \ \ \ \hat{\vv{\beta}}_{LS} = \underset{\vv{b}\in\R^{r+1}}{Argmin} (\vv{y}-\ZZ\vv{b})^T(\vv{y}-\ZZ\vv{b})
+\]
+
+Dove $(\vv{y}-\ZZ\vv{b})^T(\vv{y}-\ZZ\vv{b}) = \Sum{i=1}{n} (y_i-(\ZZ\vv{b})_i)^2 = \Sum{i=1}{n} (y_i-\sum_j b_j z_{ij})^2$\\
+
+Nel caso di $r=1$, avremo che $b_0,b_1$ saranno i coefficienti della retta che minimizza i quadrati delle distanze dai dati $(z_i)$, ovvero $\Sum{i=1}{n} (y_i-(b_0+b_1z_i))^2$\\
+
+\fg[]{0.3}{Figura3.jpeg}
+
+
+
+\begin{teo}
+Supponiamo che $\ZZ$, detta matrice disegno, abbia rango $r+1$\\
+1) $\hat{\vv{\beta}}_{LS}= (\ZZ^T\ZZ)^{-1}\ZZ^T\vv{y}$ sono stimatori lineari di $\vv{y} $\\
+2) Sia $H= \ZZ(\ZZ^T\ZZ)^{-1}\ZZ^T$ la matrice "cappuccio" (o "hat matrix")
+\[
+\hat{\vv{y}}=H\vv{y}=\ZZ\hat{\vv{\beta}}_{LS} \ \ \ \ \hat{\vv{y}} = \text{ "fitted values"}
+\]
+\[
+\hat{\vv{\eps}}=(\vv{y}-\hat{\vv{y}})=(\II - H )\vv{y} \ \ \ \ \hat{\vv{\eps}}=\text{ "residual values" = residui}
+\]
+Inoltre si dimostra che $\ZZ^T\hat{\vv{\eps}}=0 $ ovvero $ \hat{\vv{y}}^T\hat{\vv{\eps}}=0 $ ovvero $
+\hat{\vv{y}}\perp \hat{\vv{\eps}}$ 
+\end{teo}
+Vediamo l'idea grafica di questo teorema
+\fg[$\hat{y}$ è la proiezione ortogonale di $y$ sul sottospazio lineare generato dalle colonne di $\ZZ$, mentre
+$\hat{\eps}$ è la differenza tra i due vettori $y$ ]{0.5}{Figura4.jpeg}
+
+\begin{Dim}[*]
+Per costruire la proiezione devo trovare una base ortonormale per $Span(\ZZ)$\\
+Considero $\ZZ^T\ZZ$ forma quadratica definita positiva \ \ \ $\ZZ^T\ZZ=\Sum{i=1}{r+1}\lambda_i\vv{e}_i\vv{e}_i^T$ \ con $\lambda_1\ge \lambda_2 \ge ... \ge \lambda_{r+1}>0$ \ \ \ i $\lambda_i$ sono gli autovalori, mentre gli $\vv{e}_i$ sono autovettori\\
+
+Quindi $(\ZZ^T\ZZ)^{-1}= \Sum{i=1}{r+1} \frac{1}{\lambda_i}\vv{e}_i \vv{e}_i^T$\\
+
+Definisco $\vv{q}_i=\frac{1}{\sqrt{\lambda_i}}\ZZ \vv{e}_i \ \ i=1, ..., r+1$ e per costruzione $\vv{q}_i\in Span(\ZZ)$
+\[
+\vv{q}_i^T\vv{q}_j=\frac{1}{\sqrt{\lambda_i\lambda_j}}\vv{e}_i^T(\ZZ^T\ZZ)\vv{e}_j = \frac{1}{\sqrt{\lambda_i\lambda_j}}\vv{e}_i^T\lambda_j\vv{e}_j = \sqrt{\frac{\lambda_j}{\lambda_i}}\vv{e}_i^T\vv{e}_j= \begin{cases}
+1 \ \ i=j\\
+0 \ \ i\ne j
+\end{cases}
+\]
+\[
+\implies \ \vv{q}_i \text{ è base ortonormale di } Span(\ZZ)
+\]
+
+Per concludere scrivo
+\[
+\vv{y}=\Sum{i=1}{r+1} \vv{q}_i(\vv{q}_i^T \vv{y}) = \Sum{i=1}{r+1} \frac{1}{\lambda_i}\ZZ \vv{e}_i (\ZZ \vv{e}_i)\vv{y} = \Sum{i=1}{r+1}\frac{1}{\lambda_i}\ZZ \vv{e}_i\vv{e}_i^T \ZZ^T\vv{y} =
+\]
+\[
+= \ZZ\O \Sum{i=1}{r+1} \frac{1}{\lambda_i}\vv{e}_i\vv{e}_i^T \C\ZZ^T\vv{y} = \UB{H}{\ZZ(\ZZ^T\ZZ)^{-1}}\vv{y}=\ZZ \hat{\vv{\beta}}_{LS}
+\]
+
+H è un proiettore ortogonale su un sottospazio, quindi valgono:
+$H^T=H \ \ \ \ H^2=H$ quindi
+\[
+\hat{\vv{\eps}} = (\vv{y}-\hat{\vv{y}})= (\II-H)\vv{y}
+\]
+\[
+\ZZ^T\hat{\vv{\eps}}= \ZZ^T(\II-\ZZ(\ZZ^T\ZZ)^{-1}\ZZ^T)\vv{y} = \ZZ^T \vv{y} - \ZZ^T\ZZ(\ZZ^T\ZZ)^{-1}\ZZ^T\vv{y}=0
+\]
+
+\end{Dim}
+
+
+
+
+Se abbiamo $rango(\ZZ)=k<r+1$, allora
+\[
+\ZZ^T\ZZ=\Sum{i=1}{r+1}\lambda_i\vv{e}_I\vv{e}_i^T \ \ \text{ dove } \lambda_1\ge\lambda_2\ge...\ge\lambda_k \ \ \lambda_{k+1}=...=\lambda_{r+1}=0
+\]
+Non possiamo fare l'inversa di questa matrice $\cancel{(\ZZ^T\ZZ)^{-1}}$\\
+Quindi useremo la pseudo inversa o inversa generalizzata $(\ZZ^T\ZZ)^-$ e varrà tutto allo stesso modo\\
+
+Oss. Seguento quest'idea, vedremo che avremo più problemi nel caso in cui le covariate hanno delle collinearità, ovvero se $\ZZ$ ha colonne dipendenti\\
+
+
+
+\subsubsection*{Decomposizione della varianza}
+
+Sappiamo che:
+\[
+\vv{y}=\hat{\vv{y}}+\hat{\vv{\eps}} \ \ \ \text{ con } \hat{\vv{y}}\perp \hat{\vv{\eps}}
+\]
+Quindi posso applicare il teorema di Pitagora in $\R^n$
+\[
+\vv{y}^T\vv{y}=\hat{\vv{y}}^T\hat{\vv{y}} + \hat{\vv{\eps}}^T\hat{\vv{\eps}}
+\]
+\[
+\Sum{i=1}{n} y_i^2 = \Sum{i=1}{n}\hat{y}_i^2 + \Sum{i=1}{n} \hat{\eps}_i^2 \Longleftrightarrow \Sum{i=1}{n} y_i^2 - n \overline{y}^2 = \Sum{i=1}{n} \hat{y}_i^2  + \Sum{i=1}{n} \hat{\eps}_i^2 - n\overline{y}^2
+\]
+
+Osservazioni (dove $\overline{y}$ è la media):\\
+• \ $\Sum{i=1}{n}(y_i-\overline{y}^2)=\sum y_i^2 -n\overline{y}^2$\\
+• \ $\overline{y}=\overline{\hat{y}}$ \ \ ovvero hanno la stessa media\\
+Dove \ $n\overline{\hat{y}}=\Sum{i=1}{n} \hat{y}_i = \hat{\vv{y}}^T\vv{\textbf{1}} = [\ZZ(\ZZ^T\ZZ)\ZZ^T\hat{y}]^T\vv{\textbf{1}} = \vv{y}^T[H]\vv{\textbf{1}} = \vv{y}^T\vv{\textbf{1}}$ \ \ se $\vv{\textbf{1}} = \OO\begin{array}{c}
+     1  \\
+     \vdots\\
+     1
+\end{array}\CC \in \ZZ$
+
+\[
+\Sum{i=1}{n} (y_i-\overline{y})^2 = \Sum{i=1}{n} (\hat{y}_i-\overline{\hat{y}})^2 + \Sum{i=1}{n}\hat{\eps}_i^2
+\]
+
+Formula della decomposizione della varianza\\
+Questa ci dice che la variabilità (somma degli scarti dalla media al quadrato) la posso decomporre in variabilità dei fittati più l'errore\\
+
+
+\Lezione{02/05/23}\\
+
+\[
+\UB{SS_{tot}}{\Sum{i=1}{n} (y_i-\overline{y})^2} = \UB{SS_{reg}}{\Sum{i=1}{n} (\hat{y}_i-\overline{\hat{y}})^2} + \UB{SS_{res}}{\Sum{i=1}{n}\hat{\eps}_i^2}
+\]
+
+Definiamo:\\
+$SS_{tot}$ la somma totale degli scarti al quadrato della media\\
+$SS_{reg}$ la somma dei quadrati degli scarti previsti\\
+$SS_{res}$ somma dei quadrati dei residui\\ \\
+
+\begin{defi}
+Sia il coefficiente di determinazione \ \ $R^2=\frac{SS_{reg}}{SS_{tot}}= \frac{\Sum{i=1}{n} (\hat{y}_i-\overline{\hat{y}})^2}{\Sum{i=1}{n} (y_i-\overline{y})^2}= 1 - \frac{SS_{reg}}{SS_{tot}}= 1-  \frac{\Sum{i=1}{n} \hat{\xi}_i^2}{\Sum{i=1}{n} (y_i-\overline{y})^2}$\\
+Sappiamo che $0\le R^2 \le 1$\\
+Inoltre $R^2$ quantifica la proporzione di variabilità dei dati spiegata dal modello di regressione
+\end{defi}
+
+
+Oss. Se $R^2=1$ abbiamo $\Sum{i=1}{n} (y_i-\overline{y})^2 =0$, questo implica che abbiamo interpolazione perfetta, ma questo non ci piace perché non abbiamo più l'indice che indica la variabilità dei dati\\
+Se invece $R^2=0$ cioè $\Sum{i=1}{n} (\hat{y}_i-\overline{\hat{y}})^2$ \ \ $\forall i \hat{y}_i=\overline{y}$ e quindi i proiettori non influenzano la risposta\\
+
+
+
+\subsection{Regressione lineare semplice}
+
+$L=\Sum{i=1}{n}(y_i - \beta_0 -\beta_1 Z_i )^2$ vogliamo trovarne il massimo
+\[
+\begin{cases}
+    \frac{\partial L}{\partial \beta_0}=0 \\
+    \frac{\partial L}{\partial \beta_1}=0 
+\end{cases} \Longleftrightarrow \begin{cases}
+    -2\Sum{i=1}{n} (y_i-\beta_0-\beta_1Z_i)=0\\
+    -2\Sum{i=1}{n} (y_i-\beta_0-\beta_1Z_i) \cdot z_i=0
+\end{cases} \Longleftrightarrow \begin{cases}
+    n\beta_0 + \beta_1 \sum z_i = \sum y_i\\
+    \beta_0 \sum z_i + \beta_1 \sum z_i^2 = \sum y_i z_i
+\end{cases}
+\]
+\[
+\Longleftrightarrow \begin{cases}
+    \beta_0 = \frac{\sum y_i}{n} - \beta_1 \frac{\sum z_i}{n}\\
+    \frac{\sum y_i}{n} \sum z_i -\beta_1 \frac{(\sum z_i)^2}{n} + \beta_1 \sum z_i^2 = \sum y_i z_i
+\end{cases} \Longleftrightarrow \begin{cases}
+    \hat{\beta}_0=\overline{y} - \hat{\beta_1} \overline{z}\\
+    \hat{\beta}_1 = \frac{\sum (y_i-\overline{y})(z_i-\overline{z})}{\sum (z_i-\overline{z})^2}
+\end{cases}
+\]
+
+Oss. Questo equivale a risolvere \ $\hat{\vv{\beta}}= (\ZZ^T\ZZ)^{-1}\ZZ^T\vv{y}$\\
+Ma nella forma trovata è più interpretabile, infatti possiamo vedere la prima equazione come il fatto che il "baricentro" $(\overline{y},\overline{z})$ appartenga alla retta di fitting \\
+Mentre $\hat{\beta}_1$, ovvero la pendenza della retta, è la correlazione tra $y$ e $z$\\ \\
+
+
+
+\begin{teo}
+    Dati gli stimatori ai minimi quadrati \ $\vv{y} = \ZZ \vv{\beta} + \vv{\eps} \ \ \hat{\vv{\beta}}_{LS} = (\ZZ^T\ZZ)^{-1} \ZZ^T \vv{y}$\\
+    1) $\E{\hat{\vv{\beta}}_{LS}}=\vv{\beta}$ sono non distorti per $\vv{\beta}$\smallskip\\
+    2) $Cov\OO\hat{\vv{\beta}}_{LS}\CC=\sigma^2(\ZZ^T\ZZ)^{-1}$\smallskip\\
+    3) $\E{\hat{\vv{\eps}}}=0$\smallskip\\
+    4) $Cov\OO\hat{\vv{\eps}}\CC=\sigma^2(1-H)$\smallskip\\
+    5) $\E{\hat{\vv{\eps}}^T\hat{\vv{\eps}}} = \sigma^2(n-r-1)$\ \
+    dove Z è n x r-1  r= numero di intercette\\
+    Da quest'ultimo risultato otteniamo che $S^2=\frac{\hat{\vv{\eps}}^T\hat{\vv{\eps}}}{n-r-1} = \frac{\sum \hat{\eps}_i^2}{n-r-1}$ è stimatore non distorto per $\sigma^2$
+\end{teo}
+
+\begin{Dim}
+    1)
+    \[
+    \E{\hat{\vv{\beta}}_{LS}}= \E{(\ZZ^T\ZZ)^{-1}\ZZ^T\vv{y}}=(\ZZ^T\ZZ)^{-1}\ZZ^T \E{\vv{y}} = (\ZZ^T\ZZ)^{-1}\ZZ^T \E{\ZZ \vv{\beta} + \vv{\eps}} = (\ZZ^T\ZZ)^{-1}\ZZ^T \ZZ \vv{\beta} = \vv{\beta}
+    \]
+    2)Sappiamo che $Cov(A\vv{y})=A\,Cov(\vv{y})A^T$ \\ E che \ $Cov(\vv{y})= Cov(\ZZ\vv{\beta}+\vv{\eps}) = Cov(\vv{\eps}) = \sigma^2 \vv{1}_n$ perché $\ZZ\vv{\beta}$ non è aleatorio, quindi:
+    \[
+    Cov((\ZZ^T\ZZ)^{-1}\ZZ^T\vv{y}) = (\ZZ^T\ZZ)^{-1}\ZZ^T \cdot Cov(\vv{y})\cdot \OO (\ZZ^T\ZZ)^{-1}\ZZ^T \CC^T = \sigma^2 (\ZZ^T\ZZ)^{-1}\ZZ^T \ZZ(\ZZ^T\ZZ)^{-1} = \sigma^2(\ZZ^T\ZZ)^{-1}
+    \]
+    3)
+    \[
+    \E{\hat{\vv{\eps}}} = \E{\vv{y}-\hat{\vv{y}}} = \E{(\II-H)\vv{y}}= (\II-H)\E{\vv{y}} = (\II-H)\ZZ\vv{\beta} =0
+    \]
+    Uguale a zero perché $(\II-H)$ è il proiettore sul sottospazio ortogonale a $span(\ZZ)$\\
+    4)
+    \[
+    Cov(\hat{\vv{\eps}}) = (\II-H) Cov(\vv{y})(\II-H)^T = \sigma^2 (\II-H)(\II-H)^T = \sigma^2(\II-H)^2=\sigma^2(\II-H)
+    \]
+    Perché $(\II-H)$ è un proiettore\\
+    5)
+    \[
+    \E{\hat{\vv{\eps}}^T\hat{\vv{\eps}}} = \E{\Sum{i=1}{n} \hat{\eps}^2_i} = \E{tr\O\hat{\vv{\eps}}\hat{\vv{\eps}}^T\C}
+    \]
+    Questo vale perché la traccia da la somma degli elementi sulla diagonale e se moltiplico una matrice per la trasposta ottengo tutte le componenti al quadrato
+    \[
+    \E{tr\O\hat{\vv{\eps}}\hat{\vv{\eps}}^T\C} = \E{tr\Big((\II-H)\vv{y}[(\II-H)\vv{y}]^T \Big)}
+    \]
+    Dato che $\vv{y}=\ZZ\vv{\beta} + \vv{\eps}$ allora $(\II-H)\vv{y} = (\II-H)\vv{\eps}$
+    \[
+    \E{\hat{\vv{\eps}}^T\hat{\vv{\eps}}} = \E{tr\Big( (\II-H)\vv{\eps}\vv{\eps}^T(\II-H) \Big)} = \E{tr\Big( (\II-H)\vv{\eps}\vv{\eps}^T \Big)}\]
+    \[= tr\Big( \E{(\II-H)\vv{\eps}\vv{\eps}^T} \Big) = tr(\II-H)\, Cov(\vv{\eps})= \sigma^2(n-r-1)
+    \]
+    Perché la traccia di un proiettore è uguale alla dimensione del sottospazio su cui proietta\\
+    Quindi $\frac{\sum \hat{\eps}_i^2}{n-r-1}=S^2$ è stimatore non distorto per $\sigma^2$
+\end{Dim}
+
+\phantom{}
+
+\begin{teo}[Gauss-Markov]
+    \[\vv{Y} = \ZZ \vv{\beta} + \vv{\eps} \ \
+    rango(\ZZ)=r+1\]
+    \[
+    \implies \ \forall \vv{c}\in \R^{r+1} \ \vv{c}^T\hat{\vv{\beta}}_LS \ \text{ è lo stimatore di } \vv{c}^T\vv{\beta} \text{ che ha la varianza minima tra tutti gli stimatori che:}
+    \]
+    1) Sono non distorti per $\vv{c}^T\vv{\beta}$\\
+    2) Sono della forma $a_1Y_1+...+a_nY_n$ (lineare $\vv{Y}$)\\
+    Ovvero $\vv{c}^T\hat{\vv{\beta}}_{LS}$ è BLUE, best linear unbiased estimator per $\vv{c}^T\vv{\beta}$
+\end{teo}
+
+\begin{Dim}
+    Non distorto dimostrato nel teorema precedente
+    \[
+    \vv{c}^T\hat{\vv{\beta}}_{LS} = \UB{1\times(r+1)}{\vv{c}^T} \ \UB{(r+1)\times(r+1)}{ (\ZZ^T\ZZ)^{-1}} \ \UB{(r+1)\times n}{\ZZ^T} \vv{Y}
+    \]
+    Quindi ottengo una moltiplicazione $(1\times n)$ per $(n \times 1)$ che quindi darà soluzione lineare in $Y$ 
+\end{Dim}
+
+Vediamo un caso particolare interessante con $\vv{c}$ un vettore di zeri e un uno alla riga j  \ \ $\vv{c}^T\hat{\vv{\beta}}_{LS} = \hat{\vv{\beta}}_j$\\
+Quindi la componente j-esima che è uno stimatore unidimensionale ha varianza minima ed è non distorto\\ \\
+
+
+Per poter fare inferenza "puntuale" su $\vv{\beta}$ e $\vv{\sigma}$ (ovvero IC, test d'ipotesi ...) c'è bisogno di fare assunzione sulla legge di $\vv{\eps}$\\
+Quindi suppongo che $\vv{\eps} \sim \Nc_n(\vv{0}, \sigma^2 \II) \Longleftrightarrow \eps_i \overset{iid}{\sim} \Nc(0,\sigma^2) $ congiuntamente gaussiane\\
+Avremo quindi che $\vv{Y}\sim \Nc_n (\ZZ \vv{\beta}, \sigma^2 \II)$\\
+
+Penserò $y_1$ come la realizzazione di una gaussiana di media $\beta_0 + \beta_1 z$ e varianza $\sigma^2$
+
+\fg[]{0.4}{Figura5.jpeg}
+
+\phantom{}
+
+
+\Lezione{05/05/23}\\
+
+\begin{teo}
+    Assumiamo $rango(\ZZ)=r+1$\\
+    I) \ $\hat{\vv{\beta}}_{LS}$ e $\hat{\sigma}^2 = \frac{\hat{\vv{\eps}}^T\hat{\vv{\eps}}}{n}= \frac{n-r-1}{n}S^2$ \ sono gli stimatori ML\\
+    II) \ $\hat{\vv{\beta}} \sim \Nc_{r+1}(\vv{\beta},\sigma^2(\ZZ^T\ZZ)^{-1})$\\
+    III) \ $\hat{\vv{\eps}}\sim \Nc_n(\vv{0},\sigma^2(\II-H))$\\
+    IV) \ $\hat{\vv{\beta}}\ind \hat{\vv{\eps}}$ \ indipendenti stocasticamente \\
+    V) \ $n\hat{\sigma}^2 = \hat{\vv{\eps}}^T\hat{\vv{\eps}} \sim \sigma^2 \cdot \Chi^2(n-r-1)$
+\end{teo}
+
+\begin{Dim}
+I)
+    \[
+    L=\Prod{i=1}{n} f_{Y_i}(y_i) = \Prod{i=1}{n} \O\frac{1}{\sqrt{2\pi \sigma^2}}\C^n exp \OOO -\frac{1}{2\sigma^2}\Sum{i=1}{n} \O y_i - \sum_j \beta_jz_{ij}\C^2 \CCC
+    \]
+    \[
+    \eps_i \sim \Nc(0,\sigma^2) \ \ \ \ Y_i \sim \Nc \O\sum_j\beta_jz_{ij}, \sigma^2 \C
+    \]
+    Data la forma di L (funzione likelihood) massimizzare L equivale a massimizzare $\Sum{i=1}{n} \O y_i - \Sum{j=0}{r} \beta_j z_{ij}\C^2$\\ ma questo equivale a massimizzare i minimi quadrati $\implies \hat{\vv{\beta}}_{ML} = \hat{\vv{\beta}}_{LS}$\\
+
+    Dimostriamo i punti II)...IV) insieme:
+    \[
+    \hat{\vv{\beta}}=(\ZZ^T\ZZ)^{-1}\ZZ^T\vv{Y} \ \ \ \hat{\vv{\eps}} = (\II-H)\vv{Y}
+    \]
+    \[
+    \implies \OO\begin{array}{c}
+        \hat{\vv{\beta}}  \\
+          \hat{\vv{\eps}}
+    \end{array}\CC = \OO\begin{array}{c}
+         (\ZZ^T\ZZ)^{-1}\ZZ^T \\
+          1- \ZZ (\ZZ^T\ZZ)^{-1}\ZZ^T
+    \end{array}\CC
+    \]
+    Quindi il vettore $\OO\begin{array}{c}
+        \hat{\vv{\beta}}  \\
+          \hat{\vv{\eps}}
+    \end{array}\CC$ è un vettore gaussiano, essendo trasformazione lineare del vettore gaussiano $\vv{Y}$
+    \[
+    \OO\begin{array}{c}
+        \hat{\vv{\beta}}  \\
+          \hat{\vv{\eps}}
+    \end{array}\CC \sim \Nc_{n+r+1} \O \Bigg(\begin{array}{c}
+       \vv{\beta}  \\
+          \vv{0}
+    \end{array}\Bigg) ; \sigma^2 \OO\begin{array}{cc}
+        (\ZZ^T\ZZ)^{-1} & (\ZZ^T\ZZ)^{-1}\ZZ^T(1-H)^T =0  \\
+         0  & (\II-H)
+    \end{array}\CC \C
+    \]
+    \[
+    \implies \hat{\vv{\beta}} \text{ e } \hat{\vv{\eps}} \ \text{ sono vettori scorrelati di un vettore gaussiano } \implies \hat{\vv{\beta}} \ind \hat{\vv{\eps}} 
+    \]
+    \phantom{}
+
+    IV) \ Ricordiamo che se $\vv{X}\sim \Nc(\vv{\mu},\Sigma)$ dove $\Sigma$ ha rango $k$, allora $(\vv{X}-\vv{\mu})^T \Sigma^{-1}(\vv{X}-\vv{\mu})\sim \Chi^2(k)$
+    \[
+    \hat{\vv{\eps}} \sim \Nc (\vv{0},\sigma^2 (\II -H)) \implies \hat{\vv{\eps}}^T \frac{(\II-H)^-}{\sigma^2} \hat{\vv{\eps}}\sim \Chi^2(n-r-1) \ \ \ \text{ ricordo } A^- \text{ è la pseudo-inversa}
+    \]
+    Inoltre vale che $H\hat{\vv{\eps}}=0 $ e $\hat{\vv{\eps}}= (\II-H)\hat{\vv{\eps}}$
+    \[
+    \hat{\vv{\eps}}^T \frac{(\II-H)^- (\II-H)}{\sigma^2} \hat{\vv{\eps}} = \frac{\hat{\vv{\eps}}^T\hat{\vv{\eps}}}{\sigma^2} \sim \Chi^2(n-r-1)
+    \]
+    \[
+    \implies \begin{cases}
+        \hat{\vv{\beta}}\sim \Nc (\vv{\beta}, \sigma^2(\ZZ^T\ZZ)^{-1}) \\  \hat{\vv{\eps}}^T\hat{\vv{\eps}} \sim \sigma^2 \Chi^2(n-r-1)
+    \end{cases}
+    \]
+\end{Dim}
+
+\phantom{}
+
+\textbf{Corollario:}
+\[
+\begin{cases}
+        \frac{1}{\sigma^2} (\hat{\vv{\beta}}-\vv{\beta})^T(\ZZ^T\ZZ)(\hat{\vv{\beta}}-\vv{\beta}) \sim \Chi^2(r+1)\\  \frac{n\hat{\sigma}^2}{\sigma^2} \sim  \Chi^2(n-r-1)
+\end{cases} \ \ \  \text{ e sono tra loro indipendenti}
+\]
+
+
+La dimostrazione è conseguenza evidente del teorema e sono indipendenti perché dipendono rispettivamente solo da $\hat{\vv{\beta}}$ e $\hat{\vv{\eps}}$ che sono indipendenti\\
+
+Tutto ciò perché voglio costruire una regione di confidenza e quindi mi serve una quantità pivotale, adesso mi devo liberare di $r$ dentro le $\Chi^2$
+\[
+\frac{(\hat{\vv{\beta}}-\vv{\beta})^T(\ZZ^T\ZZ)(\hat{\vv{\beta}\cdot}-\vv{\beta})\frac{1}{r+1}}{n\hat{\sigma}^2\cdot \frac{1}{n+r+1}} \sim F(r+1,n-r-1)
+\]
+\[
+\text{Ho ottenuto una quantità pivotale per } \vv{\beta} \ \ \ \frac{(\hat{\vv{\beta}}-\vv{\beta})^T(\ZZ^T\ZZ)(\hat{\vv{\beta}\cdot}-\vv{\beta})\frac{1}{r+1}}{S^2} \sim F(r+1,n-r-1)
+\]
+Possiamo quindi calcolare le regioni di confidenza
+\[
+\OOO \vv{\beta}\in \R^{n+1} \ (\hat{\vv{\beta}}-\hat{\beta})^T (\ZZ^T\ZZ) (\hat{\vv{\beta}}-\vv{\beta}) \le (r+1) S^2 F_{1-\alpha} (r+1, n-r-1) \CCC
+\]
+É una regione di confidenza di livello $(1-\alpha)$ per $\vv{\beta}$ e ha forma di ellissoide
+
+\fg[]{0.6}{Figura6.jpeg}
+
+
+Sappiamo che 
+$\hat{\beta}_j  \sim \Nc(\beta_j, \sigma^2(\ZZ^T\ZZ)^{-1}_{jj})$
+\[
+\implies \frac{\hat{\vv{\beta}}-\vv{\beta}}{\sqrt{S^2 (\ZZ^T\ZZ)^{-1}_{jj}}} \sim t(n-r-1)
+\]
+\[
+IC_{1-\alpha} \text{ per } \beta_j  \text{ è } \Big[
+\hat{\beta}_j \pm \UB{ se(\hat{\beta_j})}{\sqrt{S^2(\ZZ^T\ZZ)^{-1}_{jj}}} \ t_{1-\tfrac{\alpha}{2}}(n-r-1)\Big] \ \ \ \text{ dove } se (\hat{\beta_j}) \text{ è lo standard error}\skipp
+\]
+\phantom{}
+
+Un altro metodo per trovare un intervallo di confidenza è usare il  test d'ipotesi $\begin{cases}
+    H_0 : \beta_j =0 \\
+    H_1 : \beta_j \ne 0
+\end{cases}$
+\[
+\text{Sotto } H_0 \ \ T_j = \frac{\hat{\beta}_j}{\sqrt{S^2(\ZZ^T\ZZ)^{-1}_{jj}}} \sim t(n-r-1)
+\]
+\[
+RC = \OOO |T_j|> t_{1-\tfrac{\alpha}{2}} (n-r-1) \CCC 
+\]
+Quindi, posta $t_j$ la realizzazione del test, posso calcolare il p-value del test $\prob{T>|t_j|}$\\
+
+Questo test d'ipotesi (con $\beta_j=0$) equivale a fare la feature selection marginale, se ho evidenza che $\beta_j=0$ allora posso trascurare la covariata j\\
+
+\newpage
+
+\subsubsection*{Regressione su R}
+
+Vediamo cosa è importante guardare dal summary della regressione di R, cioè risultato del fit:
+\[
+\begin{array}{l|c|c|c|c}
+
+     & \text{Estimate} & se(\hat{\beta}_j) & t-value & p-value  \\
+     \hline
+     \beta_0 & \text{Stima puntuale} & \sqrt{S^2(\ZZ^T\ZZ)^{-1}_{jj}} & \frac{\text{stima puntuale}}{se(\hat{\beta}_j)} & ...\\
+     \hline
+     \beta_1 &  &  &  & \\
+     \hline
+     \vdots &  &  &  & \\
+\end{array}
+\]
+Il $t-value$ è il valore statistico del test $(\beta_j=0 \ vs \ \beta_j \ne 0 )$ \, sotto $H_0$\\
+
+Quindi partendo da $\vv{Y}=\beta_0+\beta_1\vv{Z}_1+...+\beta_r\vv{Z}_r +\vv{\eps}$\\
+Guarderò i p-value del summary e se quello corrispondente al test su $\beta_j$ è alto, allora la covariata $\vv{Z}_j$ non è significativa e la posso togliere dal test\\
+
+Posso fare anche i test analoghi sugli intervalli di confidenza, usando gli intervalli chiamati "one at a time" che sono intervalli marginali sulle singole covariate: \ $IC = \OO\hat{\beta}_j \pm \sqrt{S^2(\ZZ^T\ZZ)^{-1}_{jj}} \ t_{1-\tfrac{\alpha}{2}}(n-r-1)\CC$\\
+
+• \ Un'altra cosa importante da guardare nel summary, oltre al p-value è  il segno della stima puntuale, perché se ho una covariata continua e il $\beta_j$ positivo, vuol dire che al crescre di quella covariata cresceranno i valori della risposta e questo ci servirà per spiegare la relazione tra la covariata e la variabile\\
+
+• \ Altro fattore da guardare è l'ordine di grandezza, potrei avere un $\beta_j$ molto significativo, ma se ha un ordine $10^{-3}$ questo ci dice l'impatto della covariata sulla risposta, per capire quant'è l'effetto dovremo vedere dove si muove la $Z_j$ e dove si muove la $Y$\\
+
+• \ Invece nel caso in cui le covariate hanno ordini di grandezza molto diversi, per evitare fastidi, si standardizzano le covariate
+\newpage
+
+
+
+\Lezione{08/05/23}\\
+
+Vediamo altri test sui parametri
+\[
+\begin{cases}
+    H_0: C\vv{\beta} =0\\
+    H_1: C\vv{\beta}\ne 0
+\end{cases} \ \ \ C \text{ matrice } p\times (r+1)
+\]
+\phantom{}
+
+Tra tutti questi test si usano test per vedere se ho delle covariate significative:
+\[
+\begin{cases}
+    H_0: \beta_1 = \beta_2 = ... =0\\
+    H_1: \exists j \text{ tc } \beta_j \ne 0
+\end{cases}
+\]
+\phantom{}
+
+Sfruttando test di questo tipo, posso costruire un test per confrontare il modello $\ZZ$ con un sotto modello $\ZZ_1$ in cui cancellop alcune covariate\\
+\[
+\vv{Y}=\ZZ \vv{\beta} + \vv{\eps} \hspace{20pt} \vv{Y}=\ZZ_1 \vv{\beta}_1 + \vv{\eps}_1
+\]
+\[
+SS_{res}(\ZZ) = \hat{\vv{\eps}}^T\hat{\vv{\eps}} = \Sum{i=1}{n} \hat{\eps}_i^2 \hspace{20pt} SS_{res}(\ZZ_1) = \hat{\vv{\eps}}_1^T\hat{\vv{\eps}}_1 = \Sum{i=1}{n} \hat{\eps}_{i1}^2 
+\]
+\phantom{}
+
+Per confrontare i due modelli posso confrontare gli $SS_{res}$\\
+So che vale sempre $SS_{res}(\ZZ) \le SS_{res}(\ZZ_1)$ perché aggiungendo covariate, aumento la parte spiegata dal modello e quindi abbassare la parte residua, ovvero la parte che non riesco a spiegare\\
+Se la differenza tra le due è grande, vuol dire che tra le due ho perso molto, se invece è piccola vuol dire che aggiungendo le covariate non cambia di molto la parte spiegata
+\[
+\begin{cases}
+    H_0: \ZZ \text{ e } \ZZ_1 \text{ sono equivalenti}\\
+    H_0: \ZZ \text{ e } \ZZ_1 \text{ non sono equivalenti}
+\end{cases}
+\]
+"Rifiuto $H_0$ se $SS_{res}(\ZZ_1) - SS_{res}(\ZZ)$ è grande"\\
+
+Si può dimostrare che
+\[
+\frac{SS_{res}(\ZZ_1)-SS_{res}(\ZZ)}{S^2\cdot p} \sim F(p, n-r-1)
+\]
+Dove  $S^2= \frac{SS_{res}(\ZZ)}{n-r-1}$ e $p$ è la differenza tra le colonne $\ZZ$ e $\ZZ_1$\skipp
+
+Rifiuto se $\frac{SS_{res}(\ZZ_1)-SS_{res}(\ZZ)}{S^2p}> F_{1-\alpha}(p,n-r-1)$\skipp\\
+Se ottengo p-value basso significa sotto modello diverso, invece p-value alto significa sotto modello equivalente e quindi scelgo il sotto modello\\
+
+Avere $\ZZ_1=\O\begin{array}{c}
+     1  \\
+     \vdots\\
+     1
+\end{array}\C$ equivale al test $\begin{cases}
+    H_0: \beta_1 = ... = \beta_r =0\\
+    H_1 : \exists \beta_j =0
+\end{cases}$ questo è il test F che fa R in automatico\\
+
+
+\subsection{Anova}
+La tecnica Anova, ovvero analysis of varianze, è un modello lineare in cui le covariate sono solo categoriche, valuteremo questi gruppi per confrontare le medie\\
+
+Esempio di confronto tra gruppi: supponiamo di avere 3 gruppi di costo appartamenti: "centro", "periferia" e "fuori città" e voglio valutare se il costo è lo "stesso" nei gruppi\\
+Andrò a costruire una matrice, dove l'elemento $z_{ij}=\begin{cases}
+    1 \ \text{ se } i\in \text{ gruppo j}\\
+    1 \ \text{ se } i\not\in \text{ gruppo j}
+\end{cases}$\\
+Permutando le righe della matrice di modo da avere prima le righe delle unità statistiche $i$ nei primi gruppi, ottengo la matrice
+\[
+\ZZ= \OO \begin{array}{ccccc}
+     \begin{array}{c}
+     1\\ \vdots \\ 1
+     \end{array} & \left . \begin{array}{c}
+     1\\ \vdots \\ 1
+     \end{array}\right \} n_1 & \begin{array}{c}
+     0\\ \vdots \\ 0
+     \end{array} & \dots & \begin{array}{c}
+     0\\ \vdots \\ 0
+     \end{array} \\
+     \begin{array}{c}
+     1\\ \vdots \\ 1
+     \end{array} & \begin{array}{c}
+     0\\ \vdots \\ 0
+     \end{array} & \left . \begin{array}{c}
+     1\\ \vdots \\ 1
+     \end{array}\right \} n_2 & \dots & \begin{array}{c}
+     0\\ \vdots \\ 0
+     \end{array} \\
+     \vdots & \vdots & \vdots &  & \vdots \\
+     \begin{array}{c}
+     1\\ \vdots \\ 1
+     \end{array} & \begin{array}{c}
+     0\\ \vdots \\ 0
+     \end{array} & \begin{array}{c}
+     0\\ \vdots \\ 0
+     \end{array} & \dots & \left . \begin{array}{c}
+     1\\ \vdots \\ 1
+     \end{array}\right \} n_g 
+\end{array}  \CC\hspace{20pt} \vv{Y} = \OO \begin{array}{c}
+     X_{11}  \\
+     \vdots \\
+     X_{n_11}\\
+     X_{12}  \\
+     \vdots \\
+     X_{n_22}\\
+     \vdots \\
+     X_{1g}\\
+     \vdots \\
+     X_{n_gg}
+\end{array} \CC \skipp
+\]
+
+Quindi contando le righe $n_j = $ numero di unità statistiche nel gruppo j \ e \ $\sum n_j = n$\\
+
+Mentre nel vettore delle risposte $\vv{Y}$ gli $X_{ij}$  sono la risposta dell'unità i del gruppo j, invece che scrivere $Y_1,...,Y_n$\\
+
+Posto, come al solito, $\vv{Y}= \ZZ \vv{\beta} + \vv{\eps}$ allora $X_{ij}\sim \Nc(\mu_j,\sigma^2)$ con $\mu_j=\beta_0+\beta_j$ perché  $\ZZ\vv{\beta}= \OO\begin{array}{c}
+    \beta_0+\beta_1 \\
+     \vdots\\
+     \beta_0+\beta_j
+\end{array}\CC$\\
+Quindi richiedere le medie uguali equivale a porre tutte le $\beta_j=0$ e quindi che il sotto modello con solo l'intercetta sia equivalente al modello globale \\
+
+Da questo si capisce che fittare un modello e quindi stimare la significatività dei $\beta_j$, in questo caso (covariate categoriche) equivale a fare un confronto tra le medie\\
+
+
+
+Abbiamo un problema perché la matrice $\ZZ$ non ha rango massimo, infatti la prima colonna (intercetta) è la somma delle restanti. Quindi si usando delle matrici $\tilde{\ZZ}$ a rango massimo che raccolgono le stesse informazioni, per esempio la seguente che è $n\times g$ invece che $n\times(g+1)$
+\[
+\tilde{\ZZ} = \OO \begin{array}{cccc}
+    \textbf{1} & \textbf{1} & 0 & 0 \\
+    \vdots & 0 & \textbf{1} & 0\\
+    \vdots & \vdots & \vdots & \vdots\\
+    \vdots & 0 & 0 & \textbf{1}\\
+    \textbf{1} & \textbf{-1} & \textbf{-1} & \textbf{-1}\\
+\end{array} \CC  \ \ \ \ \ \text{ dove le colonne sono $g$, invece che } g-1
+\]
+\[
+\E{X_{i1}}=\beta_0+\beta_1 \hspace{20pt} \E{X_{i2}}=\beta_0+\beta_2 \hspace{10pt} ... \hspace{10pt} \E{X_{ig}}=\beta_0-\beta_1- ... -\beta_{g-1}
+\]
+\[
+\mu_j=\beta_0+\tau_j \ \ \ \ \sum \tau_j =0
+\]
+Quindi è una riparametrizzazione equivalente a prima, ma con il vincolo che la somma dei $\beta$ sia nulla
+
+\phantom{}
+
+Confrontiamo il modello $\tilde{\ZZ}$ con il modello $\ZZ_1$\\
+
+In $\ZZ_1$ ho solo l'intercetta e svolgendo il calcolo $\big(\ZZ_1(\ZZ_1^T\ZZ_1)^T\ZZ_1^T\big)$ ottengo che tutti i gruppi hanno la stessa media equivalente alla media su i e j di tutte le osservazioni\\
+Quindi il valore fittato è: \ $\hat{\vv{y}}= \OO \begin{array}{c}
+   \overline{X}_{\cdot \cdot}  \\
+    \vdots
+\end{array} \CC$\\
+Dove $\overline{X}_{\cdot \cdot}=\frac{1}{n}\Sum{ij}{}X_{ij}$ e supponendo $n_1=...=n_g=m$ allora $n=mg$ e $\overline{X}_{\cdot \cdot}=\frac{1}{mg}\Sum{ij}{}X_{ij}$\\
+Oss. Ricordo che le $X_{ij}$ sono le $Y_i$, le avevo chiamate in modo diverso\\
+
+
+Invece per $\tilde{\ZZ}$, ovvero metodo $\ZZ$ che sono equivalenti, ottengo delle previsioni $\hat{\vv{y}}=\OO\begin{array}{c}
+    \left.\begin{array}{c}
+        \overline{X}_{\cdot 1} \\
+        \vdots
+    \end{array}\right\} n_1\\
+    \vdots \hspace{20pt}\phantom{} \\
+    \left.\begin{array}{c}
+        \overline{X}_{\cdot g} \\
+        \vdots
+    \end{array}\right\} n_g
+\end{array}\CC$\\
+Le previsioni sono uguali nei singoli gruppi, diverso da prima che erano uguali fra i gruppi\\
+$\forall i \in $ gruppo j la previsione sarà $\overline{X}_{\cdot j} = \frac{1}{m} \Sum{i=1}{m}X_{ij}$ dove abbiamo supposto per semplicità che $n_1=...=n_g = m$\\
+
+Oss. Andremo a confrontare il residuo di quando prevedo la stessa media nei gruppi con il residuo di quando prevedo gruppo per gruppo, perché se questi due modelli sono equivalenti allora posso pensare che le medie dei gruppi siano le stesse, che è quello che voglio mostrare
+
+Oss. Stiamo cercando di mostrare che le covariate, che sappiamo essere gaussiane, siano ugualmente distribuite e quindi vogliamo che abbiano stessa media\\
+
+L'idea per confrontare i due modelli è usare il test sugli $SS_{res}$
+\[
+\frac{\frac{SS_{res}(\ZZ_1)-SS_{res}(\tilde{\ZZ})}{g-1}}{\frac{SS_{res}(\tilde{\ZZ})}{mg-g}} = \frac{\frac{ \sum_{ij} (X_{ij}-\overline{X}_{\cdot \cdot})^2 - \sum_{ij}(X_{ij}-\overline{X}_{\cdot j})^2 }{g-1}}{\frac{\sum_{ij}(X_{ij}-\overline{X}_{\cdot j})^2}{mg-g}} \sim F(g-1, mg-g)
+\]
+
+
+
+\[
+\Sum{j=1}{g}\Sum{i=1}{m} (X_{ij}-\overline{X}_{\cdot \cdot})^2 = \UB{SS_w}{\Sum{j=1}{g}\Sum{i=1}{m}(X_{ij}-X_{\cdot j})^2} + \UB{SS_b}{ m\Sum{j=1}{g} (\overline{X}_{\cdot j}-\overline{X}_{\cdot \cdot})^2}
+\]
+Dove abbiamo $SS_{\text{within}} = $ variabilità nel gruppo \ e \ $SS_{\text{between}} = $ variabilità tra i gruppi\\
+
+Quindi il test diventa: \ $\frac{\frac{SS_b}{g-1}}{\frac{SS_w}{g(m-1)}} \sim F(g-1,g(m-1))$\skipp\\
+Rifiuto se la variabilità tra i gruppi è molto più grande della variabilità nei gruppi, perché questo da evidenza statistica che le medie nei gruppi sono diverse\\
+
+Vediamolo graficamente:\\
+Senza questo metodo avrei per esempio potuto plottare i boxplot di ogni gruppo e graficamente vedere come erano distribuiti i gruppi\\
+\fg[]{0.3}{Figura7.jpeg}
+Invece questo metodo confronta le $SS_w$ ovvero quante sono distribuite le nuvolette dei gruppi con la $SS_b$ che è la variabilità tra le medie delle nuvolette.\\
+Se questi valori hanno lo stesso ordine e quindi non ho nessun evidenza per dire che le medie sono diverse\\
+\fg[]{0.65}{Figura8.jpeg}
+
+Questo metodo funziona se $X_{ij}\sim \Nc (\mu_j,\sigma^2)$ e quindi oltre a verificare la gaussianità delle osservazioni dovrò verificare che abbiano varianza simile\\
+
+
+
+Implementando Anova su R ricevo la Tabella Anova
+
+\[
+{\renewcommand\arraystretch{1.2} 
+\begin{array}{c|c|c|c|c|c}
+
+     \text{Causa della variabilità} & SS & g.d.l. & MS & F_0 & p-value \\
+     \hline
+      \text{Gruppi} & SS_b & g-1 & \frac{SS_b}{g-1}=MS_b & \frac{MS_b}{MS_w}&\\
+     \hline
+     \text{Errore} & SS_w & g(m-1) & \frac{SS_w}{g(m-1)}=MS_w &  & \\
+     \hline
+     \text{Totale} & SS_{tot} & gm-1 &  &  &
+\end{array}
+}
+\]
+
+Il p-value sarà la probabilità che la Fisher sia più grande della statistica che ottengo con i miei dati\\
+
+Quindi con p-value piccolo rifiuto e quindi le medie tra i gruppi sono diverse, invece con p-value alto, accetto e le medie sono uguali\\
+
+Oss. Ovviamente la differenza tra le medie non vuol dire che tutte le medie sono diverse\\
+
+In conclusione, posta l'assunzione $X_{ij}\sim \Nc(\mu_j,\sigma^2)$, il test è $\begin{cases}
+    H_0 : \mu_1=...=\mu_g\\
+    H_1 : \exists j \text{ tc } \mu_j\ne \mu_i \ \text{ per qualche i}
+\end{cases}$\\ \\
+
+\Lezione{15/05/23}\\
+
+Principali finalità di questo tipo di modelli:\\
+• \ Capire le relazioni tra le covariate e la risposta\\
+• \ Fare previsione della risposta y in corrispondenza di valori $\vv{z}_i$, ovvero con una nuova osservazione o non appartenente al dataset\\ \\
+
+Spesso si \textbf{valida} un modello attraverso la CV, o cross validazione\\
+
+A partire dal dataset $(y_i,\vv{z}_i)$, seleziono in modo randomico un sottoinsieme, che corrisponde a una certa percentuale del dataset, lo chiamo test set e lo metto da parte. A questo punto fitto il modello sul restante sottoinsieme che chiamerò training set.\\
+Confronto le stime $\hat{y}_i$ ottenute dal modello con solo il training per valutare la bontà della stima sul test set.\\
+
+Posso ripetere la procedura un po' di volte e l'errore quadratico medio, ovvero la differenza tra il valore stimato e il valore vero sul test set, si chiama errore di cross validazione\\
+
+Oss. Ovviamente non potrei confrontare confrontare il modello con dei dati che ho usato per costruire il modello \\
+
+
+Supponiamo di avere una nuova osservazione $\vv{z}_0$ che non appartiene al dataset. Avrà covariate del tipo $\vv{z}_0=(1,z_{0,1},...,z_{0r})^T$\\
+
+Avrò due fonti di incertezza, quella data dagli $\hat{\beta}_i$ e la variabilità $\sigma^2$\\
+Posta $Y_0$ la risposta in corrispondenza di $\vv{z}_0$, allora $\E{Y_0}=\vv{z}_0^T\vv{\beta}$
+
+
+Per stimare questa quantità uso il teorema di Gauss-Markov, per cui so che lo stimatore BLUE di $\vv{z}_0^T\vv{\beta}$ è $\vv{z}_0^T\hat{\vv{\beta}} = \vv{z}_0^T(\ZZ^T\ZZ)^{-1}\ZZ^T\vv{y}$ \ che mi fornisce una stima puntuale\\
+Oltre a questa stima, vorrei costruire un intervallo di confidenza, per fare ciò devo capire la variabilità di questo stimatore, ovvero che legge ha $\vv{z}_0\hat{\vv{\beta}}$\\
+
+$\implies \vv{z}_0^T \sim \Nc (\vv{z}_0^T; \sigma^2 \vv{z}_0^T (\ZZ^T\ZZ)^{-1}\vv{z}_0)$ perchè combinazione lineare di gaussiane\\
+Voglio costruire una stima intervallare di questa, con la varianza incognita\\
+Però so anche che $\frac{\hat{\vv{\eps}}^T\hat{\vv{\eps}}}{\sigma^2}\sim \Chi^2(n-r-1)$ e che è indipendente da $\vv{z}_0^T \hat{\vv{\beta}}$\\
+
+\[
+\implies \frac{\vv{z}_0^T (\hat{\vv{\beta}}-\vv{\beta})}{\sqrt{\vv{z}_0^T(\ZZ^T\ZZ)^{-1}\vv{z}_0}\sqrt{S^2}}\sim t(n-r-1)
+\]
+
+Posso quindi scrivere l'IC di livello $1-\alpha$ per $\E{y_0}$
+\[
+IC=\OO \vv{z}_0^T \hat{\vv{\beta}} \pm S \sqrt{\vv{z}_0^T(\ZZ^T\ZZ)^{-1}\vv{z}_0} t_{1-\tfrac{\alpha}{2}}(n-r-1) \CC \ \ \ \text{ IC per la media di } Y_0
+\]
+
+
+Nel caso $r=1$, ovvero regressione lineare, e quindi $\vv{z}_0=(1,z_0)^T$\\
+Facendo il conto esplicito sulla parte di variabilità (larghezza) dell'IC, si ottiene
+\[
+\sqrt{S^2 \OO\frac{1}{n} + \frac{(z_0-\overline{z})^2}{SS_z} \CC} \ \ \text{ dove } SS_Z=\sum (z_i-\overline{z})^2
+\]
+
+Questo mi dice che la variabilità del mio modello dipende principalmente da quanto la mia osservazione $\vv{z}_0$ è lontana dal baricentro\\
+
+
+Se invece voglio fare previsione sul valore puntuale di $\hat{Y}_0$, questa previsione ha incertezza che ho nello stimare la media e poi un'incertezza legata a $\sigma^2$, ovvero la variabilità della gaussiana\\
+
+
+Dato che $Y_0 = \vv{z}_0^T\vv{\beta} + \eps_0$\\
+Svolgendo una procedura analoga a prima e ricordandosi che $\eps_0$ è indipendente dai $\beta$, si ottiene
+
+\[
+\frac{Y_0 - \vv{z}_0^T\hat{\vv{\beta}}}{\sqrt{S^2(1+\vv{z}_0^T(\ZZ^T\ZZ)^{-1}\vv{z}_0)}}\sim t(n-r-1)
+\]
+Questa è una t-student perché è il quoziente di una gaussiana standardizzata e la radice di una Chi-quadro divisa per i suoi gradi di libertà, però standardizzando questa gaussiana devo tenere conto della variabilità dei $z\beta$ e di $\eps$ e per questo al denominatore devo aggiungere un $S^2$\\
+
+Quindi posso dire che:
+\[
+\prob{ Y_0 \in \OO \vv{z}_0^T \hat{\vv{\beta}} \pm \sqrt{S^2(1+\vv{z}_0^T(\ZZ^T\ZZ)^{-1}\vv{z}_0)} \  t_{1-\tfrac{\alpha}{2}} (n-r-1) \CC } = 1-\alpha \ \ \ \text{ intervallo di previsione di } Y_0
+\]
+
+Ovvero la probabilità che una t-student stia tra i suoi quantili\\
+
+L'intervallo per $Y_0$ sarà più ambio di quello della media di $Y_0$ perché tiene conto di $\eps_0$\\
+
+
+Nel caso di regressione lineare semplice possiamo visualizzare questa cosa:
+
+\fg[]{0.4}{Figura9.jpeg}
+
+Nella figura vediamo il modello fittato ($\hat{\beta}_0+\hat{\beta}_1z$)\\
+Inoltre per ogni valore possiamo calcolare un intervallo di confidenza per la media, centrato sulla retta e l'intervallo di previsione centrato nello stesso punto, ma con larghezza maggiore\\
+Posso sviluppare gli inviluppi di questi intervalli di confidenza. Per la media (---) per la previsione (-\,-\,-)\\
+Questi inviluppi si allargano perché tanto più mi allontano dalla media $\overline{Z}$, tanto più l'ampiezza aumenta\\
+
+Questo è sensato perché se sono vicino alla media vuol dire che sono vicino ai punti che ho usato poer fittare il modello.
+Questo fenomeno si  chiama problemi di estrapolazione\\
+
+
+Vediamo un esempio di problema di estrapolazione, che evidenzia l'errore al di fuori della "finestra" in cui osservo i dati
+\fg[regressione \ \ \ \ \ valori reali]{0.6}{Figura10.jpeg}
+
+\newpage
+
+Cerchiamo di capire cosa succede quando ho un modello che comprende covariate sia continue che categoriche\\
+
+Esempio:
+Y=stipendio\\
+$Z_1=$ anni di servizio (continua)\\
+$Z_2=$ sesso (binaria)
+\[
+\vv{Y}=\beta_0+\beta_1Z_1+\beta_2Z_2 +\eps
+\]
+$\forall i$ tc $z_{2i}=0$ (maschi) \ \ $y=\hat{\beta_0}+\hat{\beta}_1Z_1$\\
+$\forall i$ tc $z_{2i}=1$ (femmine) \ \ $y=\hat{\beta_0}+\hat{\beta}_1Z_1+\hat{\beta}_2$\\
+
+Però è un po' limitante questo modello perché è possibile che ci sia una relazione tra $Z_1$ e $Z_2$ che quindi implica una diversa pendenza\\
+
+Per esempio in questo caso posso avere un aumento di guadagno minore per le donne con l'aumento degli anni di servizio\\
+
+Per poter valutare questa cosa, sempre con un modello lineare, introduco l'interazione, ovvero una nuova covariata\\
+
+Oss. La linearità è nei $\beta$ non negli Z
+\[
+Y=\beta_0+\beta_1Z_1 + \beta_2Z_2 +\beta_3 Z_1Z_2 + \eps
+\]
+
+$\forall i$ tc $z_{2i}=0$ (maschi) \ \ $y=\hat{\beta_0}+\hat{\beta}_1Z_1$\\
+$\forall i$ tc $z_{2i}=1$ (femmine) \ \ $y=\hat{\beta_0}+(\hat{\beta}_1+\hat{\beta}_3)Z_1+\hat{\beta}_2$\\ 
+
+
+Posso fare un test $\begin{cases}
+    H_0 : \beta_3=0\\
+    H_1 : \beta_3 \ne 0
+\end{cases}$ che se ha un p-value basso, allora c'è interazione e quindi le due rette possono avere pendenza diversa, in particolare la stima di $\beta_3$ ci stima la differenza nello slope delle due curve\\
+
+
+
+Oss. $\beta_3$ è la differenza tra i coefficienti angolari al passare da la categoria $z_2=0$ a $z_2=1$, vale lo stesso con più variabili categoriche, solamente avrei più coefficienti di interazione e il coefficiente angolare sarebbe $\Delta y$ all'aumentare di 1 della variabile continua \\ \\
+
+Vale la stessa cosa nel caso di variabili continue:
+\[
+Z_1, Z_2 \text{ continue} \ \ \vv{Y}=\beta_0 + \beta_1 \vv{Z}_1 + \beta_2 \vv{Z}_2 + \beta_3 \vv{Z}_1\vv{Z}_2 + \vv{\eps}\]
+\[
+Y(Z_1)= \beta_0 + \beta_1 Z_1 + \beta_2 Z_2 + \beta_3 Z_1Z_2 + \eps
+\]
+\[
+Y(Z_1+\delta)= \beta_0 + \beta_1 (Z_1+\delta) + \beta_2 Z_2 + \beta_3 (Z_1+\delta)Z_2 + \eps
+\]
+\[
+\Delta Y = Y(Z_1+\delta)-Y(Z_1) = \beta_1 \delta + \beta_3Z_2\delta
+\]
+
+Quindi se c'è interazione, al variare dell'osservazione per $Z_1$, la $Y$ varia anche per causa di $Z_2$
+
+\phantom{}\\
+
+\textbf{Punti di leva:}\\
+Oss. Visti a laboratorio, quindi li vediamo velocemente\\
+
+Nel nostro modello
+\[
+\var{\vv{\eps}}=\sigma^2\II \ \ \ \var{\eps_i}=\sigma^2
+\]
+Fittando il modello, ottengo
+\[
+\var{\hat{\vv{\eps}}}=\sigma^2 (\II-H) \ \ \ \var{\hat{\eps}_i}=\sigma^2 (1-h_{ii})
+\]
+$h_{ii}$ è l'elemento i-esimo della diagonale di H, si chiama leverage del dato i\\
+Per esempio se $h_{ii}=1$ allora $\var{\hat{\eps}_i}=0$, ovvero sto interpolando il dato\\
+Quindi tanto più la leverage tende a 1, tanto più il modello è forzato a passare per quel dato, ovvero fa effetto leva\\
+
+Vediamolo in modo più generale:
+\[
+\hat{\vv{y}}=\ZZ\hat{\vv{\beta}}= H\vv{y}\]
+\[
+\hat{y}_i = \Sum{j=1}{n} h_{ij}y_j = h_{ii} y_i + \Sum{\overset{j=1}{j\ne1}}{n} h_{ij}y_j
+\]
+Però $H\vv{1}=\vv{1}$, perché c'è l'intercetta in H, ma $H\vv{1} = \Sum{j=1}{n} h_{ij}=1$ \ e \ $\Sum{i}{} h_{ii}=tr(H)= r+1$\\
+
+
+Si fa quindi il Plot dei Leverages\\
+Però non voglio avere interpolazione, ovvero non voglio avere dei punti con levarages più alti di altri, la mia situazione ideale sarebbe avere tutti i punti con lo stesso effetto leva, ovvero $h_{ii}=\frac{r+1}{n}$\\
+
+Quindi si mette una soglia a $2\O\frac{r+1}{n}\C$ e tutte le osservazioni con \ $h_{ii}>2\O\frac{r+1}{n}\C$ verranno chiamati punti leva e ci devo prestare attenzione, tendenzialmente li escluderò dal modello\\
+
+\fg[]{0.4}{Figura11.jpeg}
+
+\phantom{}
+
+
+\textbf{Grafici di diagnostica:}
+
+Una buona regola per vedere se il modello sta andando bene è fare questi grafici di diagnostica che nel pratico sono gli  scatterplot degli $(\hat{y}_i,\hat{\eps}_i)$ o $\hat{y}_i, \frac{\hat{\eps}_i}{\sqrt{1-h_{ii}}}$\\
+Questa nuvola di punti deve essere il più possibile casuale, centrata sullo zero,
+Non voglio vedere un plot a imputo che si allarga in avanti o all'indietro, perché questo tipo di grafico viola la omoschedasticità, ovvero la varianza cambia al variare della $y_i$
+\fg[]{0.3}{Figura12.jpeg}
+\phantom{}
+
+
+\textbf{Esempio del quartetto di Hanscobe:}\\
+Si generano delle regressioni con stessi $R^2$ e $\hat{\beta}_0,\hat{\beta}_1$, ma sono generate da dataset molto diversi\\
+\fg[]{0.5}{FIgura13.jpeg}
+
+L'idea è che guardare solo $R^2$ e i $\hat{\beta}$ non ci dice niente su quanto il modello vada bene, dovrò sempre fare un grafico di diagnostica dei residui\\
+
+
+\textbf{Normalità dei residui:}
+Per valutare la normalità si usa uno shapiro test o qqplot\\
+Che mi confrontano i quantili di una gaussiana, rispetto ai quantili del mio test\\
+
+
+
+\Lezione{16/05/23}
+
+Procediamo con \textbf{Indici di goodness of fitness:}\\
+
+Avevamo visto che:
+
+$R^2$ mi restituisce la quota parte del dataset spiegata dal modello \ \ $R^2=\frac{SS_{reg}}{SS_{tot}}= 1 - \frac{SS_{res}}{SS_{tot}}$\\
+
+Possiamo anche dover confrontare modelli con un numero di covariate diverso\\
+Supponiamo di avere un modello $M_h$ con h covariate e un sovra modello $M_k$ con $k>h$\\
+Un confronto di $R^2$ non è "fair", perché ovviamente si alzerà. Per mitigare l'aumento di $R^2$ dovuto all'aumento delle covariate, si introduce $R^2_{adj}$ (adjusted) tale che $1- R^2_{adj}= \frac{\tfrac{SS_{res}}{n-r-1}}{\tfrac{SS_{tot}}{n-1}}$ ovvero $R^2_{adj}=1-(1-R^2)\frac{n-1}{n-r-1}$\\ \\
+
+
+\textbf{Metodi per selezionare le covariate:}\\
+
+Supponiamo di avere $r$ covariate, il metodo ottimale per decidere quali covariate togliere sarebbe confrontare tutti i possibili sottomodelli\\
+Se voglio un sottomodello con:\\
+1 covariata, avrò r modelli possibili\\
+h covariate, avrò $\binom{r}{h}$ possibili\\
+r covariate avrò 1 modello\\
+
+Però appena $h$ aumenta, confrontare tutti i modelli diventa computazionalmente poibitivo\\
+
+
+Si usano i \textbf{Metodi steopwise:}\\
+a) foward selection, che aggiunge covariate \\
+b) backward selection, che parte con tutte le covariate e ne toglie una alla volta\\
+c) both che aggiunge e toglie\\
+
+Per decidere quando fermarmi, ad ogni iterazione, si confronta il modello $M_k(i)$, con i indice di iterazione e k numero di covarite, con $M_{k'}(i+1)$ e si fa il test F\skipp\\
+Se $k'>k$ allora si valuta $\frac{\tfrac{SS_{res}(M_k(i))-SS_{res}(M_{k'}(i+1))}{k'-k}}{\tfrac{SS_{res}(M_k(i))}{n-k-1}}$ e se il p-value è alto allora i modelli sono equivalenti\\ \\
+
+
+\textbf{Collinearità tra le covariate:}\\
+
+Se la collinearità è alta, allora la varianza $\sigma^2(\ZZ^T\ZZ)^{-1}$ "esplode"\\
+Per controllare la collinearità, c'è un indice che si chiama \textbf{VIF} = variance inflation factor che per ogni covariata j vale $VIF_j= \frac{1}{1-R^2_j}$ dove $R^2_j$ è il coefficiente di determinazione di un modello in cui si pone la covariata $\vv{Z}_j$ come risposta e le altre covariate come predittori, nel senso che mi dimentico di $Y$ e considero la covariata come risposta. A questo punto tanto più $R^2_j$ è alto, tanto più $\vv{Z}_j$ sarà combinazione lineare delle altre covariate e quindi $VIF$ è alto e quindi $\sigma^2$ rischia di esplodere\\ \\
+
+
+
+Vediamo come si risolvono alcuni problemi e come si identificano gli outlier\\
+
+
+\textbf{Problemi di eteroschedasticità:}\\
+Che si verificano quando non ho omoschedasticità, ovvero che l'assunzione $Cov(\vv{\eps})=\sigma^2\II$ non è verificata\\
+E quindi $Cov(\vv{\eps})=\sigma^2\Sigma$ ovvero è una matrice più complicata\\
+In questo caso esiste $C : CC^T = C^TC = \Sigma^{-1}$ con $C=\sqrt{\sigma^{-1}}$, detta radice di $\Sigma$\\
+
+Se riscriviamo il modello come $C\vv{Y} = C\ZZ\vv{\beta}+ C\vv{\eps}$ allora si ottiene $\var{C\vv{\eps}}=\sigma^2\II$\\
+In questo caso avaremo $\hat{\vv{\beta}}= (\ZZ^T\Sigma^{-1}\ZZ)^{-1}(\ZZ^T\Sigma^{-1}\vv{Y})$\\
+
+Esempio:\\
+Caso in cui la matrice $\Sigma$ è simile all'identità, ma diversa \ $\Sigma = \sigma^2 \O\begin{array}{ccc}
+    m_1 & &  \\
+     & \ddots & \\
+     & & m_n
+\end{array}\C$\\
+I dati vengono trasformati con $\sqrt{\Sigma^{-1}}$ che è la diagonale con termini \ $1\frac{1}{\sqrt{\sigma^2 m_i}}$\\
+Un esempio in cui ho la matrice di questo tipo, ho i dati che provengono da gruppi e la variabilità scala con la numerosità del gruppo\\
+Allora stiamo trasformando le $Y$ tenendo conto di queste radici. Per qeusto motivo si chiama regressione pesata\\ \\
+
+
+
+\textbf{Outliers:}\\
+
+Costruisco il boxplot:\\
+Creo la "scatola" centrata in $Q_2$, con estremi $Q_1$ e $Q_3$, pongo $IQR=Q_3-Q_1$ come l'ampiezza della scatola\\
+Poi le "righe" arrivano fino a $Q_1- 1.5*IQR$ e $Q_3+1.5*IQR$\\ 
+Tutti i dati che sono al di fuori di questi sono detti outliers e li segno con dei pallini
+
+
+\fg[]{0.4}{Figura14.jpeg}
+
+
+
+Costruita in questo modo, la probabilità di avere outliers per una gaussiana è $0.007$\\
+
+Non devo buttare via gli outliers, la presenza di outliers va indagata perché può avere diversi motivi\\ \\
+
+
+
+\textbf{Punti influenti:}\\
+
+A partire dal modello $\vv{Y}+\ZZ\vv{\beta}+\vv{\eps}$\\
+Chiamiamo $\ZZ_{(i)}$ la matrice disegno a cui tolgo la riga i, è matrice $(n-1)\times(r+1)$\\
+E $\vv{Y}_{(i)}$ il vettore delle risposte a cui ho tolto $y_i$\\
+A questo punto fittiamo il modello $\vv{Y}_{(i)}+\ZZ_{(i)}\vv{\beta}+\vv{\eps}_{(i)}$\\
+Ottego $\hat{\vv{\beta}}_{i}=(\ZZ_{(i)}^T\ZZ_{(i)})^{-1}\ZZ^T_{(i)}\vv{Y}_{(i)}$\\
+Dovrò avlutare la discrepanza tra $\hat{\vv{\beta}}$ e $\hat{\vv{\beta}}_{(i)}$ se sono distanti, allora il sarà un dato influente\\
+Ovvero un dato è influente se togliendolo, mi cambiano le stime\\
+Però questa è la "distanza" tra due realizzazioni di vettorre gaussiani, dovrò valutare la distanza tenendo anche conto della variabilità\\
+
+Si usa:
+\begin{defi}
+    La \textbf{distanza di Cook} = $D_i$ tra $\hat{\vv{\beta}}$ e $\hat{\vv{\beta}}_{(i)}$ è
+    \[
+    D_i=\frac{(\hat{\vv{\beta}}_{(i)}-\hat{\vv{\beta}})^T\ZZ^T\ZZ(\hat{\vv{\beta}}_{(i)}-\hat{\vv{\beta}})}{S^2(r+1)}
+    \]
+\end{defi}
+
+Un $D_i$ alto vuol dire che i è un punto molto influente\\
+
+Questo valore è uguale se valuto la differeza tra $\hat{\vv{Y}}=\ZZ\hat{\vv{\beta}}$ e $\hat{\vv{Y}}_{(i)}=\ZZ\hat{\vv{\beta}}_{(i)}$, ovvero $D_i=\frac{(\hat{\vv{Y}}_{(i)}-\hat{\vv{Y}})^T(\hat{\vv{Y}}_{(i)}-\hat{\vv{Y}})}{S^2(r+1)}$\\
+
+Si può anche dimostrare che \ $D_i=\frac{1}{r+1}\cdot\hat{\eps_i^*}\O\frac{h_{ii}}{1-h_{ii}}\C$ \ \ dove $\hat{\eps}^*_i=\frac{\hat{\eps}_i}{S\sqrt{1-h_{ii}}}$ è il residuo studentizzato\\
+E questo ci dice che distanze di Cook alte e leverages alte sono paragonabili\\
+
+
+\textbf{Caso in cui i residui non sono gaussiani:}\\
+
+Si trasformano le $y_i$ per tirarli a una normale\\
+
+Una trasformazione che spesso porta i dati a normalità e il logaritmo, nel senso che i dati sono distribuiti come una log normale. Questa trasformazione rientra in una categoria più grossa:\\
+
+
+Trasformazioni Box-Cox, che sono trasformazioni polinomiali o logaritmniche:
+\[
+y^{new} = \frac{(y^{\lambda}-1)}{\lambda} \hspace{40pt} y^{(new)} = log\,y
+\]
+Calcolo $\lambda^{opt}$ tale per cui la verosimiglianza gaussiana di $y^{new}$ è massima\\
+Nel pratico si passano i possibili lambda e con ognuno di questi si cerca quello più gaussiano\\
+
+Se $\lambda^{opt}=0$ allora uso il logaritmo $y^{(new)}$, altrimenti uso la trsformazione polinomiale $y^{new}$\\
+
+Tipicamente r restituisce un profilo di verosimiglianza in funzione di $\lambda$\\
+E l'ottimo è la migliore trasformazione tra quelle di questo tipo\\
+
+Oss. Se ottengo, per esempio, $\lambda^{opt}=0.372$ non userò questo $\lambda$ perché è un valore che non sono in grado di motivare, prenderò $\sqrt[3]{y}$ e già questo è poco interpretabile\\ \\
+
+
+
+\textbf{AIC, indice di Akaike:}\\
+Serve in generale a confrontare due modelli ed è definito $AIC=-2ln(L)+2k$ \ con $k=$ numero di parametri del modello\\
+Confrontando due modelli preferirò un AIC piccolo\\
+

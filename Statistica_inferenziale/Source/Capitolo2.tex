@@ -1,0 +1,223 @@
+
+Esempio: Data una moneta (v.a. $X$ Bernulliana), l'obbiettivo della statistica è quello di trovare il parametro  $p=\prob{X=1}$. \ L'unico modo che ho è quello di lanciare la moneta\\
+
+Evento: \ \ $X_1, ..., X_n \overset{\omega}{\leadsto} x_1,...,x_n$ \ \ dove $x_i=X_i(\omega)$
+
+\begin{defi}
+Un \textbf{Campione casuale} è un insieme di v.a. i.i.d. $X_1, ..., X_n$, dove
+n è l'ampiezza del campione
+\end{defi}
+
+\begin{defi}
+    Dato un campione casuale $X_1, ..., X_n$ la legge $\mathcal{L}(X_i)$ è \textbf{parametrica} se è nota a meno di un numero finito di parametri
+\end{defi}
+
+
+Oss. Se non fosse parametrica, dovremmo cercare la legge di $X_i$ tra tutte le funzioni di ripartizione, ovvero in un insieme infinito dimensionale. Sarebbe un problema troppo complicato, se invece cerco tra le leggi parametriche restringo il problema, perché $F_X(t)$ dipende da $\vv{\theta}=\theta_1,...,\theta_k \text{ con } k<\infty$\\ 
+
+Esempi: \ a) \ $F_X(t)\sim Be(p)$ \ ho $\theta_1=p \text{ quindi } k=1$ \ \  \ \ b) $F\sim\mathcal{N}(\mu,\sigma^2) \ k=2$\\
+Per trovare la funzione mi basta trovare questi parametri\\ \\
+%
+\begin{defi}
+    Un \textbf{modello statistico} \ $\left( \R^n;\ \mathcal{B}(\R^n); \ \mathbb{P}_{\vv{\theta}} \right)$ \ è lo spazio dove assumono i valori i miei campioni casuali con $\vv{\theta}\in \Theta$ spazio dei parametri
+\end{defi}
+
+\begin{defi}
+    $Y=T(X_1,...,X_n)$ è una \textbf{statistica}, cioè una qualsiasi funzione del campione
+\end{defi}
+
+Esempi:\ \ $\sum X_i \ \ \ \prod X_i \ \ \ X_{(1)} \ \ \ S^2$ \ sono statistiche
+\smallskip
+
+\phantom{Esempi: }$\frac{(n-1)S^2}{\sigma^2}$ \ non è una statistica perché dipende da $\sigma$ che è un parametro che devo trovare\\ \\
+
+La legge di Y è detta legge campionaria\\
+Minimo, massimo... $X_{(1)} ... X_{(k)} ... X_{(n)}$ sono dette statistiche d'ordine\\
+Oss. Ogni statistica è una riduzione dei dati e ci da informazioni sul campione, per esempio il minimo e il massimo prendono informazioni da $\R^n$ e  restituiscono informazioni utili in $\R$\\ 
+
+\Lezione{22/02/2023}
+
+La realizzazione del campione su $\omega$ è \ $t=Y(\omega)=T(X_1(\omega),...,X_n(\omega))$
+
+Un'inferenza è un processo di ricerca dei parametri $\vv{\theta}$ \\
+Un'inferenza di $T(X)$ su $\theta$ è il valore di $\theta$ che trovo per un valore $x=X(\omega)$ \\
+
+\begin{teo}[Principio di sufficienza]
+Una statistica $T(\vv{X})$ è sufficiente per $\theta$ se ogni inferenza su $\theta$ dipende dal campione $\vv{X}$ solo tramite $T(\vv X)$ 
+\end{teo}
+
+\phantom{}
+
+Prop. Se $\vv{x}, \vv{y}$ sono due realizzazioni diverse del campione t.c. $T(\vv{x})=T(\vv{y})$ e se vale il principio di sufficienza, allora l'inferenza su $\theta$ sarà identica sia che osservi $\vv{x}$ o $\vv{y}$\\
+
+\begin{defi}
+    $T(\vv{x})$ è una statistica \textbf{sufficiente} per $\theta$ se la distribuzione di $\vv{X}=(X_1,...,X_n)$ dato $t=T(\vv{X})$ non dipende da $\theta$ per qualunque valore di t
+\end{defi}
+
+Oss. La def equivale a dire $\Lc \O \vv{X} \ |\ T\big(\vv{X}\big)=t \C$ non dipende da $\theta \ \ \forall t$\\
+Ed equivale a chiedere che valga il principio di sufficienza\\
+
+Esempio: $X_1,X_2 \sim Be(\theta)$ allora $T=X_1+X_2$ è una stat suff\\
+Per verificarlo devo calcolare la legge condizionata $\Lc \O X_1,X_2 \ | \ T(\vv{X}=t) \C  \ \ \forall t$ \ cioè $t=0,1,2$\\
+$\prob{X_1=0,X_2=0 \ | \ T=0}=1 \ \ \ \prob{X_1=1, X_2=1 \ |\ T=2}=1 \\
+\prob{X_1=1,X_2=0 \ |\ T=1}=\prob{X_1=0, X_2=1 \ |\ T=1}=\frac12$\\
+Quindi $\forall t$ la legge condizionata non dipende da $\theta$ \ \ (ovvero non compare $\theta$ nelle probabilità condizionate) \\
+
+\begin{teo}[Criterio di fattorizzazione]
+Sia $f(\vv{x},\theta)$ la densità di probabilità congiunta di $\vv{X}$, una statistica $T( \vv{X})$ è sufficiente per $\theta$ se e solo se
+esistono due funzioni $g(t,\theta)$ e $h\O\vv{x}\C$ t.c.  \ \  $f(\vv{x},\theta)=h(\vv{x})\ g(T(\vv{x}),\theta) \ \ \forall \vv{x} \ \forall \theta$
+\end{teo}
+
+\phantom{}
+
+Esempio: $X_1,...,X_n \sim Be(p)$ \ \ $T(\vv{X}) = \Sum{i=1}{n}X_i$ è suff per p \ \ \ verifichiamolo con il criterio di fattorizzazione \\ $f(\vv{x},p)=\Prod{i=1}{n} p^{x_i}(1-p)^{1-x_i}\ \II_{\{0,1\}}(x_i) = p^{\sum x_i} (1-p)^{n-\sum x_i} \Prod{i=1}{n} \II_{\{0,1\}}(x_i) = g(\sum x_i, p) \ h(\vv{x})$ \\
+Oss. La densità la scrivo così perché equivale a moltiplicare per p quando $x_i=1$ e per (1-p) quando $x_i=0$ \\ \\
+
+
+
+\begin{Dim} Criterio di fattorizzazione (nel caso discreto, senza perdita di generalità w.l.g.)\\
+1) Sia $T(\vv{X})$ stat sufficiente per $\theta$, allora
+\[f(\vv{x},\theta)= \PP_{\theta}\O \vv{X}=\vv{x} \ |\ T(\vv{X})=T(\vv{x})\C \cdot \PP_{\theta}\O T(\vv{X})=T(\vv{x}) \C = h(\vv{x})\cdot g(T(\vv{x},\theta))\]
+Perchè il primo fattore non dipende da $\theta$ essendo T sufficiente\\
+% ci vorrebbero due invii
+2)* Assumiamo che valga la fattorizzazione\\
+Sia $q(t,\theta)$ la densità di prob di $T(\vv{X})$ \\
+Sia $A_{T(\vv{x})}= \{\vv{y}: T(\vv{y})=T(\vv{x})\} =$ \  l'insieme dei vettori che hanno la stessa controimmagine di $\vv{x}$ 
+\[ \Lc\O \vv{X} \ |\ T(\vv{x})\C= \frac{f(\vv{x},\theta)}{q(T(\vv{x},\theta))}=\frac{g(T(\vv{x}),\theta)h(\vv{x})}{\Sum{\vv{y}\in A_{T(\vv{x})}}{} f(\vv{y}, \theta)}=\frac{g(T(\vv{x},\theta),\theta) h(\vv{x})}{\Sum{\vv{y}\in A_{T(\vv{x})}}{} g(T(\vv{y}),\theta)h(\vv{y})} =\]\[
+=\frac{g(T(\vv{x}),\theta)h(\vv{x})}{g(T(\vv{x}),\theta) \Sum{\vv{y}\in A_{T(\vv{x})}}{}h(\vv{y})} = \frac{h(\vv{x})}{\Sum{\vv{y}\in A_{T(\vv{x})}}{}h(\vv{y})} \ \text{ che non dipende da } \theta \implies \text{T è suff}\] 
+
+\end{Dim}
+
+
+Esempio: $X_1,...,X_n \sim \Uc([0,\theta])$ \ \ è l'uniforme\\
+$f_{X_i}(x_i,\theta)=\frac{1}{\theta}\II_{[0,\theta]}(x_i)$ \ \ \ $f(\vv{x},\theta)=\Prod{i=1}{n}f_{X_i}(x_i,\theta)= \frac{1}{\theta^n} \Prod{i=1}{n}\II_{[0,\theta]}(x_i)$ \\ La produttoria di indicatrici è un indicatrice, che vale 1 se $\forall i \ 0\le x_i \le \theta$, quindi posso lavorare con il massimo\\
+$f(\vv{x},\theta) = \frac{1}{\theta^n} \II_{[0,\theta]}(X_{(n)})\cdot 1 = g(X_{(n)},\theta) \cdot h(\vv{x}) \implies T(\vv{x})=X_{(n)} = \underset{i=1...n}{Max}X_i$ è sufficiente\\ \\
+
+Esempio: $X_1,...,X_n \sim \Nc (\mu,\sigma^2)$ \ \ \ $\vv{\theta}=(\mu,\sigma^2) \ \ \Theta=\R\times\R^+$
+\[f(\vv{x},\vv{\theta})=\frac{1}{(\sqrt{2\pi\sigma^2})^n} \exp \left\{-\frac{1}{2\sigma^2} \sum_{i=1}^n (x_i -\mu)^2\right\} = \frac{1}{(\sqrt{2\pi\sigma^2})^n} \exp \left\{-\frac{1}{2\sigma^2} \sum_{i=1}^n x_i^2 -\frac{n\mu^2}{2\sigma^2} + \frac{\mu}{\sigma}\sum_{i=1}^n x_i\right\} = \] \[ =g(\sum X_i, \sum X_i^2, \vv{\theta}) = g(T_1(\vv(X)), T_2(\vv{X}),\theta)\]  $\vv{T}(\vv{X})=(\sum X_i, \sum X_i^2)$ è una stat suff bivariata per $\theta$ \ \ (bivariata vuol dire che sta in $\R^2$)\\ 
+
+Oss. Analogamente posso provare che $(\vv{X}_n, S^2)$ è una stat suff bivariata per $\theta$\\ \\
+
+
+
+\begin{teo}
+Sia $r$ una funzione biunivoca e $T(\vv{X})$ una stat suff, allora \ $T^*(\vv{X}) = r(T(\vv{X}))$ è suff
+\end{teo}
+
+\begin{Dim} \[f(\vv{x},\theta)=g(T(\vv{x}),\theta)h(\vv{x})=g(r^{-1}(T^*(\vv{x})),\theta)h(\vv{x})=g^*(T^*(\vv{x}),\theta)h(\vv{x})\]
+\end{Dim}
+
+\phantom{}
+
+
+\Lezione{24/02/2023}
+
+\begin{defi}
+    Una va X appartiene alla \textbf{famiglia esponenziale}: $X\in EF$ \ \ se $f(x,\vv{\theta})=h(x)c(\vv{\theta}) \,exp \OOO \Sum{j=1}{k} t_j(x)w_j(\vv{\theta})\CCC$
+\end{defi}
+
+Oss. Da $f(\vv{x},\vv{\theta})= \Prod{i=1}{n}h(x_i)\ c(\vv{\theta})^n \,exp \OOO \Sum{i=1}{n} \Sum{j=1}{k} t_j(x_i)w_j(\vv{\theta})\CCC\ $ ottengo subito che\\ $\vv{T}( \vv{X})=\O \Sum{i=1}{n}t_1(X_i), ..., \Sum{i=1}{n}t_k(X_i)\C$ è suff per $\vv{\theta}$ \\ \\
+
+
+Esempio: $X\sim Be(p) \ \ \ f(x,p)=p^x(1-p)^{1-x}\II_{\{0,1\}}(x) = \II_{\{0,1\}}(x)\cdot(1-p)\, exp\OOO x \, log(\frac{p}{1-p}) \CCC = h(x)\cdot c(p) \cdot e^{...}$\\
+In questo caso abbiamo $k=1 \ \ t_1(x)=X \ \ w_1(p)=log(\tfrac{p}{1-p}) \ \implies T(\vv{X})=\Sum{i=1}{n}X_i$ \ è suff per p\\ 
+
+Esempio: $X\sim \Pc(\lambda) \ \ \ f(x,\lambda)=\frac{e^{-\lambda}\lambda^x}{x!}\II_{\NN}(x)= \ \frac{\II_{\NN}(x)}{x!}e^{-\lambda}\, exp\OOO x \, log(\lambda) \CCC \ \implies T(\vv{X})=\sum X_i$ \ è suff per $\lambda$\\
+
+Esempio: Facile verificare che anche $X\sim \mathcal{E}(\lambda) \in EF$ \ e \ $X\sim \Gamma (n,\lambda)\in EF$\\
+
+Esempio: $X\sim \Nc(\mu,\sigma^2) \ \ f(x,\vv{\theta})=\frac{1}{\sqrt{2\pi\sigma^2}} \, exp \OOO -\frac{1}{2\sigma^2}(x-\mu)^2\CCC = \frac{1}{\sqrt{2\pi\sigma^2}}\, exp\OOO -\frac{\mu^2}{2\sigma^2}\CCC \, \OOO -\frac{x^2}{2\sigma^2} +\frac{\mu}{\sigma^2}x \CCC$
+In questo caso abbiamo $k=2 \ \ t_1(x)=x^2 \ \ t_2(x)=x \ 
+\implies \vv{T}(\vv{X})=(\sum X_i, \sum X_i^2)$ è suff\\
+Oss. Avevo ottenuto lo stesso risultato con la fattorizzazione, ma era molto più laborioso\\ 
+
+Esempio: $X\sim \Uc_{[0,\theta]}(x) \ \ f(x,\theta)=\frac{1}{\theta}\II_{[0,\theta]}(x)$ \ \ non sta nella famiglia esponenziale, perché $c(\theta)=\frac{1}{\theta}$ ma l'indicatrice, in nessun modo, si può scrivere come un esponenziale  \\ \\
+
+\begin{defi}
+    Una statistica sufficiente $T(\vv{X})$ è detta \textbf{sufficiente e minimale} se per ogni altra stat suff $T'(\vv{X})$,  $T(\vv{X})$ è una funzione di $T'(\vv{X})$, \ ovvero \ \ $\forall \vv{x},\vv{y} \ tc \ T'(\vv{x})=T'(\vv{y}) \implies T(\vv{x})=T(\vv{y})$
+\end{defi}
+
+Oss. Tutto il campione è sufficiente, però non è minimale. 
+Infatti ha più informazioni della media campionaria e per questo non si può scrivere come funzione della media, che è una statistica sufficiente\\ 
+
+\begin{teo}[Lemma di Scheffè 1]
+Sia $f(\vv{x},\theta)$ la densità congiunta di $\vv{X}$. \ \ Se esiste una funzione $T(\vv{X}) \ tc \ \ \forall \vv{x},\vv{y}$ il quoziente $\frac{f(\vv{x},\theta)}{f(\vv{y},\theta)}$ è costante rispetto a $\theta$ se e solo se $T(\vv{x})=T(\vv{y})$, \ allora $T(\vv{X})$ è stat suff e minimale per $\theta$
+\end{teo}
+
+\phantom{}
+
+Esempio: $X_1, ..., X_n \sim \Uc_{[0,\theta]} \ \ f(\vv{x},\theta)=\frac{1}{\theta_n}\Prod{i=1}{n}\II_{[0,\theta]}(x_i)=\frac{1}{\theta^n}\II_{[0,\theta]}(x_{(n)})$\\
+$\frac{f(\vv{x},\theta)}{f(\vv{y},\theta)}=\frac{\II_{[0,\theta]}(x_{(n)})}{\II_{[0,\theta]}(y_{(n)})}$, questo quoziente non dipende da $\theta$ se e solo se $T(\vv{x})=x_{(n)}=T(\vv{y})=y_{(n)}$, allora $X_{(n)}$ è suff e minimale\\
+
+Esempio: $X_1,...,X_n\sim \Nc(\mu,\sigma^2) \ \\ \frac{f(\vv{x},\vv{\theta})}{f(\vv{y},\vv{\theta})}=\frac{\frac{1}{\O\sqrt{2\pi\sigma^2}\C^n} \, exp \OOO -\frac{1}{2\sigma^2}\Sum{i=1}{n}(x_i-\mu)^2\CCC}{\frac{1}{\O \sqrt{2\pi\sigma^2} \C^n} \, exp \OOO -\frac{1}{2\sigma^2}\Sum{i=1}{n}(y_i-\mu)^2\CCC} = exp \OOO -\frac{\mu^2}{2\sigma^2}-\frac{\sum x_i^2}{2\sigma^2}+\frac{\mu}{\sigma^2}\sum x_i+ \frac{\mu^2}{2\sigma^2} + \frac{\sum
+y_i^2}{2\sigma^2}+\frac{\mu}{\sigma^2}\sum y_i \CCC = \\ = exp \OOO -\frac{\sum x_i^2}{2\sigma^2}+\frac{\mu}{\sigma^2}\sum x_i+ \frac{\sum
+y_i^2}{2\sigma^2}+\frac{\mu}{\sigma^2}\sum y_i \CCC$ \ \ non dipende da $(\mu,\sigma^2) \Longleftrightarrow \begin{cases} \sum x_i^2 = \sum y_i^2 \\ \sum x_i = \sum y_i \end{cases}$ \\
+$\implies \vv{T}(\vv{X})=(\sum X_i, \sum X_i^2)$ è stat suff e minimale\\
+
+
+\begin{teo}
+Ogni funzione biunivoca di una statistica suff e minimale è anch'essa suff e minimale
+\end{teo}
+\phantom{}
+
+Esempio: $\vv{T}(\vv{X})=(\sum X_i, \sum X_i^2)$ è suff e minimale $\implies (\overline{X}_n, S^2)$ è suff e minimale\\ \\
+
+
+\begin{defi}
+    Sia $T(\vv{X})$ una statistica e sia $h(t,\vv{\theta})$ la famiglia di densità di $T$, questa famiglia si dice \textbf{completa} (e quindi dirò che $T(\vv{X})$ è completa) \ se $\EE_{\theta}[g(T)]=0 \ \forall \theta \ \implies \ \prob{g(T)=0}=1$
+\end{defi}
+
+\vspace{0.7cm}
+Esempio: $X_1,...,X_n \sim Be(p) \ \ T(\vv{X})=\sum X_i \sim Bi(n,p)$\\
+Sia $g$ una funzione di T tc $\EE_p[g(T)]=0 \ \forall p \implies \Sum{k=0}{n}g(k)\binom{n}{k}p^k(1-p)^{n-k}=\Sum{k=0}{n}g(k)\binom{n}{k} ( \tfrac{p}{1-p} )^k (1-p)^n=0 \ \forall p$\\
+Posto $s= \O \frac{p}{1-p} \C^k$ \ quindi $\Sum{k=0}{n}g(k)\binom{n}{k}s^k =0 \ \forall s$, \ questo è un polinomio di grado n in s identicamente nullo $\implies g(k)\binom{n}{k}=0 \ \forall k=0...n \ \implies g(k)=0 \ \forall k \implies \prob{g(T)=0}=1 \implies T=\sum X_i$ è completa\\
+
+Esempio: $X_1,...,X_n \sim \Uc_{[0,\theta]} \ \ X_{(n)}$ è suff e min, verifico completezza \\
+Mi serve la densità del massimo, so che $F_{X_{(n)}}(t)=(F_X(t))^n$ \\ Essendo $f_X(t)=\frac{1}{\theta}\II_{[0,\theta]}$ \ avrò \ $F_X(t)=\frac{t}{\theta}\II_{[0,\theta]} + \II_{[0,+\infty]}(t)$\\
+$F_{X_{(n)}}(t)=\O \frac{t}{\theta}\C^n\II_{[0,\theta]} + \II_{[0,+\infty]}(t) $ \ ottengo \ $f_{X_{(n)}}(t,\theta)=n\frac{t^{n-1}}{\theta^n}\II_{[0,\theta]}(t)=h(t,\theta)$\\
+$\forall\theta \ \ 0=\EE_{\theta}[g(X_{(n)})]=\int_{\R} g(t)h(t,\theta)\, dt \implies \frac{d}{d\theta}\EE_{\theta}[g(X_{(n)})]=0=\frac{d}{d\theta}\int_0^{\theta}g(t)\frac{n}{\theta^n}t^{(n-1)}\, dt = \frac{d}{d\theta}\OO\frac{1}{\theta^n}\int_0^{\theta}g(t) n t^{(n-1)}\, dt\CC \\ \implies 0=\frac{1}{\theta^n}g(\theta)n\theta^{(n-1)}+\frac{d}{d\theta}\O\frac{1}{\theta^n}\C\cdot\EE[g(X_{(n)})]\cdot \theta^n$ però il valore atteso è nullo \\ $\implies \forall \theta \ \ \tfrac{ng(\theta)}{\theta}=0 \implies g(\theta)=0 \ \forall \theta \implies \prob{g(X_{(n)})=0}=1$ \\
+
+
+
+
+\Lezione{28/02/2023}
+
+\begin{teo}[Bahadur]
+Una statistica suff e completa è anche minimale
+\end{teo}
+
+Oss. Questo è utile perché verificare la completezza è spesso più facile della minimalità\\ \\
+
+Oss. Abbiamo visto che dato $X_1,...,X_n$ con $\Lc(X_i)\in EF$ ovvero $f(x,\vv{\theta})= h(x) c(\vv{\theta})\, exp \OOO \Sum{j=1}{k} t_j(x)w_j(\vv{\theta}) \CCC$\\
+Allora \ $\vv{T}( \vv{X})=\O \Sum{i=1}{n}t_1(X_i), ..., \Sum{i=1}{n}t_k(X_i)\C$ è suff per $\vv{\theta}$\\
+
+\begin{teo}
+$\vv{T}(\vv{X})$ è completa se $\{w_1(\vv{\theta}), ..., w_k(\vv{\theta})\}$ mappa $\Theta$ in un insieme che contiene almeno un aperto di $\R^k$
+\end{teo}
+\phantom{}
+
+Esempio: $X_i\sim \Pc(\lambda) \ \ \ f(x,\lambda)= \frac{\II_{\NN}(x)}{x!} e^{-\lambda} \, exp\{ x\,log(\lambda)\} \implies t_1(x)=x$\\
+$w_1(\lambda)=log(\lambda):\R^+\to\R$ che contiene aperti $ \implies$ è completa (e per Bahadur anche minimale)\\ 
+
+Esempio: $X_1,...,X_n\sim \Nc(\mu,\sigma^2) $ 
+\[f(x,\mu,\sigma^2)=\frac{1}{\sqrt{2\pi\sigma^2}} \, exp \OOO -\frac{1}{2\sigma^2}(x-\mu)^2\CCC = \frac{1}{\sqrt{2\pi\sigma^2}}\, exp\OOO -\frac{\mu^2}{2\sigma^2}\CCC \, exp \OOO -\frac{x^2}{2\sigma^2} +\frac{\mu}{\sigma^2}x \CCC \]
+\[t_1(x)=x^2 \ \ \ t_2(x)=x \ \ \ w_1(\vv{\theta})=-\frac{1}{2\sigma^2} \ \ \ w_2(\vv{\theta})=\frac{\mu}{\sigma^2} \ \ \ \ \vv{\theta}=(\mu,\sigma^2)\in \Theta=\R\times\R^+\] \\
+Quindi \ $(w_1,w_2):\Theta\to\R^-\times\R$ che contiene aperti $\implies (\sum X, \sum X_i^2)$ è suff minimale completa\\
+
+Esempio: $X_1,...,X_n\sim\Nc(\mu,\mu^2)$ ottengo analogamente $w_1=-\frac{1}{2\mu^2} \ \ \ w_2=\frac{1}{\mu}$ queste mappano una parabola, che non contiene un aperto di $\R^2$, quindi non possiamo concludere che sia completa\\
+
+Oss. In questo esempio posso vedere che il campione dipende solo da un parametro e concludere subito che non posso applicare il teorema \\ \\
+
+
+\begin{defi}
+    Una statistica $S(\vv{X})$ è detta \textbf{ancillare} se ha la distribuzione che non dipende da $\theta$ 
+\end{defi}
+\phantom{}
+
+Esempio: $X_1,...,X_n\sim \Uc ([\theta,\theta+1])$\\
+Considero il $Range= X_{(n)}-X_{(1)} \ \sim Beta(n-1,2)$ è ancillare \\
+
+
+
+Prop. "In molte situazioni" Se $S$ è una statistica ancillare e $T$ è stat suff, minimale e completa, allora $S\ind T$\\
+

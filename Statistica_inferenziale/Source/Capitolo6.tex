@@ -1,0 +1,178 @@
+
+\Lezione{12/04/23}
+
+Studio delle proprietà di stimatori, test ... quando l'ampiezza del campione: $n\to+\infty$\\
+
+\begin{defi}
+Una successione di stimatori $W_n$ è \textbf{consistente} se \ $\forall \eps >0 \ \lim_{n\to+\infty} \prob{ |W_n-\theta|<\eps }=1 $\\ ovvero se $ W_n \xrightarrow[\PP]{}\theta$
+\end{defi}
+\phantom{}
+
+Esempio:\\
+Media campionaria $\overline{X}_n$ : \ \ $X_1 \ , \ \frac{X_1+X_2}{2} \ , \ \frac{X_1+X_2+X_3}{3} \ ...$\\
+$\overline{X}_n$ è consistente per $\E{X_i}=\mu$\\
+
+
+Sappiamo che $Y_n\xrightarrow{qc} Y\ \implies Y_n\xrightarrow{\PP} Y  \ \implies Y_n \xrightarrow{\Lc} Y $\\
+\phantom{Sappiamo che }$Y_n\xrightarrow{\Lc} Y \ \cancel{\implies}  Y_n\xrightarrow{\PP} Y \ \cancel{\implies}  Y_n\xrightarrow{qc} Y $
+\\
+\phantom{Sappiamo che }$Y_n\xrightarrow{\Lc} c \ \implies  Y_n\xrightarrow{\PP} Y$\\ \\
+
+
+Possiamo valutare la consistenza usando Chebyshev:
+\[
+\prob{|W_n - \theta|\ge \eps} \le \frac{\E{|W_n -\theta|^2}}{\eps^2}=\frac{MSE(W_n)}{\eps^2}
+\]
+Quindi se $MSE(W_n) \to 0 $ allora $W_n$ è consistente per $\theta$  \ e \ $W_n\xrightarrow{\PP}\theta$\\
+
+\begin{defi}
+    Sia $W_n$ una successione di stimatori tali che
+    \[
+    \sqrt{n}\OO W_n -\tau(\theta) \CC \xrightarrow{\Lc} \Nc(0,\sigma^2)
+    \]
+    Allora $W_n$ è asintoticamente gaussiano e $\sigma^2$ è detta \textbf{varianza asintotica}
+\end{defi}
+
+Questo risultato vale per il TCL, che dice:
+\[
+\sqrt{n}\O\overline{X}_n - \E{X_i}\C \xrightarrow{\Lc} \Nc(0,\var{X_i})
+\]
+Quindi $\overline{X}_n \approx \Nc\O \E{X_i}, \frac{\var{X_i}}{n} \C$\\
+Oss. In questo caso si parla di asintotica normalità (AN), attenzione che quando si usa il limite non possiamo tenere il valore $n$ come parametro\\
+
+
+Mostriamo che la varianza asintotica è diversa dal limite delle varianze degli $W_n$ \\
+
+Esempio: 17.1\\
+
+
+\textbf{Corollario:} Asintotica normalità $\implies $ consistenza
+\[
+\sqrt{n}\O W_n -\tau(\theta) \C\xrightarrow{\Lc} \Nc(0,\sigma^2) \ \implies W_n \xrightarrow{\PP}\tau(\theta)
+\]
+
+
+\begin{Dim}
+\[
+\O W_n - \tau(\theta) \C = \frac{\sigma}{\sqrt{n}} \O \frac{W_n -\tau(\theta)}{\sigma} \C \cdot \sqrt{n} \xrightarrow{\Lc} 0  \ \ \text{ per il teorema di Slutsky}
+\]
+\[
+\text{Infatti } \ \ \frac{\sigma}{\sqrt{n}} \xrightarrow{q.c.}0 \ \ \ \ \frac{W_n -\tau(\theta)}{\sigma} \cdot \sqrt{n} \xrightarrow{\Lc} \Nc(0,1)
+\]
+\[
+\O W_n - \tau(\theta) \C \xrightarrow{\Lc} 0 \ \implies \ \O W_n - \tau(\theta) \C \xrightarrow{\PP} 0 \ \ \ \text{ perché il limite è una costante}
+\]
+\end{Dim}
+
+\begin{defi}
+    Successione di stimatori $W_n$ è \textbf{asintoticamente efficiente} per $\tau(\theta)$ se
+    \[
+    \sqrt{n}\OO W_n -\tau(\theta)\CC \xrightarrow{\Lc} \Nc (0, v(\theta)) \ \ \text{ con } \ \ v(\theta) = \frac{[\tau'(\theta)]^2}{\E{\O\frac{\partial}{\partial \theta}\, log\, f(x,\theta)\C^2}} = \frac{[\tau'(\theta)]^2}{I_1(\theta)}
+    \]
+    \[
+    \equiv W_n \approx \Nc \O \tau(\theta), \frac{[\tau'(\theta)]^2}{I_n(\theta)} \C
+    \]
+\end{defi}
+
+\phantom{}
+
+\begin{teo}[Efficienza asintotica degli MLE]
+Siano $\camp \sim f(x,\theta)$ \ \ con $f(x,\theta)$ che soddisfa le ipotesi di regolarità di C.R. e $\hat{\theta}_{MLE}$ stimatore ML per $\theta$
+\[
+\implies \sqrt{n}\OO \tau(\hat{\theta}_{MLE}) -\tau(\theta) \CC \xrightarrow{\Lc} \Nc(0,v(\theta)) \ \ \text{ con } \ \ v(\theta)=\frac{[\tau'(\theta)]^2}{I_1(\theta)}
+\]
+Ovvero gli MLE sono asintoticamente efficienti
+\end{teo}
+
+
+Oss. Nel caso in cui non valgano le ipotesi di CR, dovrò lavorare a mano, vediamo il seguente:\\
+
+Esempio: 17.2\\
+
+\begin{defi}
+    Siano $W_n$ e $V_n$ due successioni di stimatori tali che
+    \[
+    \sqrt{n}\OO W_n -\tau(\theta) \xrightarrow{\Lc} \Nc (0,\sigma_W^2) \CC \hspace{30 pt}
+    \sqrt{n}\OO V_n -\tau(\theta) \xrightarrow{\Lc} \Nc (0,\sigma_V^2) \CC
+    \]
+    Allora si chiama \textbf{ARE} o asyntotic relative efficiency di $V_n$ rispetto a $W_n$
+    \[
+    ARE(V_n; W_n) = \frac{\sigma^2_W}{\sigma^2_V}
+    \]
+\end{defi}
+
+Oss. Questa frazione ci dice quale stimatore è più efficiente\\
+
+
+Esempio: 17.3\\ \\
+
+
+\begin{teo}[Metodo delta 1]
+    Siano $Y_n$ tale che $\sqrt{n}(Y_n-\theta)\xrightarrow{\Lc}\Nc(0,\sigma^2)$ e  $g$ una funzione tale che $\exists\, g'(\theta)\ne 0$
+    \[
+    \text{Allora } \ \sqrt{n}\O g(Y_n) - g(\theta) \C \xrightarrow{\Lc} \Nc (0,\sigma^2(g'(\theta))^2)
+    \]
+\end{teo}
+
+\begin{teo}[Metodo delta 2]
+    Siano $Y_n$ tale che $\sqrt{n}(Y_n-\theta)\xrightarrow{\Lc}\Nc(0,\sigma^2)$ e  $g$ una funzione tale che $\exists\, g'(\theta) = 0 \ \exists \, g''(\theta)\ne 0$
+    \[
+    \text{Allora } \ n\O g(Y_n) - g(\theta) \C \xrightarrow{\Lc} \frac{\sigma^2}{2}g''(\theta)\cdot \Chi^2_1
+    \]
+\end{teo}
+\phantom{}
+
+Esempio: 17.4\\
+
+
+\Lezione{17/04/23}
+
+\begin{defi}
+    L'\textbf{odds} è il rapporto tra la probabilità che un evento accada fratto la probabilità che non accada, per una Bernulli è $\frac{p}{1-p}$\ \ invece l'\textbf{odds ratio} è il rapporto tra odds: $\frac{\tfrac{p_1}{1-p_1}}{\tfrac{p_2}{1-p_2}}$\skipp\\
+    Un valore molto importante per le Bernulli è il $logit(p)=log\O\frac{p}{1-p}\C$\\
+    $logit(p):[0,1]\to\R$ \ questa funzione è monotona crescente e quindi invertibile  infatti
+    \[
+    y=logit(p)=log\O\frac{p}{1-p}\C \Longleftrightarrow e^y=\frac{p}{1-p} \Longleftrightarrow e^y=p(1+e^y) \Longleftrightarrow p=\frac{e^y}{1+e^y}
+    \]
+\end{defi}
+
+
+\phantom{}
+
+Esempio: 18.1\\ \\
+
+\begin{teo}
+    Dato un test  \ $\begin{cases}
+    H_0 : \theta=\theta_0\\
+    H_1 : \theta \ne \theta_0
+    \end{cases}$\\
+    Siano $\camp \sim f(x,\theta)$ e $\hat{\theta}_{MLE}$ stimatore di massima verosimiglianza per $\theta$ \\
+    Allora sotto l'ipotesi $H_0$ \ \ $-2\,log(\lambda(\vv{x}))\xrightarrow{\Lc}\Chi^2_1$
+\end{teo}
+
+Oss. Servono le condizioni di regolarità (famiglia esponenziale)\\ 
+
+\begin{Dim}
+    \[
+    -2\, log(\lambda(\vv{x}))= - 2\, log\O\frac{L(\theta_0,\vv{x})}{L(\hat{\theta}_{MLE},\vv{x})}\C = -2\,l(\theta_0,\vv{x})+2l(\hat{\theta}_{MLE},\vv{x})
+    \]
+    Sviluppiamo il primo termine con Taylor (dovrò andare al secondo ordine perché derivata prima nulla)
+    \[
+    l(\theta_0,\vv{x})= l(\hat{\theta}_{MLE},\vv{x}) + l'(\hat{\theta}_{MLE},\vv{x})(\hat{\theta}_{MLE}-\theta_0) + \frac12 l''(\hat{\theta}_{MLE},\vv{x})(\hat{\theta}_{MLE}-\theta_0)^2 + ...
+    \]
+    Però dato che $\hat{\theta}_{MLE}$ è il massimo ho $(\hat{\theta}_{MLE},\vv{x})=0$
+    \[
+    -2\,log(\lambda(\vv{x}))= -2\, l(\hat{\theta}_{MLE},\vv{x})-l''(\hat{\theta}_{MLE},\vv{x})(\hat{\theta}_{MLE}-\theta_0)^2 + 2 l (\hat{\theta}_{MLE},\vv{x}) = -l''(\hat{\theta}_{MLE},\vv{x})(\hat{\theta}_{MLE}-\theta_0)^2
+    \]
+    Si può dimostrare che
+    \[
+    I_n(\hat{\theta}_{MLE})= -l''(\hat{\theta}_{MLE},\vv{x}) \hspace{30pt} \frac{I_n(\hat{\theta}_{MLE})}{n} \xrightarrow[\PP]{q.c.} I(\theta)
+    \]
+    Sotto $H_0$ ho
+    \[
+    -2\,log(\lambda(\vv{x}))=-\UB{\to1}{\frac{l''(\hat{\theta}_{MLE},\vv{})}{n}\cdot \frac{1}{I(\theta_0)}} \cdot \UB{\xrightarrow{\Lc}\Chi_1^2}{\O\frac{\sqrt{n}(\hat{\theta}_{MLE}-\theta_0)}{\frac{1}{\sqrt{I(\theta_0)}}}\C^2}
+    \]
+    Per Slutsky \ \ $-2\,log(\lambda(\vv{x})) \xrightarrow{\Lc} \Chi_1^2$\\
+\end{Dim}
+
+

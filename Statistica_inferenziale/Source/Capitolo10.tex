@@ -1,0 +1,125 @@
+
+
+Vediamo dei modelli che non sono parametrici, ovvero le variabili non sono note a meno di $k$ parametri
+
+\subsection{Test d'indipendenza}
+
+Test validi per ogni tipo di variabile, che controllano se due variabili sono tra di loro indipendenti. Non facciamo assunzioni sulle leggi delle variabili aleatorie.\\
+
+Prendiamo A,B due variabili categoriche o comunque discrete
+\[
+\begin{array}{c|c|c|c}
+   A \,\backslash\, B  & 1 & 2 & \\
+   \hline
+   1  & n_{11} & n_{12} & n_{1\cdot}\\
+   \hline
+   2 & n_{21} & n_{22} & n_{2\cdot}\\
+   \hline
+   & n_{\cdot1} & n_{\cdot 2} & n_{\cdot \cdot}
+\end{array}
+\]
+
+$n_{ij}=$ frequenze osservate $O_{ij}$\\
+$E_{ij}=$ frequenze attese $=\frac{n_{ i \cdot}n_{\cdot j}}{n{\cdot\cdot}}$\\
+
+Oss. Se fossero indipendenti le frequenze sarebbero il prodotto delle frequenze marginali 
+
+Posto il test $\begin{cases}
+    H_0 : A\ind B\\
+    H_1 : A \text{ dipendente } B
+\end{cases}$\\
+
+Statistica test = $\Sum{j}{}\frac{(O_{iij}-E{ij})^2}{E_{ij}}\sim \Chi^2 ((r-1)(c-1))$ \ \ \ dove $r=\#$ righe e $c=\#$ colonne
+\[
+RC \big(\Chi^2 > \Chi^2_{1-\alpha} ((r-1)(c-1))\big)
+\]
+
+Oss. Nell'esempio di A e B $2\times2$ \ \ il test $\Chi^2$ coincide coincide con il confronto tra proporzioni\\
+Oss. È possibile che ci sia 0 nella tabella, per cui è difficile che sia indipendente, per affrontare situazioni "problematiche" ci sono diverse correzioni al test $\Chi^2$\\ \\
+
+
+\subsection{Test di Buon adattamento}
+Stiamo verificando che la variabile osservata è distribuita come una variabile nota\\
+
+Per variabili aleatorie discrete parametriche \ \ $x_1 ... x_n$ \ \ $H_0 : F\sim P(\lambda)$\\
+Per variabili aleatorie continue parametriche, per affrontare queste dovrò parametrizzare in intervalli\\
+
+Ci sono molti altri test non parametrici, per esempio shapiro test o Anderson-Darling...\\
+
+Test di Markov che si basano sul teorema di Glivenko-Cantelli\\
+Voglio verificare che la mia variabile abbia una certa distribuzione $\begin{cases} H_0: F\sim F_0\\
+H_1: F \not\sim F_0 \end{cases}$\\
+Questi test usano la statistica $D=\underset{x}{sup} |\hat{F}_n(x)-F_0(x)|$ si cerca la distribuzione di $D$ sotto $H_0$ e per teo G.C. il valore D tende a zero, quindi per valori grandi di D, sarò portato a rifiutare $H_0$.\\
+Dato che D sotto $H_0$ ha distribuzione nota, posso usarlo per ogni test di adattamento\\
+
+
+\subsection{Confronto tra distribuzioni non gaussiane}
+
+\textbf{Test Wilcoxson} è un test di confronto tra distribuzioni non gaussiane e indipendenti\\
+
+Vediamo un esempio, senza spiegare il metodo precisamente\\
+Si studiano i tempi di rottura di un sistema per valutare il miglior tipo di manutenzione\\
+Abbiamo osservazioni dei tempi di rottura per due tipi  di manutenzione $I$ e $II$
+\[
+\begin{array}{c|c|c|c|c|c}
+    I & 7 & 26 & 10 & 8 & 29  \\
+    \hline
+    II & 3 & 150 & 40 & 34 & 32
+\end{array}
+\]
+
+Ci sono poche osservazioni, quindi è improbabile siano gaussiane, non possiamo procedere con i metodi noti\\
+$\begin{cases}
+    H_0 : F_I(t)=F_{II}(t)\\
+    H_1 : \text{le due fdr sono diverse e stocasticamente ordinate}
+\end{cases}$\\
+
+Mi dimentico delle osservazione e costruisco i ranghi, ovvero la posizione del dato una volta ordinati
+\[
+\begin{array}{c|c|c|c|c|c}
+    I & 2 & 5 & 4 & 3 & 6  \\
+    \hline
+    II & 1 & 10 & 9 & 8 & 7
+\end{array}
+\]
+
+L'idea è che se i tempi arrivassero dalla stessa popolazione, allora mi aspetterei che i ranghi siano mescolati, quindi la somma dei ranghi dei due tipi dovrebbe essere simile\\
+
+Sotto $H_0 \ \ \prob{R_1=r_1; R_2=r_2 ... R_n=r_n}=\frac{1}{n!}$ perché supponendo che non ci sia differenza $(H_0)$ allora tutte le stringhe ha la stessa probabilità\\
+Chiamata $W=\sum_{II} R_j$ e calcolato $\sum_{II}R_j=35$\\
+Si può calcolare, usando il calcolo combinatorio, $\prob{W\ge35}=0.07654$ \ \ questo equivale al $p-value$ perché è la probabilità di una statistica rispetto al valore osservato\\
+Quindi in questo caso c'è un pochino di evidenza per dire che i due gruppi hanno distribuzioni diverse\\ \\
+
+
+\textbf{Test di Mann-Whitney}
+
+
+
+Serve per due popolazioni accoppiate $x_1...x_n \ \ y_1...y_n$ \\
+Nel caso parametrico si usava il Paired t-test e quindi $d_i=y_i-x_i$ e la statistica test in funzione di $d_i$\\
+Nel caso non parametrico uso comunque $d_i$, ma il test diventa: \ $H_0 : F_d = F_{-d}$\\
+In $H_0$ si pone $F_d =\overline{F}_d = 1- F_d$
+
+Esempio:
+Si raccolgono dati sulle miglia per gallone per una macchina prima e dopo l'aggiunta di additivo\\
+Si vuole dimostrare che dopo l'aggiunta di additivo le miglia per gallone salgono
+\[
+\begin{array}{c|c|c|c|c|c|c|c}
+    \text{Macchina} & 1 &2&3&4&5&6&7  \\
+    \hline
+    \text{Prima } x & 17.2 & 21.6 & 19.5 & 19.1 & 22.0 & 18.7 & 20.3 \\
+    \hline
+    \text{Dopo } y & 18.3 & 20.8 & 20.9 & 21.2 & 22.7 & 18.6 & 21.9 \\
+    \hline
+    y-x & 1.1 & -0.8 & 1.4 & 2.1 & 0.7 & -0.1 & 1.6\\
+    \hline
+    \text{Rango con segno } & 4 & -3 & 5 & 7 & 2 & -1 & 6
+\end{array}
+\]
+
+Dove i ranghi sono calcolati rispetto a $|y-x|$\\
+
+Sommiamo i ranghi positivi $\sum T_i = 24$ \ anche qui se le popolazioni sono uguali e quindi la differenza è simmetrica, allora la somma dei ranghi positivi e negativi saranno opposte, ma simili e quindi posso calcolare \ $p-value = 0.0547$, perciò c'è debole evidenza statistica per cui la distribuzione dopo sia maggiore della distribuzione prima\\
+
+
+Nel caso di più variabili c'è l'estensione di questo test che si chiama test di Kruska-Wallis

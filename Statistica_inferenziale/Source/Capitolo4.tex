@@ -1,0 +1,636 @@
+
+Per test d'ipotesi si intende la verifica delle ipotesi statistiche
+
+
+\begin{defi}
+L'\textbf{ipotesi statistica} è un'affermazione su parametri incogniti $\vv{\theta}$ della legge di $\vv{X}$
+\end{defi}
+
+\begin{defi}
+    In un problema di test d'ipotesi si introducono due ipotesi complementari:
+    L'ipotesi nulla $H_0$ e  l'ipotesi alternativa $H_1$
+\end{defi}
+
+Oss. L'ipotesi statistica è la formulazione delle ipotesi nulla e alternativa, mentre il test d'ipotesi è un processo decisionale che ci porta a scegliere tra $H_0$ e $H_1$\\
+
+Queste due ipotesi sono dette complementari perché se $H_0$ è tc $\vv{\theta}\in \Theta_0$,\\
+Allora definiremo $H_1$ tc $\vv{\theta}\in \Theta_0^C$, ovvero sta nel complementare\\
+
+\begin{defi}
+    Un \textbf{test d'ipotesi} è una regola che specifica:\\
+    a) Per quali valori di $\vv{x}$ accetto $H_0$\\
+    b) Per quali valori di $\vv{x}$ rifiuto $H_0$ (accetto $H_1$)
+\end{defi}
+\phantom{}
+
+Dovrò definire la regione critica \ \ $RC= \{ \vv{x}\in\R^n$ tc decido di rifiutare $H_0 \}$\\
+$RC$ viene specificata sulla base dei valori assunti da una statistica test $W(\vv{x})$ \\
+
+Oss. Nella definizione della regione critica, che è ciò che ci porta alla decisione, deve esserci solo il campione e la statistica, non può esserci il parametro incognito\\ \\
+
+
+Esempio: Abbiamo delle bottigliette con scritto $500ml$, però vogliamo vedere se la media è più bassa.\\
+Faremo dei tentativi per valutare se lo è veramente: \ \ $\camp \sim \Nc (\mu,\sigma^2)$
+
+$H_0: \mu \ge 500ml \ \ \ \ \ \ H_1 : \mu<500ml$
+
+Quindi definisco la regione critica come \ \  $RC:\{\overline{X}_n < 500-k\}$\\
+
+Oss. Attenzione che non avremmo potuto definire $RC$ con $\mu$ al posto di $\overline{X}_n$
+
+Oss. Tendenzialemnte $H_0$  è l'ipotesi "vera fino a prova contraria"\\ \\
+
+\Lezione{20/03/20}
+
+
+Vediamo dei metodi per costruire dei test d'ipotesi e dei metodi per valutarli e confrontarli
+
+
+\subsection{Test del rapporto di verosimiglianza}
+
+Detto anche LRT, cioè Likelihood ratio test\\
+
+
+Date delle ipotesi $H_0: \theta\in \Theta_0 \ \ \ \ \ \ H_1 : \theta\in\Theta_0^C$, definiamo il LRT\\
+\begin{defi}
+    La statistica test per il LRT è \ \ $\lambda(\vv{x})= \frac{\displaystyle\sup_{\theta\in\Theta_0} L(\theta,\vv{x})}{\displaystyle\sup_{\theta\in\Theta}L(\theta,\vv{x})} = \frac{L(\hat{\theta}\,^0_{MLE})}{L(\hat{\theta}_{MLE})} $\smallskip\smallskip\\
+    La regione critica è \ \ $RC= \{\lambda(\vv{x})\le c\}$ \ con \ $0\le c\le 1$
+\end{defi}
+
+Oss. $0\le \lambda(\vv{x})\le 1$ perché sappiamo che sia numeratore che denominatore sono positivi e il sup in un insieme più grande è sicuramente maggiore uguale\\
+
+Oss. Ha senso porre la regione critica con $\le$ perché se $\lambda$ è piccolo, vuol dire che il sup in $\Theta_0$ è molto più piccolo del sup in $\Theta$, ma quindi è molto probabile che il parametro appartenga a $\Theta^C_0$\\ \\
+
+
+
+Esempio: $\camp \sim \Nc (\theta,1) \ \ \ \begin{cases}
+H_0 :  \ \theta =\theta_0\\
+H_1 :  \ \theta\ne \theta_0
+\end{cases}$\\
+Oss. Al numeratore di $\lambda$ scriviamo direttamente $\theta_0$ perché è il sup in un punto
+\[
+\lambda(\vv{x}) = \frac{L(\theta_0, \vv{x})}{\sup_{\theta\in\Theta} L(\theta, \vv{x})} = \frac{L(\theta_0,\vv{x})}{L(\hat{\theta}_{MLE}, \vv{x})} = \frac{L(\theta_0,\vv{x})}{L(\overline{x}_n, \vv{x})}
+\]
+\[
+\lambda(\vv{x}) = \frac{\O\frac{1}{2\pi}\C^{\tfrac{n}{2}} \, exp\OOO -\frac12 \Sum{i=1}{n} \O x_i -\theta_0  \C^2  \CCC }{\O\frac{1}{2\pi}\C^{\tfrac{n}{2}} \, exp\OOO -\frac12 \Sum{i=1}{n} \O x_i -\overline{x}_n  \C^2  \CCC} = exp \OOO \frac12 \OO -\Sum{i=1}{n} \O x_i -\theta_0  \C^2   + \Sum{i=1}{n} \O x_i -\overline{x}_n  \C^2 \CC \CCC
+\]
+
+Oss. $\Sum{i=1}{n} \O x_i -\theta_0  \C^2 = \Sum{i=1}{n} \O x_i -\overline{x}_n  + \overline{x}_n -\theta_0 \C^2 = \Sum{i=1}{n} \O x_i -\overline{x}_n  \C^2 + \Sum{i=1}{n} \O \overline{x}_n -\theta_0  \C^2 + 0$ 
+\[
+\implies \lambda(\vv{x})= exp\OOO -\frac{n}{2} \O \overline{x}_n -\theta_0 \C^2 \CCC
+\]
+
+\[
+RC= \OOO exp\OOO -\frac{n}{2} (\overline{X}_n -\theta_0)^2 \CCC \le c \CCC = \OOO \O \overline{X}_n -\theta_0\C^2 \ge - \frac{2\, log\, c}{n} \CCC = \OOO \vv{x} \ : \ |\overline{X}_n -\theta_0| \ge \sqrt{-\frac{2\, log\, c}{n}} \CCC
+\]
+\phantom{}\smallskip
+Oss. Questa regione critica ha senso perché equivale a valutare la distanza tra $\theta_0$ e $\overline{X}_n$ e se è maggiore di un certo valore allora rifiuto e questo ha senso perchè supponendo che $\theta_0$ sia vera, allora la media campionaria è disposta come una gaussiana centrata in $\theta_0$\\ \\
+
+
+Esempio: $\camp\sim \theta + \Ec (1)$ \ \ \ $f(x,\theta) = exp\{-(x-\theta)\} \II_{[0,+\infty]}(x)$
+\[
+L(\theta,\vv{x}) = \Prod{i=1}{n} exp\{-(x_i-\theta)\} \II_{[0,\infty]}(x_i) = exp\OOO -\sum x_i +n\theta \CCC \II_{(-\infty,X_{(1)}]}(\theta)
+\]
+Guardando la funzione, concludo che $\hat{\theta}_{MLE}=X_{(1)}$ +++grafico \\
+
+
+Test: $\begin{cases}
+    H_0 : \ \theta\le \theta_0\\
+    H_1 : \ \theta>\theta_0
+\end{cases}$
+\[
+\lambda(x)=\frac{\sup_{\theta\le\theta_0 } L(\theta,\vv{x})}{\sup_{\theta\in\R}L(\theta,\vv{x})} = \frac{\sup_{\theta\le\theta_0 } L(\theta,\vv{x})}{L(X_{(1)},\vv{x})}
+\]
+
++++grafici\\
+
+Dato che la curva di L è crescente\\
+Se $X_{(1)}\le \theta_0 \implies \sup_{\theta\le\theta_0} L(\theta,\vv{x})= L (X_{(1)},\vv{x})$\\
+Se invece $X_{(1)}>\theta_0 \implies \sup_{\theta\le\theta_0} L(\theta,\vv{x}) = L(\theta_0, \vv{x})$\\
+\[
+\lambda(\vv{x}) = \begin{cases}
+    \ \ 1 \ \ \ \ X_{(1)}\le \theta_0\\
+    \frac{L(\theta_0,\vv{x})}{L(X_{(1)},\vv{x})} \ \ \ X_{(1)}>\theta_0
+\end{cases} \ \ = \begin{cases}
+    \ \ 1 \ \ \ \ X_{(1)}\le \theta_0\\
+    exp\{-n(X_{(1)}-\theta_0) \} \ \ \ X_{(1)}>\theta_0
+\end{cases}
+\]
+
+\[
+RC= \{ e^{-n(X_{(1)}-\theta_0)} \le c \} = \{ X_{(1)}\ge \theta_0 - \frac{log\, c}{n} \}
+\]
+
+\phantom{}
+
+\begin{teo}
+Siano $T(\vv{X})$ stat suff per $\theta$ e $\lambda^*(t), \lambda(\vv{x})$ le statistiche LRT basate su $T$ e su $\vv{X}$
+\[\text{Allora } \ \ \lambda^*(T(\vv{x}))=\lambda(\vv{x}) \ \ \forall \vv{x}\]
+\end{teo}
+
+\begin{Dim}
+\[
+\lambda(\vv{x}) = \frac{\sup_{\theta\in\Theta_0} L(\theta,\vv{x})}{\sup_{\theta\in\Theta}L(\theta,\vv{x})} \ \overset{\text{fattorizzazione }}{ = } \frac{\sup_{\theta\in\Theta_0} g(T(\vv{x}), \theta)\,\cancel{h(\vv{x})}}{\sup_{\theta\in\Theta}g(T(\vv{x}), \theta)\,\cancel{h(\vv{x})}} = \]
+\[=\frac{\sup_{\theta\in\Theta_0} L^*(T(\vv{x}),\theta)}{\sup_{\theta\in\Theta}L^*(T(\vv{x}),\theta)} = \lambda^*(T(\vv{x}))
+\]
+\end{Dim}
+
+\phantom{}
+
+
+Oss. Adesso che abbiamo capito la LRT facciamo considerazioni su un test in generale
+
+\subsection{Considerazioni di un test}
+Prendiamo un test con una $RC$ e con le ipotesi $\begin{cases}
+    H_0 : \ \theta\in \Theta_0\\
+    H_1 : \ \theta\in \Theta_0^C
+\end{cases}$\\ 
+
+\begin{center}
+\begin{tabular}{|c|c|c|}
+\hline
+ & Accetto $H_0$ & Rifiuto $H_0$\\
+\hline
+ $H_0$ vero & OK & Errore di I tipo\\
+\hline
+$H_1$ vero & Errore di II tipo & OK \\
+\hline
+\end{tabular}
+\end{center}
+
+Commettere un errore di I tipo è peggio di commettere un errore di II tipo\\
+
+
+$\PP_{\theta}(\vv{X}\in RC) = \ \begin{cases}
+    \text{probabilità di commettere un errore di I tipo \ \ se } \theta\in \Theta_0\\
+    1-\PP_{\theta}(\vv{X}\not\in RC) =  1- \text{probabilità di commettere un errore di II tipo \ \ se } \theta\in \Theta_0^C
+\end{cases}$\\ \\
+
+
+\begin{defi}
+    La \textbf{funzione potenza} di un test con regione critica $RC$ è:
+    \[
+    \beta(\theta) : \Theta \to [0,1] \ \ \ \ \beta(\theta)=\PP_{\theta}(\vv{X}\in RC)
+    \]
+\end{defi}
+
+\phantom{}
+
+La funzione potenza "ideale", sarebbe $\beta(\theta)= \begin{cases}
+    0 \ \ \text{ se } \theta\in \Theta_0\\
+    1 \ \ \text{ se } \theta\in\Theta_0^C
+\end{cases}$\\
+
+Oss. É impossibile riuscire ad avere una funzione così, perché l'unico modo per avere errore I =0 sarebbe quello di accettare sempre $H_0$, ma questo comporterebbe errore II = 1\\ \\
+
+
+
+Esempio: Dati la VA e i test seguenti \ \ $X\sim Bi(5,\theta) \ \ \ \begin{cases}
+    H_0 : \ \theta\le \frac12\\
+    H_1 : \ \theta>\frac{1}{2}
+\end{cases}$\\
+Voglio confrontare le funzioni potenza di:\\
+Test1: \ \ $RC_1 =\{X=5\}$\\
+Test2: \ \ $RC_2 = \{X\ge3\}$\\
+
+$\beta_1(\theta)=\PP_{\theta}(X=5)=\theta^5$\\
+$\beta_2(\theta)=\PP_{\theta}(X\ge3) = \binom{5}{3}\,\theta^3(1-\theta)^2 + 5\,\theta^4(1-\theta) +\theta^5$\\
++++grafico\\
+
+Le due funzioni sono crescenti, quindi per entrambe vale che $\prob{\text{errore I tipo}} \le \PP_{\theta_0}(RC) = \beta(\theta_0)$\\
+
+$\beta_1(\theta_0)=\O\frac12\C^5=0,03125$ \ \ \ \ che è un buon limite\\
+$\beta_1(\theta)\ge0,8 \implies \theta\ge0,96$ quindi questo test va bene in $\Theta_0$, ma fuori non è molto forte\\
+
+$\beta_2(\theta_0)= (10 + 5 +1 )\O\frac12\C^5 = \frac12$ \ \ che è troppo alta\\ \\
+
+\Lezione{21/03/2023}\\
+
+Esempio: $\camp \sim \Nc (\mu,\sigma^2)$ \ con  $\sigma^2$ noto\\
+LRT per \ $\begin{cases}
+    H_0 \ \ \mu\le \mu_0\\
+    H_1 \ \ \mu>\mu_0
+\end{cases}$ \ \ con $RC = \OOO \frac{\overline{X}_n -\mu_0}{\tfrac{\sigma}{\sqrt{n}}} >c \CCC$
+\[
+\beta(\mu) = \PP_{\mu}\O\frac{\overline{X}_n -\mu_0}{\tfrac{\sigma}{\sqrt{n}}}>c\C = \PP_{\mu} \O\underset{Z}{\underbrace{\frac{\overline{X}_n -\mu}{\tfrac{\sigma}{\sqrt{n}}}}} > c + \frac{\mu_0-\mu}{\tfrac{\sigma}{\sqrt{n}}}\C = 1 - \Phi \O c +\frac{\mu_0-\mu}{\tfrac{\sigma}{\sqrt{n}}}  \C
+\]
+Al crescere di $\mu$, \ \ $\frac{\mu_0-\mu}{\tfrac{\sigma}{\sqrt{n}}}$ decrcesce, \ \ $\Phi$ decresce \ \ e quindi $\beta$ è crescente in $\mu$
+\[
+\lim_{\mu\to-\infty} \beta(\mu) =0 \ \ \ \  \lim_{\mu\to +\infty} \beta(\mu) =1 \ \ \ \ \beta(\mu_0)= 1-\Phi(c)
+\]
+Inoltre per modificare la crescita di questa curva, l'unica cosa che possiamo fare è modificare n\\
+Al crescere di $n$ la funzione cresce più velocemente\\ 
+
+
+Vogliamo controllare (limitare) la massima probabilità di commettere un errore di I tipo
+
+\[\sup_{\mu\le\mu_0} \beta(\mu) = \beta(\mu_0)\]
+\[\beta(\mu_0)=0.10 \ \Longleftrightarrow \ 1-\Phi(c)=0.10  \ \Longleftrightarrow \ c= Z_{0.9}=1.28\skipp\]
+
+Vogliamo che la funzione potenza sia $\ge 0.8$ per $\mu\ge\mu_0+\sigma$, ovvero che oltre a quel punto la probabilità di commettere un errore II tipo sia minore del $20\%\,$, per far ciò devo imporre:
+\[
+0.8 = \beta(\mu_0+\sigma) = 1-\Phi\O1.28-\frac{\sigma}{\tfrac{\sigma}{\sqrt{n}}}\C = 1 - \Phi(1.28-\sqrt{n}) \Longleftrightarrow \Phi(1.28-\sqrt{n})=0.2
+\]
+\[
+\Longleftrightarrow 1.28 -\sqrt{n} = Z_{0.2} = -0.84 \Longleftrightarrow n= 4.49 \Longleftrightarrow  n\ge 5\]
+
+++++GRAFICO\\ \\
+
+
+\begin{defi}
+    $\forall \, 0\le \alpha\le 1 $ un test con funzione potenza $\beta(\theta)$ è detto di \textbf{dimensione} $\alpha$ se il $\displaystyle \sup_{\theta\in\Theta_0} \beta(\theta)=\alpha$
+\end{defi}
+
+\begin{defi}
+    $\forall \, 0\le \alpha\le 1 $ un test con funzione potenza $\beta(\theta)$ è detto di \textbf{livello} $\alpha$ se il $\displaystyle \sup_{\theta\in\Theta_0} \beta(\theta)\le\alpha$
+\end{defi}
+
+Oss. Queste definizioni si usano per controllare gli errori di I tipo\\ \\
+
+Esempio: $\camp $ iid \ \ $f(X,\theta) = e^{-(x,\theta)} \II_{[\theta,+\infty)}$ \ \ con \ \ $\begin{cases}
+    H_0 : \ \theta\le \theta_0\\
+    H_1 : \ \theta>\theta_0
+\end{cases}$
+
+Avevamo trovato LRT  con  $RC = \OOO X_{(1)}\ge \theta_0 - \frac{log \, c}{n} \CCC$ \\
+
+LRT serve per trovare una "forma" di regione critica, quello che poi dobbiamo fare è imporre il livello\\
+
+Voglio un test LRT di livello $\alpha$, ovvero \ \ $\displaystyle \sup_{\theta\le \theta_0} \beta(\theta) = \sup_{\theta\le \theta_0} \PP_{\theta}(RC) \le \alpha$
+\[
+\beta(\theta)= \PP_{\theta} \O X_{(1)}\ge \theta_0 -\frac{log\, c}{n} \C
+\]
+Avevamo trovato che $X_i = \theta T_i$ \ con \ $T_i\sim \Ec (1)$
+\[
+\implies min X_i = min (\theta +T_i)= \theta + T_{(1)} \ \ \ \ T_{(1)}\sim \Ec(n)
+\]
+\[
+\PP(X_{(1)}\ge k) = e^{-n(k-\theta)} \ \ \ \ \text{ questa funzione è crescente in } \theta
+\]
+\[
+\beta(\theta)= exp\OOO-n\O\theta_0 -\frac{log\, c}{n} -\theta\C\CCC \ \ \ \ \alpha=\sup_{\theta\le\theta_0} \beta(\theta) = \beta(\theta_0) = exp\OOO-n\O\theta_0 -\frac{log\, c}{n} -\theta_0\C\CCC = c
+ \]
+
+\phantom{}\\
+
+\begin{defi}
+    Un test con funzione potenza $\beta(\theta)$ è detto \textbf{non distorto} se \ \ $\beta(\theta')\le\beta(\theta'') \ \ \ \forall \theta'\in \Theta_0^C \ \ \forall \theta''\in\Theta_0$
+\end{defi}
+
+
+
+\begin{defi}
+    Sia $C$ una classe di test per verificare $H_0: \ \theta\in \Theta_0$ \ VS \ $H_1: \ \theta\in\Theta_0^C$\\
+    Allora un test in $C$ con funzione potenza $\beta(\theta)$ è \textbf{UMP}, uniformly most powerful,\\ se $\beta(\theta)\ge\beta'(\theta) \ \ \forall \theta\in\Theta_0^C$ e $\forall\beta'(\theta)$ funzione potenza di test in $C$\\
+    Tipicamente $C$ è la classe funzione dei test di livello $\alpha$
+\end{defi}
+
+Oss. L'idea è che sono sicuro di non avere problemi in $\Theta_0$ perché ho chiesto che la classe sia di livello $\alpha$, quindi la $\beta$ più forte è quella più forte in $\Theta_0^C$\\ \\
+
+
+Oss. Il seguente lemma parte da una situazione più facile e generalizza in seguito
+
+\begin{teo}[Lemma di Neymann-Pearson]
+     Usando le "ipotesi semplici", ovvero $H_0 : \ \theta=\theta_0$ \ VS \ $H_1: \ \theta=\theta_1$\\
+     Per $\beta$ ci serviranno solamente $f(\vv{x},\theta_i)$ per $i=0,1$ \\
+     Sia $RC$ tale che:\\
+     1) \ $\vv{x}\in RC$ se $f(\vv{x},\theta_1)>kf(\vv{x},\theta_0)$\ \ \ e \ \ \ $\vv{x}\in RC^C$ se $f(\vv{x},\theta_1)<k f(\vv{x},\theta_0)$ \ \ \ con $k\ge0$\\
+     2) \ $\alpha = \PP_{\theta_0}(\vv{x}\in RC)$\\
+     Allora:\\
+     a) \ Qualunque test che soddisfa 1) e 2) è UMP di livello e dimensione $\alpha$\\
+     b) \ Se esiste un test che soddisfa 1) e 2) con $k>0$\\
+     \phantom{b) \ }Allora ogni test UMP di livello $\alpha$, ha anche dimensione $\alpha$ (soddisfa  la 2))\\
+     \phantom{b) \ }E soddisfa la 1) tranne che su un insieme $A$ \ tc \ $\PP_{\theta_0}(\vv{x}\in A)= \PP_{\theta_1}(\vv{x}\in A)=0$
+\end{teo}
+
+Oss. Quindi poste le ipotesi semplici,  che mi fanno scegliere tra due valori del parametro\\
+Questo lemma si basa su un'idea simile alle "classi di equivalenza dei test" e dice che un test con 1) e 2) è UMP e se invece prendo un test UMP, allora sarà "quasi" uguale al test con 1) e 2)\\ 
+
+\begin{Dim}[Neymann-Pearson*]
+    La 2) equivale a dire che il test è di dimensione $\alpha$\\
+    Prendiamo $\Phi(\vv{x})$ una funzione test \ \ \ $\Phi(\vv{x})=\II_{RC}(\vv{x})$\\
+
+    \textbf{a)}\\
+    Siano $\Phi(\vv{x})$ la funzione test di un test che soddisfa  1) e 2)  \ \ con funzione potenza $\beta(\theta)$ \\
+    E \ $\Phi'(\vv{x})$ la funzione test di un altro test di livello $\alpha$ \ \ con \ $\beta'(\theta)$
+    \[
+    (\Phi(\vv{x})-\Phi'(\vv{x}))\cdot (f(\vv{x},\theta_1)-k  f(\vv{x},\theta_0))\ge 0 \ \ \forall \vv{x}
+    \]
+    Se $\vv{x}\in RC$, definita da 1), allora questa diventa:
+    \[
+    (1-\Phi'(\vv{x}))\underset{\ge0}{\underbrace{(f(\vv{x},\theta_1)-kf(\vv{x},\theta_0))}}
+    \]
+    Se $\vv{x}\in RC^C$, per la 1)
+    \[
+    (0-\Phi'(\vv{x}))\underset{\le 0}{\underbrace{f(\vv{x},\theta_1-f(\vv{x},\theta_0))}}
+    \]
+    Avevamo ottenuto che:
+    \[
+    \int_{\R^n} (\Phi(\vv{x})-\Phi'(\vv{x}))(f(\vv{x},\theta_1)-k  f(\vv{x},\theta_0)) \, d\vv{x}\ge 0
+    \]
+    Poichè $\int_{\R^n}\II_{B}(\vv{x})\, d\vv{x} = \PP(\vv{x}\in B)$
+    \[
+    0\le \PP_{\theta_1}(RC) - \PP_{\theta_1}(RC') - k\PP_{\theta_0}(RC) + k\PP_{\theta_0}(RC') = \beta(\theta_1) - \beta'(\theta_1) - k\big(\beta(\theta_0)- \beta'(\theta_0)\big)
+    \]
+    So che $\Phi$ soddisfa la 2) \ $\implies \beta(\theta_0)=\alpha$\\
+    E so che $\Phi'$ è di livello $\alpha$ \ $\implies \beta'(\theta_0)\le \alpha$
+    \[
+    \implies \beta(\theta_0)-\beta'(\theta_0)\ge 0 \ \implies \beta(\theta_1) - \beta'(\theta_1) \ge 0 \implies \ \Phi \text{ è UMP, oltre che essere di livello e dimensione } \alpha    \]
+
+    \phantom{}
+
+    \textbf{b)}\\
+    Sia $\Phi'$ la funzione test di test UMP di livello $\alpha$, ma da a) so che $\Phi$ (che soddisfa 1) e 2)) è UMP di liv $\alpha$
+    \[
+    \implies \beta(\theta_1)=\beta'(\theta_1)
+    \]
+    So che \ $\beta'(\theta_0)\le \alpha$ \ \ e da a) so che $0\le -k(\beta(\theta_0)-\beta'(\theta_0)) \implies 0\ge(\alpha-\beta'(\theta_0))\implies \beta'(\theta_0)\ge\alpha$ \\
+    $\implies \beta'(\theta_0) =\alpha$ \ \  
+    quindi soddisfa 2)\\
+
+    \[
+    \beta(\theta_1) -\beta'(\theta_1) - k(\beta(\theta_0)- \beta'(\theta_0)) = \int_{\R^n} (\Phi(\vv{x})-\Phi(\vv{x}))(f(\vv{x},\theta_1)-kf(\vv{x},\theta_0))\,d\vv{x}
+    \]
+
+    $\implies \Phi = \Phi'$ \ tranne che su un insieme A con $\PP_{\theta_0}(\vv{x}\in A)=\PP_{\theta_1}(\vv{x}\in A)$
+\end{Dim}
+\phantom{}
+
+\Lezione{27/03/23}
+
+Oss.
+$\begin{cases}
+    H_0 : \ f_0(\vv{x})\\
+    H_1 : \ f_1(\vv{x})
+\end{cases}$ \ \ non devono essere della stessa famiglia parametrica\\
+
+Esempio: 13.1\\
+
+\textbf{Corollario:}\\
+Dato \ $\begin{cases}
+    H_0 \ : \ \theta=\theta_0\\
+    H_1 \ : \ \theta=\theta_1
+\end{cases}$ \ sia $T(\vv{X})$ una statistica sufficiente per $\theta$ e $g(t,\theta)$ la legge di $T(\vv{X})$\\
+Allora il test UMP di livello $\alpha$ basato su T è quello con $RC=\{g(t,\theta_1)>kg(t,\theta_2)\}$\\
+
+Oss. Vale perché $f(\vv{x},\theta)=g(t,\theta)h(\vv{x})$\\
+
+Esempi: 13.2 \ 13.3 \ 13.4\\
+
+
+\begin{defi}
+    Data una famiglia di leggi $\{f(x,\theta), \ \theta\in \Theta\}$, la famiglia è detta a MLR, o likelihood ratio monotona (non decrescente)  se \ $\frac{f(x,\theta_1)}{f(x,\theta_2)}$ è monotona non decrescente in x \ $\forall\theta_1>\theta_2$
+\end{defi}
+
+\phantom{}
+
+Esempi: 13.5 \ 13.6\\
+
+
+\begin{teo}[Karlin-Rubin]
+    Dato $\begin{cases}
+        H_0 : \ \theta\le \theta_0\\
+        H_1 : \ \theta> \theta_0
+    \end{cases}$
+    \ \  \ Se T è stat suff per $\theta$ tale che la legge di $T$, ovvero $g(t,\theta)$, ha MLR\\
+    Allora $\ \forall t_0$ il test con $RC= \{ T>t_0 \}$ è UMP di livello $\alpha = \PP_{\theta_0}(T>t_0)$ 
+\end{teo}
+
+Oss. Ovvero quando ho l'ipotesi in questo modo e ho a disposizione una statistica suff con legge MLR\\
+
+
+
+\begin{Dim}
+    \[
+    \beta(\theta) = \PP_{\theta} (T>t_0)
+    \]
+    Mostriamo che $T$ ha MLR $\implies$ la funzione potenza $\beta(\theta)$ è non decrescente in $\theta$\\
+    Posto $\theta_1<\theta_2$ e data la $F(t,\theta)$ la funzione di ripartizione di $T$
+    \[
+    \frac{d}{d t}[F(t,\theta_1)- F(t,\theta_2)] = g(t,\theta_2)-g(t,\theta_1) = g(t,\theta_1) \OO \UB{\text{crescente in t}}{\frac{g(t,\theta_2)}{g(t,\theta_1)}} -1 \CC
+    \]
+    Questa derivata essendo crescente o è sempre positiva oppure passa da negativa a positiva\\
+    Quindi $[F(t,\theta_1)- F(t,\theta_2)]$ è o sempre crescente, oppure prima decresce e poi cresce\\
+    E quindi questa differenza raggiunge il massimo in $-\infty$ oppure in $+\infty$\\
+
+    Ma essendo funzioni di ripartizione vanno entrambe da 0 a 1 e quindi
+    \[
+    \begin{cases}
+        F(-\infty,\theta_2)-F(-\infty,\theta_1)=0\\
+        F(+\infty,\theta_2)-F(+\infty,\theta_1)=0
+    \end{cases}
+    \]
+    \[
+    \implies \ \ \ \ F(t,\theta_2)-F(t,\theta_1)\le 0  \Longleftrightarrow F(t,\theta_2)\le F(t,\theta_2)
+    \]
+    \[
+    \beta (\theta_1)= \PP_{\theta_1} = 1- F(t_0,\theta_1)\le 1- F(t_0,\theta_2)= \PP_{\theta_2}(t>t_0) = \beta(\theta)
+    \]
+
+    \phantom{}
+    
+    Oss. Definiamo X stocasticamente più grande di Y, $X \underset{st}{\ge} Y$, se $F_X(t)\le F_Y(t)$\\
+    Esempi: 10.7 \ 10.8\\
+    
+    Quindi se T ha MLR allora $\beta(\theta)$ è crescente
+    \[
+    \implies \sup_{\theta\le\theta_0} \beta(\theta)=\beta(\theta_0) \implies \text{ il livello è } \alpha=\PP_{\theta_0}(RC) = \PP_{\theta_0}(T>t_0)
+    \]
+    \phantom{}
+
+    Partendo dal caso
+    $\begin{cases}
+        H_0 : \ \theta=\theta_0\\
+        H_1 : \ \theta = \theta' 
+    \end{cases}$ \ \ \ con $\theta'>\theta_0$\  \ quindi ho un'ipotesi semplice inclusa nel caso generale
+    \[
+    \text{Allora } \  \tilde{K}= \inf_{\tau=\{t>t_0\}} \frac{g(t,\theta')}{g(\theta_0)}
+    \]
+    \[
+    T>t_0 \Longleftrightarrow \frac{g(t,\theta')}{g(\theta_0)} >\tilde{K}
+    \]
+    \[
+    T>t_0 \Longleftrightarrow \OOO g(t,\theta')>\tilde{k}g(t,\theta_0) \CCC \ \ \text{ è UMP per il corollario di N-P} 
+    \]
+\end{Dim}
+
+
+Si può dimostrare il teorema nel caso opposto: \ $\begin{cases}
+    H_0 : \ \theta\ge\theta_0\\
+    H_1 : \ \theta < \theta_0 
+\end{cases}$ \\ 
+In cui si ha UMP con $RC : \{T<t_0\} \ \ \alpha=\PP_{\theta_0}(T<t_0)$\\ \\
+
+\Lezione{28/03/23}
+
+\begin{defi}
+    Un test è detto \textbf{Test Unione Intersezione}, o test UI\\ Se \ $\Theta_0$ si può scrivere come un'intersezione di sottoinsiemi di $\Theta$ e se\\
+    $H_0 : \ \theta\in \Theta_0 = \underset{\gamma\in\Gamma}{\bigcap} \Theta_{0\gamma}$ \ \ VS \ \ $H_1 : \ \theta\in\Theta_0^C= \underset{\gamma\in\Gamma}{\bigcup} \Theta_{0\gamma}^C$\\
+    $\forall\,\gamma \ \ \ H_{0\gamma} : \  \theta_0\in\Theta_{0\gamma} \ \text{ VS } \ H_{1\gamma} : \ \theta\in \Theta_{0\gamma}^C$ \ \ con $RC_{\gamma}$\\
+    $\implies RC$ del test UI è $RC=\underset{\gamma\in\Gamma}{\bigcup}  RC_{\gamma}$ 
+\end{defi}
+
+Oss. Complementare dell'intersezione è l'unione dei complementari\\
+Oss. La $RC$ è unione perché devo accettare tutti gli $H_{0\gamma}$
+
+
+Esempio: 14.1\\
+
+
+\begin{defi}
+    Un test è detto \textbf{intersezione unione}, o test IU, quando si può scrivere
+    \[
+    H_0 : \ \theta\in \Theta_0 = \underset{{\gamma\in\Gamma}}{\bigcup} \Theta_{0\gamma} \ \ \text{ VS } \ \ H_1 : \ \theta\in \Theta_0^C = \underset{{\gamma\in\Gamma}}{\bigcap} \Theta_{0\gamma}^C
+    \]
+    \[
+    RC_{IU}= \underset{\gamma\in\Gamma}{\bigcap} RC_{\gamma}
+    \]
+\end{defi}
+
+
+Esempio: 14.2\\ \\
+
+
+
+
+\begin{teo}
+Dato un test UI \ \ $\begin{cases}
+    H_0 : \ \theta\in \underset{\gamma\in\gamma}{\bigcap} \Theta_{0\gamma}\\
+    H_1 : \ \theta\in \underset{\gamma\in\gamma}{\bigcap} \Theta_{0\gamma}^C
+\end{cases}$\\
+Chiamiamo $\lambda_{\gamma}(\vv{x})$ la statistica del LRT per $H_{0\gamma}=\theta\in\Theta_{0\gamma}$\\
+e $\lambda(\vv{x})$ la statistica del LRT per il test UI\\
+Sia $T(\vv{x})=\displaystyle\inf_{\gamma} \lambda_{\gamma}(\vv{x})$ e siano
+    \[
+    RC_T = \{ \lambda_{\gamma}(\vv{x})=c \ \ \text{ per qualche } \gamma\} = \{T(\vv{x})\le c\}
+    \]
+    \[
+    RC_{\lambda}=\{\lambda(\vv{x})\le c\}
+    \]
+    Allora:\\
+    a) \ $T(\vv{x})\ge \lambda(\vv{x}) \ \ \forall \vv{x}$\\
+    b) \ $\beta_T(\theta)\le \beta_{\lambda}(\theta) \ \ \forall\theta$\\
+    c) \ Se il LRT ha livello $\alpha$, allora il test UI ha livello $\alpha$
+\end{teo}
+
+\begin{Dim}
+    a)
+    \[
+    \Theta_0=\underset{\gamma\in\Gamma}{\bigcap} \Theta_{0\gamma} \ \implies \Theta_0 \subset \Theta_{0\gamma} \ \forall\gamma
+    \]
+    \[
+    \lambda_{\gamma}(\vv{x})= \frac{\sup_{\Theta_{0\gamma}}L(\theta,\vv{x})}{\sup_{\Theta}L(\theta,\vv{x})} \ge  \frac{\sup_{\Theta_0}L(\theta,\vv{x})}{\sup_{\Theta}L(\theta,\vv{x})} = \lambda(\vv{x}) 
+    \] 
+    \[
+    \implies T(\vv{x}) = \inf_{\gamma}\lambda_{\gamma}(\vv{x})\ge \lambda(\vv{x})
+    \]
+
+    b)
+    \[
+    \beta_T(\theta)=\PP_{\theta}(T(\vv{x})\le c) \le \PP_{\theta}(\lambda(\vv{x})\le c) = \beta_{\lambda}(\theta)
+    \]
+
+    c)
+    \[
+    \text{Livello test UI } = \sup_{\theta\in\Theta_0}\beta_T(\theta) \le \sup_{\theta\in\Theta_0} \beta_{\gamma}(\theta)\le\alpha
+    \]
+\end{Dim}
+
+\begin{teo}
+Dato un test IU con $\Theta_0 = \underset{\gamma\in\Gamma}{\Theta_{0\gamma}}$\\
+Sia $\alpha_{\gamma}$ il livello del test su $\Theta_{0\gamma}$ con $RC_{\gamma}$ allora il test IU ha livello $\alpha= \displaystyle\sup_{\gamma} \alpha_{\gamma}$
+\end{teo}
+
+\begin{Dim}
+    \[
+    \theta\in\Theta_0 \implies \theta\in\Theta_{0\gamma} \text{ per qualche } \gamma
+    \]
+    \[
+    \PP_{\theta}(\vv{x}\in RC) \le \PP_{\theta}(\vv{x}\in RC_{\gamma}) \le \alpha_{\gamma}\le \sup_{\gamma} \alpha_{\gamma}
+    \]
+\end{Dim}
+
+\phantom{}
+
+
+Vediamo questo teorema in un caso particolare del test IU, dove l'insieme dei $\Theta_{0\gamma}$ ha un numero di indici ben definito\\
+
+
+\begin{teo}
+    Dato un test IU con $H_0 : \ \theta\in \cup_{j=1}^k \Theta_{0j}$ e $RC_j$ la RC del test $H_0 : \theta\in \Theta_{0j}$\\
+    Supponiamo che per qualche $i=1...k$ \ $\exists$ una successione di parametri $\theta_l \in \Theta_{0i}$ tale che\\
+    \[
+    1) \lim_{l\to+\infty} \PP_{\theta_l} (\vv{x}\in RC_i)=\alpha
+    \]
+    \[
+    2) \lim_{l\to\infty} \PP_{\theta_l} (\vv{x}\in RC_j)= 1 \ \ \ j=1...k \ j\ne i
+    \]
+    Allora il test IU con $RC=\bigcap_{j=1}^n RC_j$ ha livello $\alpha$ 
+\end{teo}
+
+\begin{Dim}
+    Dal teorema precedente \ $RC$ ha livello $\alpha$, vogliamo mostrare che ha proprio dimensione $\alpha$
+    \[
+    \theta_l \in \Theta_{0i} \in \Theta_0 = \underset{j}{\cup} \Theta_{0j}
+    \]
+    \[
+    \implies \sup_{\theta\in\Theta_0} \PP_{\theta}(\vv{x}\in RC) \ge \lim_{l\to+\infty} \PP_{\theta_l} (\vv{x}\in RC) = \lim_{l\to +\infty} \PP_{\theta_l} (\vv{x}\in \underset{j}{\cap} RC_j) \ge\]
+    Vale per la disuguaglianza di Bonferroni \ $\displaystyle\prob{\bigcap_{i=1}^n A_i}\ge \Sum{j=1}{n} \prob{A_i} - (n-1)$
+    \[
+    \ge \lim_{t\to+\infty} \Sum{j=1}{k} \PP_{\theta_l} (\vv{x}\in RC_j) - (k-1) = (k-1)\cdot 1 +\alpha -(k-1) = \alpha
+    \]
+\end{Dim}
+
+
+Esempio: 14.2\\
+
+
+Oss. Definiamo i seguenti test:
+Unilateri o one-sided se
+\ $H_0 : \ \theta\le \theta_0 \ \ \ H_1 : \  \theta\ge \theta_0$ \\
+Bilateri o two-sided se \ $H_0 : \ \theta = \theta_0 \ \ \ H_1 : \  \theta \ne \theta_0$ \\ \\
+
+
+
+\subsection{p-value}
+
+
+\begin{defi}
+    Il \textbf{p-value} $p(\vv{X})$ è una qualunque statistica tale che $0\le p(\vv{X}) \le 1$
+\end{defi}
+
+Voglio costruire i p-value di modo che valori piccoli di $p(\vv{X})$ siano a supporto di $H_1$
+
+\begin{defi}
+    Una statistica p-value è \textbf{valida} se $\forall \theta\in \Theta_0$ e $\forall 0 \le \alpha \le 1$ \ \ $\PP_{\theta}(p(\vv{X})\le \alpha)\le \alpha$
+\end{defi}
+
+Questa definizione ha senso perché mi dice che sotto $\Theta_0$ la probabilità di avere valori piccoli di p è piccola\\
+
+Se p-value è valido allora lo posso usare per valutare dei test:
+
+Posso costruire \ $RC=\{p(\vv{X})\le \alpha\}$ che ha livello $\alpha$
+\[
+\text{Perché } \ \sup_{\theta\in \Theta_0} \PP_{\theta} (RC) = \sup_{\theta\in \Theta_0}\PP_{\theta}(p(\vv{X})\le \alpha)\le \alpha \ \ \forall\theta\in \Theta_0
+\]
+\phantom{}
+
+
+Esempio: 14.3\\ \\
+
+
+\Lezione{03/04/23}
+
+
+\begin{teo}
+    Supponiamo che sia $W(\vv{X})$ una statistica tale che valori grandi di $W$ danno evidenza a favore di $H_1$\\
+    Sia $p(\vv{X}) = \displaystyle \sup_{\theta\in \Theta_0} \PP_{\theta} (W(\vv{X})\ge W(\vv{x}))$ \\
+    Allora $p(\vv{X})$ è p-value valido
+\end{teo}
+
+Esempio: 15.1\\
+
+Oss. Uno statistico non usa il "trashold", ovvero non confronta il p-value per decidere se accettare o rifiutare il test\\
+Nel senso che non dice "accetto se p-value > 0.05" e va a calcolare il valore del p-value. Infatti due valore di p-value 0.051 e 0.049 sono equivalenti per uno statistico\\ \\
+
+

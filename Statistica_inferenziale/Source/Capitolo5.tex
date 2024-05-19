@@ -1,0 +1,148 @@
+\subsection{Regioni di confidenze}
+
+Precedentemente avevamo costruito stimatori puntuali che portavano a stime puntuali\\
+Adesso costruiamo stime intervallari che portano a intervalli di confidenza (i.e. $\theta\in \R$) o a regioni di confidenza (i.e. $\vv{\theta}\in \R^k$)\\
+
+
+\begin{defi}
+    Una \textbf{stima intervallare} di un parametro reale $\theta$ è una coppia di statistiche \ \ $L(\vv{X}), U(\vv{X})$ tali che
+    \[L(\vv{x}) \le U(\vv{x}) \ \forall \vv{x}\]
+    Allora la stima intervallare è l'intervallo $[L(\vv{X}); U(\vv{X})]$ e quindi la mia inferenza intervallare è \[L(\vv{X})\le \theta \le U(\vv{X})\]
+\end{defi}
+
+
+Oss. Posso anche avere stime degeneri con $L=-\infty$ oppure $U=+\infty$\\
+Ma tendenzialmente preferirò avere intervalli piccoli\\ 
+
+
+\begin{defi}
+    Dato una stima intervallare $[L(\vv{X}; U(\vv{X}))]$ per $\theta$\\
+    $\PP_{\theta}\O\theta\in [L(\vv{X}), U(\vv{X})]\C$ è detta \textbf{probabilità di copertura}
+\end{defi}
+
+\begin{defi}
+    Dato una stima intervallare $[L(\vv{X}; U(\vv{X}))]$ per $\theta$\\
+    $\displaystyle\inf_{\theta} \PP_{\theta}\O\theta \in [L(\vv{X}), U(\vv{X})]\C$ è detto \textbf{livello di confidenza}
+\end{defi}
+
+Oss. Il livello di confidenza voglio sia alto, infatti lo chiameremo $(1-\alpha)$ che voglio sia alto\\
+
+
+Esempio: 15.2\\
+
+
+Esempio: 15.3\\
+
+
+
+\subsection{Metodi per trovare stimatori intervallari}
+
+\textbf{(I)} \ Inversione di un test d'ipotesi\\
+
+Esempio: 15.4\\
+
+\[
+\vv{X}\in A(\mu_0) \Longleftrightarrow \mu_0 \in IC (\vv{X})
+\]
+
+\fg{0.5}{Figura2.jpeg}
+
+
+Test: Fissato parametro $=\mu_0$ individuo i dati campionari $(\vv{x})$ "consistenti" con tale valore $\implies $ accetto $H_0$\\
+IC: Fissato il valore del campione individuo i valori del parametro che sono "compatibili"\\
+
+
+
+\begin{teo}
+1) \ $\forall \theta_0\in\Theta$ sia $A(\theta_0)$ la regione di accettazione di un test di livello $\alpha$ per $H_0 : \theta=\theta_0$\\
+$\implies \forall\vv{x}$ sia $C(\vv{x})= \{\theta_0 : \vv{x}\in A(\theta_0)\}$\\
+Allora $C(\vv{x})$ è una regione di confidenza di livello $1-\alpha$ per $\theta$\\
+
+2) \ Viceversa, sia $C(\vv{X})$ una regione di confidenza per $\theta$ di livello $1-\alpha$\\
+$\implies \theta_0\in \Theta$ sia $A(\theta_0)=\{\vv{X} : \theta_0 \in C(\vv{X}) \}$\\
+Allora $A(\vv{\theta_0})$ è regione di accettazione di un test di livello $\alpha$ per $H_0 : \theta=\theta_0$
+\end{teo}
+
+\begin{Dim}
+1) \ $\PP_{\theta_0}(\theta\in C(\vv{x}))= \PP_{\theta_0}(\vv{x}\in A(\theta_0)) \ge 1-\alpha$\\
+
+2) \ $\PP_{\theta_0}(\vv{X}\not\in A(\theta_0))= \PP_{\theta_0}(\theta\not\in C(\vv{X})) \le \alpha$
+
+\end{Dim}
+
+
+\Lezione{04/04/23}
+
+Esempio: 16.1\\
+
+
+
+\textbf{(II)} \ Metodo basato sulla quantità pivotale\\
+
+\begin{defi}[Pivot]
+    Una variabile aleatoria $Q(\vv{X}, \vv{\theta}) = Q(X_1,...,X_n,\vv{\theta})$ è detta \textbf{quantità pivotale}, o pivot, se la sua legge $\Lc(Q)$ non dipende da $\vv{\theta}$
+\end{defi}
+Oss. Dipende anche dai parametri e quindi non è una statistica\\
+
+Esempio: 16.2, 16.3, 16.4\\
+
+Data una quantità pivotale $Q$ e fissata $\alpha \in [0,1]$\\
+Possiamo sempre trovare una coppia  $[a,b]$ che non dipende da $\theta$ tc
+\[
+\prob{a\le Q\le b} \ge 1-\alpha \ \ \implies \ C(\vv{X})=\{\theta : a\le Q \le b \} = \text{ regione di confidenza di livello } 1-\alpha
+\]
+
+L'obbiettivo è trovare l'intervallo di confidenza in funzione di $\theta$ di livello $1-\alpha$, ovvero vogliamo invertire Q:
+\[a\le Q(\vv{X},\theta)\le b \Longleftrightarrow h(\vv{X},a)\le \theta \le g(\vv{X},b)\]
+
+Esempio: 16.5, 16.6\\ \\
+
+
+\begin{defi}
+    Una legge $f_X(x)$ è detta \textbf{unimodale} se $\exists x^*$ tale che $f_X(x)$ è non decrescente \ $\forall x\le x^*$ \ \ ed è non crescente \ $\forall x>x^*$
+\end{defi}
+Oss. Ovvero se esiste unico un punto di massimo \\
+
+\begin{teo}
+    Sia $f_X(x)$ una densità unimodale. Se l'intervallo $[a,b]$ soddisfa:\\
+    (1) \ $\int_a^b f_X(x)\, dx = 1-\alpha$\\
+    (2) \ $f_X(a)=f_X(b)>0$\\
+    (3) \ $a \le x^* \le b $\\
+    Allora $[a,b]$ è l'intervallo di lunghezza minima tra tutti quelli che soddisfano la (1)
+\end{teo}
+
+
+\begin{Dim}[*]
+    Sia $[a',b']$ un intervallo con $(b'-a')<(b-a)$, voglio mostrare che non verifica la proprietà (1)\\
+    Fissiamo $a'\le a$ avremo più casi:\\
+    i) \ $b'\le a \ \ \ a'\le b'\le a\le x^*$ \ \ quindi sono nella parte crescente della densità unimodale e quindi l'integrale tra $a'$ e $b'$ è più piccolo del rettangolo con altezza $f_x(b')$
+    \[
+    \implies \int_{a'}^{b'}f_X(x)\, dx \le f_X(b')(b'-a') \le f_X(a)(b'-a') < f_X(a)(b-a) \le \int_{a}^{b}f_X(x)\, dx = 1-\alpha
+    \]
+    \phantom{}
+
+    ii) \ $b'> a \ \ \ a'\le a < b' b$
+    \[
+    \implies \int_{a'}^{b'}f_X(x)\, dx = \int_{a}^{b}f_X(x)\, dx + \int_{a'}^{a}f_X(x)\, dx -\int_{b'}^{b}f_X(x)\, dx = (1-\alpha) + \OO \int_{a'}^{a}f_X(x)\, dx -\int_{b'}^{b}f_X(x)\, dx  \CC
+    \]
+    Voglio mostrare che la parte dentro le quadre sia minore di zero
+    \[
+    \text{Essendo sulla parte crescente } \ \int_{a'}^{a}f_X(x)\, dx \le f_X(a)(a-a')
+    \]
+    \[
+    \text{Essendo sulla parte decrescente } \ \int_{b'}^{b}f_X(x)\, dx \ge f_X(b)(b-b')
+    \]
+    \[
+    \implies \OO \int_{a'}^{a}f_X(x)\, dx -\int_{b'}^{b}f_X(x)\, dx  \CC \le f_X(a)(a-a') -f_X(b)(b-b') \ \overset{(2)}{=} \ f_X(a)[(b'-a') - (b-a)] <0
+    \]
+\end{Dim}
+
+Applicazione del teorema:\\
+Dato Q unimodale, allora l'intervallo a,b $\prob{a\le Q \le b} = 1-\alpha$ ha lunghezza minima se scelgo $f_Q(b)=f_Q(a)$ e quindi $a\le q^* \le b$
+\[
+IC = [h(\vv{X},a,b)\le \theta \le g(\vv{X},a,b)]
+\]
+Se lunghezza di IC è proporzionale a $(b-a)$ allora uso il teorema \ \ (vedi esempio della gaussiana)\\
+Se invece la lunghezza di IC non è proporzionale a $(b-a)$ allora il  teorema non serve\\
+
+Esempio: 16.7\\

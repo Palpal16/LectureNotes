@@ -1,0 +1,29 @@
+
+Fin'ora abbiamo visto la statistica parametrica, per cui dato un campione $\camp$ cercavamo la legge del campione tra le leggi del tipo $ f(x,\vv{\theta})$, per cui ci riducevamo dalla ricerca dallo spazio infinito dimensionale delle leggi, alla ricerca finito dimensionale dei parametri: $\vv{\theta}\in \Theta\subseteq \R^k$\\
+
+Però quest'ipotesi, che è verificata in molte situazioni, non è sempre verificata, in questi casi possiamo procedere in questo modo:\\
+
+1) Esistono tecniche di inferenza per dati generati da leggi non parametriche\\
+
+2) Metodi per controllare se i dati vengono generati da leggi parametriche, detti test di buon adattamento:\\ \\
+
+Nell'ambito della regressione lineare assumeremo che i dati siano gaussiani, che metodi useremo per \textbf{verificare la gaussianità}?\\
+
+
+Possiamo guardare la distribuzione dei dati, è necessario fare una \textbf{rappresentazione grafica} dei dati, per esempio con un istogramma, da cui è possibile notare subito se la distribuzione assomiglia a una gaussiana\\
+
+Poi si fanno i \textbf{qqplot} ovvero un grafico con in ascissa i quantili teorici $Z_{\alpha}$ e in ordinata i quantili empirici $\Chi_{\alpha}$\\
+
+Sappiamo che i quantili di una gaussiana non standard hanno forma  del tipo: \ $\Chi_{\alpha}=\mu+\sigma Z_{\alpha}$\\
+Quindi verifico che il qqplot abbia un andamento lineare, o quasi\\
+
+
+Infine posso usare dei  test non parametrici del tipo: \ \ $\begin{cases}
+H_0 : F_X \sim \Nc(\mu,\sigma^2)\\
+H_1 : F_X \cancel{\sim} \Nc (\mu, \sigma^2)
+\end{cases}$\\
+Un esempio è lo \textbf{Shapiro test} che faremo con in laboratorio con il software\\ \\
+
+
+
+

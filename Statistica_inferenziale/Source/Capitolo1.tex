@@ -1,0 +1,75 @@
+\Lezione{20/02/2023}
+
+
+• \ Delle variabili aleatorie (va) si dicono indipendenti e identicamente distribuite (iid) se sono a 2 a 2\\ indipendenti e hanno tutte la stessa legge\\
+
+• \ Dati dicotomici sono dati che hanno un successo e un insuccesso (due risultati)\\
+
+
+\Lezione{21/02/2023}
+
+
+• \ Media e varianza campionarie: \ \ $\overline{X}_n=\frac{1}{n} \displaystyle \sum_{i=1}^n X_i \ \ \ \ S^2=\frac{1}{n-1}\sum_{i=1}^n(X_i-\overline{X}_n)^2$\\ \\
+
+• \ $q_{\alpha}$ quantile di ordine $\alpha$ di una va X continua è t.c. $\prob{X\le q_{\alpha}}=\alpha$\\
+Oss. Posti $t_{\alpha}$ e $z_{\alpha}$ i quantili di una t-student e una normale vale sempre \  $t_{\alpha}(m)>z_{\alpha}\ \ \forall m$ ordine della t\\ \\
+
+• \ Leggi condizionate: \ $\E{X|Y}=g(Y)$ è una va che è funzione di $Y$ e vale $\E{\E{X|Y}}=\E{X}$\\
+Inoltre vale la decomposizione della varianza $\var{X}=\var{\E{X|Y}}+\E{\var{X|Y}}$\\ \\
+
+• \ Funzione generatrice dei momenti $m_X(t)=\E{e^{tX}}$\\
+Oss. Calcolando il valore della sua derivata k-esima in 0 ottengo il momento di ordine k di X\\ \\
+
+\textbf{Convergenze:}\\
+$X_n\xrightarrow{qc} X$\\
+$X_n\xrightarrow{P}X \ \ \ lim_{\eps \to 0} \prob{(|X_n-X|<\eps)}\to 1$\\
+$X_n\xrightarrow{\mathcal{L}}X \ \ \ F_{X_n}(t)\xrightarrow[n\to\infty]{} F_X(t) \ \forall t$ di continuità di $F_X$\\
+$qc \implies P \implies \mathcal{L}$ \ \ \ al contrario c'è implicazione da legge a probabilità se converge a una costante\\
+
+Teo di Slutsky: \ \ Se $X_n\xrightarrow{\mathcal{L}}X \ \ Y_n\xrightarrow{P}K$, allora \ \ $X_n + Y_n \xrightarrow{\mathcal{L}}X+K$ e \ \ $X_n\cdot Y_n\xrightarrow{\mathcal{L}}X\cdot K$\\ \\
+
+\newpage
+
+
+
+
+
+\textbf{Distribuzioni:}\\
+
+• \ Gaussiana: $ Z\sim\Nc \O \mu,\sigma^2 \C \ \  \E{
+X_i}=\mu$ e $\var{X_i}=\sigma^2 \ \ \ f_Z(x)=\frac{1}{\sqrt{2\pi \sigma^2}}\exp\left\{-\frac{(x-\mu )^2}{2\sigma^2}\right\}$ \\
+
+
+• \ Campione gaussiano: $X_1, ..., X_n$ con $X_i \sim \mathcal{N}(\mu,\sigma^2)$ \ \  valgono:\\
+$ a) \ \overline{X}_n\sim\mathcal{N} \O \mu, \frac{\sigma^2}{n} \C \ \ \ \ b) \ \overline{X}_n\ind S^2 \ \ \ \ c) \ \frac{(n-1)S^2}{\sigma^2}\sim\Chi^2(n-1)$\\
+
+• \ Gamma: $X\sim\Gamma(\alpha,\beta) \ \ \ f_X(x)=\frac{\beta^{\alpha} x^{\alpha -1} e^{-\beta x}}{\Gamma (\alpha )}\II_{[0,+\infty )} (x)$  \ \ valgono:\\
+%
+$a) \ \Gamma \O \frac{k}{2},\frac{1}{2} \C \sim \Chi^2(k) \ \ \ \ b) \ Y=hX \text{ con } h>0 \implies Y\sim\Gamma\O\alpha,\frac{\beta}{n}\C$ \\
+
+• \ t-student: $T\sim t(m)$ \ \ $f_T(t)=\frac{\Gamma \left(\frac{m+1}{2}\right)}{\Gamma \left(\frac{m}{2}\right)\sqrt{\pi m}} \cdot \frac{1}{\left( 1+\tfrac{t^2}{m}\right)^{\tfrac{m+1}{2}}}$ \ \ \ valgono:\\
+$a) \ \frac{\overline{X}_n-\mu}{\tfrac{S}{\sqrt{n}}}\sim t(n-1) \ \ \ \ b) \ f_T(t)\xrightarrow{m \to \infty} f_Z(z)=\frac{1}{\sqrt{2\pi}} \ exp\{ -\frac{t^2}{2} \} $ \\
+$c) \ T\sim t(m)$ è simmetrica rispetto allo 0 e all'infinito va a zero come $t^{m+1}$, quindi $\E{T^k}<\infty \Leftrightarrow k<m$\\
+
+• \ Distribuzione di Fischer: \ $U\sim\Chi^2(n) \ \ V\sim\Chi^2(m) \ \ U\ind V $\\
+$X=\frac{\tfrac{U}{n}}{\tfrac{V}{m}}\sim F(n,m) \ \ f_X(x)=\frac{\Gamma \O \frac{n+m}{2} \C }{\Gamma \O \frac{n}{2} \C \Gamma \O \frac{m}{2} \C } m^{\tfrac{m}{2}}n^{\tfrac{n}{2}} \frac{x^{\tfrac{n}{2}-1}}{(nx+m)^{\tfrac{n+m}{2}}}\II_{[0,+\infty)}(x)$\\ 
+
+Teo: \ a) \ $X\sim F(n,m) \implies \frac1X \sim F(n,m)$ \ \ \ \ b) \ $X\sim t(m) \ \ \ X^2\sim F(1,m)$\\ \\
+
+
+• T.C.L. media campionaria quando ho un campione qualsiasi (anche non gaussiano):\\
+$\sqrt{n}(\overline{X}_n-\mu)\xrightarrow{\mathcal{L}} \mathcal{N}(0,\sigma^2)$ \\ \\
+
+
+
+
+
+
+
+• \ Dato un campione $X_1, ..., X_n$ e poste le va $X_{(1)}=\underset{i=1..n}{Min} \ X_i$ \ \ $X_{(n)}=\underset{i=1..n}{Max} \ X_i$ \ valgono:\\
+$F_{X_{(n)}}(t)=\prob{X_{(n)}\le t} = \prob{X_i \le t \ \forall i} = \prob{\bigcap_{i=1}^n \ X_i\le t} = \{ \text{indip} \} = \prod\limits_{i=1}^{n}\prob{X_i\le t}= \{ \text{i.i.d} \} = \left( F_X(t)\right)^n$\\
+$F_{X_{(1)}}(t)=\prob{X_{(1)}\le t} = 1 - \prob{X_{(1)}>t}=\{ \text{ se iid } \} = ...= 1- \left[\prob{X>t}\right]^n = 1 - \left[ 1- F_X(t) \right]^n $\\
+
+
+Oss. Se $X_i\overset{iid}{\sim} \mathcal{E}(\lambda) \implies X_{(1)}\sim\mathcal{E}(\lambda n)$ \ \
+perché $F_{X_i}(t)=1-e^{-\lambda t} \implies F_{X_{(1)}}=1-e^{-\lambda nt}$ \\

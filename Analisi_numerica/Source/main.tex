@@ -1,0 +1,1548 @@
+\documentclass{article}
+
+\input{Style}
+
+\newcommand{\om}{\Omega}
+
+
+
+
+\let \vect \vv
+\renewcommand{\vv}[1]{\underline{#1}}
+
+\let \oldexists \exists
+\renewcommand{\exists}{\oldexists\,}
+
+
+\newcommand{\tridiag}[3]{\left[\begin{array}{ccc}
+     #2 & #3 &  \\
+     #1 & \ddots & \ddots \\
+     & \ddots & \ddots
+\end{array}\right] }
+
+
+\begin{document}
+
+\begin{center}
+	\vspace*{1cm}
+	{\Huge \textsc{Metodi Numerici delle Equazioni alle Derivate Parziali}}\\
+	\vspace*{1cm}
+	{\large {Dalle lezioni del Prof. Paolo Zunino}}\\
+	\vspace*{0.1cm}
+	{\large per il corso di Ingegneria Matematica}\\
+	\vspace*{0.7cm}
+	{\large {Dispense di Simone Paloschi}}\\
+	\vspace*{0.7cm}
+	Politecnico di Milano\\
+	A.A. 2022/2023
+\end{center}
+\phantom{}\\ \\
+
+\begingroup
+  \hypersetup{hidelinks}
+  \tableofcontents
+\endgroup
+
+\pagebreak
+
+\section{Differenze Finite Poisson}
+
+\subsection{Approssimazione di u' e u" con DF}
+
+Approssimiamo la derivata prima con le differenze finite\\
+
+• \ DF in avanti: \ $u'(x_i)\simeq \frac{u(x_i+h)-u(x_i)}{h} \overset{def}{=} D^+u(x_i)$  \ \ \  ordine=1\vspace{0.5cm} 
+
+• \ DF all'indietro: \  $u'(x_i)\simeq \frac{u(x_i)-u(x_i-h)}{h} \overset{def}{=} D^-u(x_i)$  \ \ \  ordine=1\\
+
+• \ DF centrate: \  $u'(x_i)\simeq \frac{u(x_i+h)-u(x_i-h)}{2h} \overset{def}{=} D^c u(x_i)$ \ \ \   ordine=2\\ \\
+
+
+Approssimazione derivata seconda con le differenze finite\\
+
+• \ Schema a tre punti:\\
+Equivale a uno schema centrato due volte con semipasso $\frac{h}{2}$
+\[
+u''(x_i)\simeq \frac{1}{h^2}\Big( u(x_i+h)-2u(x_i) +u(x_i-h) \Big) \overset{def}{=} D^2 u(x_i)
+\]
+
+\phantom{}
+
+Vediamo l'analisi dell'errore del metodo a 3 punti come esempio.\\
+In generale l'analisi dell'errore ha sempre gli stessi procedimenti:\\
+i) Scrivo lo sviluppo di Taylor
+ii) Sostituisco le derivate sviluppate nella formula dell'errore\\
+iii) Semplifico e per valutare l'ordine, guardo l'esponente più piccolo di $h$\\
+
+Vediamo un esempio per lo schema a tre punti.\\
+Sviluppi in serie di Taylor troncati:
+\[
+u(x_i+h) = u(x_i)+hu'(x_i)+\frac{h^2}{2} u''(x_i) + \frac{h^3}{6}u'''(x_i) + \frac{h^4}{24}u''''(z_i^+)
+\]
+\[
+u(x_i-h) = u(x_i)-hu'(x_i)+\frac{h^2}{2} u''(x_i) - \frac{h^3}{6}u'''(x_i) + \frac{h^4}{24}u''''(z_i^-)
+\]
+Analisi dell'errore:
+\[
+u''(x_i)-D^2_{xx}u(x_i) = u''(x_i) - \frac{u(x_i+h)-2u(x_i)+u(x_i-h)}{h^2} = ... = \frac{h^2}{12}(u''''(z_i^+)+u''''(z_i^-)) = \Oc(h^2)
+\]
+
+\phantom{}
+
+\subsection{DF per -u"=f}
+
+\fg{0.7}{2.jpeg}
+
+Oss. Tale equazione non è un'EDP, lo diventa se si considera lo stesso modello in più dimensioni\\
+
+
+\textbf{Discretizzazione del problema con DF}\\
+
+1) \ Definiamo una griglia nell'intervallo\\
+Siano $x_i=i\cdot h$ per $i=0...N$ \ e \ h = passo di discretizzazione $= \frac{1}{N}$\\
+
+2) \ Discretizzazione dell'equazione sulla griglia\\
+\[
+\begin{array}{c}
+     -u''(x_i)=f(x_i) \\
+     \text{continuo}
+\end{array} \ \ \longrightarrow \ \ \begin{array}{c}
+     -D^2 u(x_i)=f(x_i) \ \ i=1...N-1\\
+     \text{discreto}
+\end{array}
+\]
+\phantom{}
+
+3) Discretizzazione del problema\\
+Soluzione numerica = funzione discreta \ $U_i\simeq u(x_i)$\\
+Troviamo un problema discreto lineare di dimensione $N-1$ nelle incognite $U_i$\\
+\[
+\begin{cases}
+-\frac{1}{h^2} (U_{i+1}-2U_i+U_{i-1})=f(x_i) \ \ \ i=1...N-1\\
+U_0=U_N=0 \ \ \ \text{condizioni al bordo}
+\end{cases}
+\]
+
+Scriviamo il problema lineare in forma matriciale
+
+\fg{0.8}{3.jpeg}
+
+Oss. Abbiamo scritto la forma matriciale con le condizioni di Dirichlet non nulle\\
+
+Il problema alle DF per $-u''=f$ in forma matriciale è equivalente a trovare $\vv{U}$ \ tc \ $A\vv{U}=\vv{F}$\\
+
+
+\subsection{Condizioni al bordo}
+
+• \ Dirichlet \ \ \ $u(0)=\phi_0$\\
+Devo semplicemente spostare la condizione al bordo dalla parte dei termini noti\\
+Vediamo come cambia la condizione al nodo $x_1$:
+\[
+-\frac{\phi_0 - 2 U_1 + U_2 }{h^2} = f(x_1) \ \ \longrightarrow \ \ -\frac{-2 U_1 + U_2 }{h^2} = f(x_1) + \frac{\phi_0}{h^2}
+\]
+
+Ottengo il problema matriciale visto sopra\\
+
+• \ Neumann \ \ \ $-u'(0)=\phi_0$\\
+Dovrò discretizzare e approssimare l'equazione anche al nodo $x_0$
+
+Potrei usare le DF in avanti, però inquinerei un approssimazione del II ordine con un errore del I ordine\\
+
+Uso il metodo del \textbf{nodo fantasma:}\\
+Introduco il nodo $x_{-1}$ e approssimo con DF centrare in $x_0$, poi tratto $U_{-1}$ come variabile ausiliare e la sostituisco nella condizione dell'equazione in $x_0$
+\[
+-u'(x_0)=\phi_0 \ \to \ -D^c U(x_0)=\phi_0 \ \to \ -\frac{1}{2h}(U_1-U_{-1})=\phi_0 \ \to \ U_{-1}=U_1+2h\phi_0
+\]
+\[
+-\frac{U_1 -2U_0 + U_{-1}}{h^2}=f(x_0) \ \to \ -\frac{2U_1-2U_0+2h\phi_0}{h^2} = f(x_0) \ \to \ -\frac{U_1-U_0}{h}=\phi_0 +\frac12 hf(x_0)
+\]
+Interpreto questa approssimazione come una correzione di DF in avanti, rendendola del II ordine\\
+
+Oss. Dovremo aggiungere una riga al sistema lineare\\
+
+
+\subsection{Proprietà algebriche della matrice
+}
+
+\[
+A_h\vv{U}=\vv{F}
+\]
+La matrice $A_h$ è tridiagonale e simmetrica definita positiva\\
+$\implies$ ho $N-1$ autovalori distinti e positivi, inoltre posso valutare lo spettro di $A_h$:
+\[
+\lambda_i = \frac{4}{h^2} sin^2\O\frac{\pi}{2}ih\C \ \ \ i=1...N-1
+\]
+
+Questi autovalori sono ordinati al crescere di $i$, posso quindi valutare il massimo e il minimo
+\[
+\lambda_{\text{max}} = \frac{4}{h^2} sin^2\O\frac{\pi}{2}\frac{N-1}{N}\C \xrightarrow{N\to+\infty}\frac{4}{h^2}\cdot 1 \ \ \implies \lambda_{\text{max}}\le \frac{4}{h^2}\skipp
+\]
+Dato che per $x$ piccolo $sin(x)\simeq x$, allora \ \ $\lambda_{\text{min}}\simeq \pi^2$\\
+Quindi $\lambda_{\text{min}}$ è indipendente da $h$ ed è discosto da 0 $\implies$ $A_h$ è sempre invertibile \\
+
+Numero di condizionamento spettrale = $K_2(A_h)=\frac{\lambda_{\text{max}}}{\lambda_{\text{min}}} \le \frac{4}{h^2}\cdot \frac{1}{\pi^2} = \Oc(h^{-2})$
+\newpage % \\
+
+
+
+\subsection{Analisi dell'errore}
+
+\begin{defi}
+L'errore è la differenza tra la soluzione esatta e quella numerica\\
+Errore locale: \ $e(x_i)=u(x_i)-U_i$\\
+Errore globale: \ $E=\|\vv{e}\|$
+\end{defi}
+
+\phantom{}
+
+Prima di iniziare l'analisi dell'errore, introduciamo qualche notazione:\\
+Problema in forma astratta: \ $Lu=f$ dove $L$ è un operatore, nel nostro caso $L=-\frac{d^2}{dx^2}$\\
+Lo schema in forma astratta: \ $L_hu_h=f_h$, nel nostro caso $L_h=D^2$\\
+Soluzione numerica: \ $\vv{U} \to u_h$\\
+Termine forzante: \ $\vv{F}\to f_h$\\
+
+
+\subsubsection{Consistenza}
+
+La proprietà di consistenza misura se lo schema numerico è consistente con il problema continuo, per calcolare la consistenza, dovremo sostituire la soluzione continua nello schema e valutare il residuo $= L_h u-f_h$\\
+
+\begin{defi}
+    Lo schema $L_hu_h=f_h$ si dice asintoticamente \textbf{consistente} con $Lu=f$ se \ $\displaystyle \lim_{h\to0}\|L_hu-f_h\|=0$\\
+    Ovvero se il residuo tende a zero per $h\to0$
+\end{defi}
+
+Se uno schema è consistente allora $L_h\xrightarrow[h\to0]{}L \ \ f_h \xrightarrow[h\to0]{}f$\\
+
+Per schemi alle DF il residuo $L_hu-f_h$ si chiama errore di troncamento locale o LTE\\
+
+
+Oss. Per lo schema a 3 punti $LTE(x_i)=\Oc(h^2)$ \ \ $\displaystyle\max_x |LTE(x)|\le \frac{1}{12}h^2\max_{x}|u^{iv}(x)|$\\
+E quindi il metodo è consistente del secondo ordine\\
+
+
+
+
+\subsubsection{Stabilità}
+
+\begin{defi}
+    Un metodo numerico è \textbf{stabile} se la soluzione numerica dipende con continuità dai dati\\
+    Ovvero se $\exists C_s$ indipendente da h \, tc \, $\|u_h\|\le C_s \|f_h\|$
+\end{defi}
+
+\phantom{}
+
+Prendiamo uno schema soggetto a perturbazione del dato: \ \ $L_h(u_h+\delta u_h)=f_h+\eps$\\
+Facciamo la differenza tra lo schema perturbato e quello non, otteniamo: \ \ $L_h \, \delta u_h=\eps$\\
+Possiamo dire che se lo schema è stabile allora \ $\|\delta u_h\|\le C_s \|\eps\|$\\
+
+
+Oss. Per lo schema a 3 punti si ricava \ $\|u_h\|_{h,\infty}\le \frac{1}{8}\|f_h\|_{h,\infty} \ \ \ \displaystyle\max_i|U_i|\le \frac{1}{8}\max_i|f(x_i)|$\\
+Lo schema a 3 punti è stabile\\
+
+
+
+
+\subsubsection{Convergenza}
+
+\begin{defi}
+    Lo schema è \textbf{convergente} se l'errore globale $\to 0$ per $h\to 0$
+\end{defi}
+
+\begin{defi}
+    Lo schema si dice di \textbf{ordine} p, se esiste $p\in\R^+$ \ tc \ l'errore globale $E=\mathcal{O}(H^p)$ \ $\big( \exists c>0$ tc $E\le ch^p\big)$
+\end{defi}
+
+
+\phantom{}
+
+
+Per ricavare la convergenza vediamo l'analisi dell'errore per intero\\
+
+1)  Problema continuo \ $Lu=f$\\
+
+2) Problema discreto \ $L_hU_h=f_h$\\
+
+3) Schema perturbato \ $L_h u = f_h + LTE_h$\\
+
+4) = 3) - 2) equazione dell'errore $e=u-u_h$ \ $L_h e=LTE_h$\\
+
+Proseguiamo adesso nel caso dello schema a 3 punti\\
+
+5) Consistenza $\implies LTE_h=\Oc(h^2)$ ovvero $\|LTE_h\|_{\infty}\le \frac{1}{12}h^2\displaystyle\max_x|u^{iv}(x)|$\\
+
+6) Stabilità $\implies \|e\|_{\infty} \le C_s\|LTE_h\|_{\infty}$ con $C_s=\frac{1}{8}$\\
+
+7) Convergenza = consistenza + stabilità = 5) + 6)
+\[
+E=\|e\|_{\infty}\le \frac18\|LTE_h\|_{\infty} \le \frac{1}{96}h^2\displaystyle\max_x|u^{iv}(x)|
+\]
+
+Lo schema a 3 punti è convergente di ordine 2\\
+
+Posso anche scrivere $\|u-u_h\|_{h,\infty}\le \frac{h^2}{96}\|f''\|_{\infty}$\\
+
+
+
+
+\begin{teo}[Principio di equivalenza]
+Per un metodo consistente, l'ordine di stabilità è uguale all'ordine di convergenza
+\end{teo}
+
+Oss. Lo useremo principalmente per verificare la convergenza:
+\[
+\text{Consistenza + stabilità } \Longleftrightarrow \text{ convergenza} 
+\]
+
+
+\newpage
+
+
+
+
+\section{DF Calore}
+
+\subsection{Derivazione dello schema}
+
+Vogliamo risolvere l'equazione del calore:
+\[
+\begin{cases}
+    u_t - D\Delta u =f \ \ \text{ in } Q_T\\
+    u(x,0)=g(x) \ \ \text{ in } \overline{Q}_T \ \ \ \text{condizione iniziale}\\
+    \text{Condizioni al bordo } \ \text{ su } \partial Q_T
+\end{cases}
+\]
+
+In particolare analizzeremo $x\in(0,1) \ t\in(0,T)$, mentre per le condizioni al bordo valgono gli stessi discorsi visti per Poisson, ma considereremo $u(0,t)=u(1,t)=0$\\
+
+
+Siano $h=\Delta x=\frac{1}{N}$ e $\tau=\Delta t=\frac{T}{N}$ gli intervalli spaziali e temporali\\
+La discretizzazione della griglia sarà con $x_i=i\cdot h$ e $t_n=n\cdot\tau$ dove $i,n=1...N$\\
+
+Nell'equazione del calore ho derivate nel tempo e nello spazio, quindi procederò a discretizzare prima nello spazio e poi nel tempo\\
+
+
+Con lo schema a 3 punti cerco un'approssimazione $U_i(t)\simeq u(t,x_i)$ dove il tempo è una variabile continua, ottengo un problema semi-discreto
+\[
+\begin{cases}
+    d_t U_i(t)-D^2 U_i(t)=f(t,x_i) \ \ i=1..N-1 \ \ t\in (0,T)\\
+    U_0(t) = U_N(t)=0 \ \ t\in (0,T) \ \ \ B.C.\\
+    U_i(t=0)=g(x_i) \ \ i=1...N-1  \ \ \ I.C.
+\end{cases}
+\]
+
+Posti $\vv{U}(t)=\OO \begin{array}{c} U_1(t) \\ \vdots \\ U_i(t) \\ \vdots \\ U_{N-1}(t) \end{array} \CC$ \ \ $\vv{F}(t)=\OO \begin{array}{c} f(x_1) \\ \vdots \\ f(x_i) \\ \vdots \\ f(x_{N-1}) \end{array} \CC$  \ e \ $\vv{G}=\OO \begin{array}{c} g(x_1) \\ \vdots \\ g(x_i) \\ \vdots \\ g(x_{N-1}) \end{array} \CC$ \skipp\\
+Posso riscrivere questo problema in formulazione matriciale:
+\[
+\begin{cases}
+    d_t \vv{U}(t) + A_h \vv{U}(t)=\vv{F}(t)\\
+    \vv{U}(0)= \vv{G}
+\end{cases}
+\]
+\phantom{}
+
+Ho ottenuto un sistema di EDO, in particolare un problema di Cauchy del I ordine, per discretizzare nel tempo procederò con metodi numerici noti\\
+
+Definiamo le seguenti approssimazioni: \ \ $\vv{U}_n\simeq \vv{U}(t_n) \ $ e $\ U^n_i\simeq U_i(t_n) \simeq u(t_n,x_i)$ \\
+
+• \ Eulero in Avanti \ \ $d_t \vv{U}(t_n)\simeq \frac{1}{\tau}\big(\vv{U}(t_{n+1})-\vv{U}(t_n)\big)$\\
+Approssimazione dell'equazione del calore con EA al variare di $n=i...N$ in forma matriciale e in forma nodale:
+\[
+\frac{1}{\tau}\big(\vv{U}_{n+1}-\vv{U}_n\big) + A_h\vv{U}_n = \vv{F}(t_n) \ \ \implies \ \vv{U}^{n+1}=\big( I-\tau A_h \big)\vv{U}^n + \tau \vv{F}(t_n)
+\]
+\[
+\begin{cases}
+    \frac{1}{\tau}\big(U_i^{n+1}-U_i^n\big) - \frac{1}{h^2}\big( U_{i+1}^n - 2U_i^n + U_{i-1}^n \big) = f(t^n,x_i) \ \ i=1...N\\
+    U_0^n=U_N^n=0 \ \ \
+    U_i^0=g(x_i)
+\end{cases}
+\]
+
+\phantom{}
+
+• \ Eulero all'Indietro \ \ $d_t \vv{U}(t_{n+1})\simeq \frac{1}{\tau}\big(\vv{U}(t_{n+1})-\vv{U}(t_n)\big)$\\
+Approssimazione dell'equazione del calore con EI al variare di $n=i...N$ in forma matriciale e in forma nodale:
+\[
+\frac{1}{\tau}\big(\vv{U}_{n+1}-\vv{U}_n\big) + A_h\vv{U}_{n+1} = \vv{F}(t_{n+1}) \ \ \implies \ \big( I+\tau A_h \big)\vv{U}^{n+1}=\vv{U}^n + \tau \vv{F}(t_{n+1})
+\]
+\[
+\frac{1}{\tau}\big(U_i^{n+1}-U_i^n\big) - \frac{1}{h^2}\big( U_{i+1}^{n+1} - 2U_i^{n+1} + U_{i-1}^{n+1} \big) = f(t^{n+1},x_i) \ \ i=1...N
+\]
+
+\phantom{}
+
+• \ Vediamo il metodo di Crank-Nicholson in forma matriciale
+\[
+\frac{1}{\tau}\big(\vv{U}_{n+1}-\vv{U}_n\big) + \frac12 A_h\vv{U}_{n+1} +\frac12 A_h\vv{U}_n  = \frac12 \vv{F}(t_{n+1}) + \frac12 \vv{F}(t_n)  \] \[ \implies \ \big(I+\frac12 \tau A_h \big)\vv{U}^{n+1}= \big( I-\frac12 \tau A_h \big) \vv{U}^n +\frac12 \tau \vv{F}(t_{n+1}) +\frac12 \tau \vv{F}(t_n) 
+\]
+
+\phantom{}
+
+Possiamo generalizzare questi metodi con il $\theta$-metodo
+\[
+\frac{1}{\tau}\big(\vv{U}_{n+1}-\vv{U}_n\big) + \theta A_h\vv{U}_{n+1} +(1-\theta) A_h\vv{U}_n  = \theta \vv{F}(t_{n+1}) +(1-\theta) \vv{F}(t_n)  
+\]
+
+\phantom{}
+
+
+Definiamo un metodo esplicito se non richiede di risolvere un sistema\\
+EA è esplicito, mentre EI e CN sono impliciti \\ \\
+
+
+Possiamo rappresentare i metodi visti attraverso la matrice caratteristica $C_h^{\tau}$
+\[
+\vv{U}^{n+1}=C_h^{\tau} \vv{U}^n + \tau \tilde{F}(t^*)
+\]
+
+\[
+EA: \ \ \ C_h^{\tau}=\big( I-\tau A_h \big) \ \ \ \tilde{F}(t^*)=\vv{F}(t^n)
+\]
+\[
+EI: \ \ \ C_h^{\tau}=\big( I+\tau A_h \big)^{-1} \ \ \ \tilde{F}(t^*)=\big( I+\tau A_h \big)^{-1}\vv{F}(t^{n+1})
+\]
+\[
+CN: \ \ \ C_h^{\tau}=\big( I+\frac12 \tau A_h \big)^{-1}\big( I-\frac12 \tau A_h \big)
+\]
+
+\phantom{}
+
+
+\subsection{Proprietà della matrice caratteristica}
+
+
+Una matrice è positiva se tutti i coefficienti $a_{ij}$ sono non negativi e almeno uno è positivo. Queste matrici conservano il segno tra $A*\vv{x}$ e $\vv{x}$\\
+
+Quindi se $C_h^{\tau}$ è positiva, allora la soluzione del problema modello conserva il segno della condizione iniziale
+\[
+\vv{U}_0\ge0 \implies \vv{U}_n\ge 0 \ \ \forall n>0
+\]
+Questo proprietà è nota come il principio del massimo discreto\\
+
+Per EA i coefficienti di $C_h^{\tau}$ sono $\frac{\tau}{h^2}$ e $1-\frac{2\tau}{h^2}$\\
+Quindi $C_h^{\tau}$ è una matrice positiva se e solo se $\tau\le \frac{h^2}{2}$\\
+
+Per EI invece sappiamo che $I+\tau A_h$ è una M-matrice, ovvero che ha inversa positiva e quindi soddisfa il principio del massimo discreto $\forall  h, \tau$\\
+
+
+\subsection{Assoluta stabilità}
+
+Definiamo un problema modello per l'equazione del calore
+\[
+\begin{cases}
+    \partial_t u -\partial_{xx} u = 0\\
+    u(0,t)=u(1,t)=0\\
+    f=0
+\end{cases}
+\]
+
+\begin{defi}
+    Un metodo si dice \textbf{A-stabile} se quando applicato al problema modello si ha $\displaystyle\lim_{n\to\infty} \|\vv{U}_n\|_{\infty}=0 \ \ \forall \vv{U}_0$ 
+\end{defi}
+
+\phantom{}
+
+Dato che il problema modello ha $f=0$ possiamo riscrivere i metodi \ $\vv{U}_{n+1}=\big(C_h^{\tau}\big)\vv{U}_0$\\
+
+Quindi i metodi sono A-stabili se e solo se $C_h^{\tau}$ è convergente\\
+
+Sappiamo che una matrice è convergente se e solo se il suo raggio spettrale $S(C_h^{\tau})=\displaystyle\max_{1\le i\le N-1} |\lambda_i(C_h^{\tau})| < 1$\\
+
+Inoltre gli autovalori di una matrice $I+\alpha M$ sono $\lambda_i(I+\alpha M)=1+\alpha \lambda_i(M)$, quindi possiamo legare gli autovalori di $C_h^{\tau}$ agli autovalori di $A_h$ che conosciamo \ \ $\lambda_i(A_h)=\frac{4}{h^2}\,sin^2\O\frac{\pi}{2}ih\C \ \ i=1...N-1$\\
+
+• \ EA ha autovalori $\lambda_i(C_h^{\tau})=1-\tau\lambda_i(A_h)$\\
+Da questa formula notiamo che l'autovalore con modulo massimo di $C_h^{\tau}$ corrisponde all'autovalore massimo di $A_h$ quindi scriviamo la condizione sul raggio spettrale
+\[
+|\lambda_{max}(C_h^{\tau})|=|1-\frac{4\tau}{h^2}\,sin^2\O\frac{\pi}{2}ih\C|<|1-\frac{4\tau}{h^2}\cdot 1|<1
+\]
+\[
+\text{EA è A-stabile } \Longleftrightarrow \tau < \frac{h^2}{2}
+\]
+Oss. Questa condizione è molto stringente, ma EA rimane comunque un metodo esplicito\\
+
+
+• \ EI ha autovalori $\lambda_i\big( (I+\tau A_h)^{-1} \big)=\frac{1}{1+\tau\lambda_i(A_h)}$
+\[
+\Bigg| \frac{1}{1+\UB{>0}{\frac{4\tau}{h^2}\,sin^2\O\frac{\pi}{2}ih\C}} \Bigg|<1
+\]
+Questa condizione è sempre verificata $\implies $ EI è incondizionatamente A-stabile\\
+
+• \ Si può verificare che CN è incondizionatamente A-stabile \\ 
+
+
+\subsubsection*{Relazione tra A-stabilità e stabilità}
+
+
+EA, EI, CN sono stabili se esiste una costante $C_s>0$ indipendente da $h$ e $\tau$ tc $\|\vv{U}_{n+1}\|\le C_s\|\vv{U}_0\|$\\
+Applichiamo la formula di questi metodi nel caso del problema modello $(f=0)$, ovvero $\vv{U}_{n+1}=(C_h^{\tau})^{n+1}\vv{U}_0$
+\[
+\|\vv{U}_{n+1}\|=\|(C_h^{\tau})^{n+1}\|\cdot\|\vv{U}_0\|
+\]
+Stiamo quindi chiedendo che $\|(C_h^{\tau})^{n+1}\|\le C_s$ \ \ quindi l'assoluta stabilità, per cui $\|(C_h^{\tau})^{n+1}\|\xrightarrow[n\to\infty]{}0$, è una condizione sufficiente per la stabilità\\
+
+
+
+
+\subsection{Consistenza}
+
+Sappiamo che un metodo è consistente se $LTE\xrightarrow[h,\tau\to0]{}0$\\
+L'errore di troncamento locale rappresenta il residuo che si genera sostituendo la soluzione del problema continuo nello schema, oppure si può anche interpretare come l'errore intrinseco di un passo temporale\\
+
+Per valutare la soluzione del problema continuo nei nodi definiamo l'operatore:
+\[
+\vv{R}u(t) \overset{def}{=} \OO \begin{array}{c} u(t,x_1) \\ \vdots \\ u(t,x_i) \\ \vdots \\ u(t,x_{N-1}) \end{array} \CC
+\]
+Quindi possiamo scrivere LTE nel modo seguente
+\[
+\tau LTE_{n}=Ru(t_{n+1})-C_h^{\tau} Ru(t_n)-\tau \tilde{F}(t_*)
+\]
+
+Esempio: valutazione di LTE per EA
+\[
+LTE_i^n = \frac12 \big(u(t_{n+1},x_i)-u(t_n,x_i)\big) - \frac{1}{h^2} \big(u(t_n,x_{i+1}) - 2u(t_n,x_i) +u(t_n,x_{i-1})\big) - f(t_n,x_i) 
+\]
+Sfruttando le approssimazioni di Taylor e il fatto che $u$ risolva l'equazione del calore, si ottine:
+\[
+LTE = \partial_t u(t_n,x_i) + \Oc(\tau) - \partial_{xx}u(t_n,x_i) + \Oc(h^2) - f(t_n,x_i) = \Oc(\tau) + \Oc(h^2)
+\]
+Si può procedere in modo analogo per EI che avrà $LTE(t_{n+1},x_i)=\Oc(\tau) + \Oc(h^2)$\\
+E per CN che avrà $LTE(t_n,x_i)=\Oc(\tau^2) + \Oc(h^2)$ (è del II ordine in spazio e tempo)\\
+
+
+
+\subsection{Analisi dell'errore, Convergenza}
+
+Sappiamo che l'errore locale è: $u(t_n,x_i)-U_i^n$\\
+Mentre l'errore globale è: $\displaystyle \max_{1\le n\le M} \|\vv{R}u(t_n)-\vv{U}_n\|$\\
+Un metodo si definisce convergente se l'errore globale $\to 0$ per $h,\tau \to 0$\\
+
+Si dimostra, nel caso $f=0$, che per gli schemi del tipo $U_{n+1}=C_h^{\tau} \vv{U}_n +\tau \tilde{F}(t_*)$ le proprietà di consistenza e stabilità implicano la convergenza con lo stesso ordine di LTE, ovvero:
+\[
+\|Ru(t_{n+1})-\vv{U}_{n+1}\|\xrightarrow{h,\tau\to 0}0 \ \forall n: 0\le n\le M-1 \ \text{ e } \ LTE = \Oc(\tau^p)+\Oc(h^q)
+\]
+\[
+\implies \|Ru(t_{n+1})-\vv{U}_{n+1}\|=\Oc(\tau^p)+\Oc(h^q)
+\]
+In particolare si ricava che $\|E(t_{n+1})\|\le C_s t_{n+1}\OO\Oc(\tau^p)+\Oc(h^q)\CC$\\
+
+Summary:
+\[
+\begin{array}{|l|c|c|c|}
+\hline
+     \text{Proprietà} & EA & EI & CN  \\
+     \hline
+     \text{Esplicita / implicita} & E & I & I\\
+     \hline
+     \text{Stabilità} & \tau<\frac{h^2}{2} & \text{Incondizionatamente} & \text{Incondizionatamente}\\
+     \hline
+     \text{Ordine} & \Oc(\tau)+\Oc(h^2) & \Oc(\tau)+\Oc(h^2) & \Oc(\tau^2)+\Oc(h^2)\\
+     \hline
+\end{array}
+\]
+
+\newpage
+
+
+\section{DF trasporto}
+
+\subsection{Introduzione}
+
+\[
+\begin{cases}
+    \partial_t u + a \partial_x u=f \ \ \text{ in } \R\\
+    u(0,x)=u_0(x)
+\end{cases}
+\]
+\phantom{}
+
+Definiamo la griglia di calcolo con nodi equispaziati in spazio e tempo \ $h=\Delta x \ \ \tau = \Delta t$\\
+
+In tempo useremo le approssimazioni:\\
+In avanti \ $\partial_t u(t_n,x_i)\simeq \frac{1}{\tau} (u(t_{n+1},x_i) - u(t_n,x_i))$\\
+All'indietro \ $\partial_t u(t_{n+1},x_i)\simeq \frac{1}{\tau} (u(t_n,x_i) - u(t_{n+1},x_i))$\\
+Entrambe del primo ordine $e=\Oc(\tau)$\\
+
+In spazio:
+Centrato \ $a\partial_x u(t,x_i)\simeq \frac{a}{2h} (u(t,x_{i+1}) - u(t,x_{i-1}))$\\
+Decentrato Downwind \ $a\partial_x u(t,x_i)\simeq \frac{a}{h} (u(t,x_{i+1}) - u(t,x_i))$\\
+Decentrato Upwind \ $a\partial_x u(t,x_i)\simeq \frac{a}{h} (u(t,x_i) - u(t,x_{i-1}))$\\ \\
+
+Posti $\vv{U}_n=\OO \begin{array}{c} U_1^n \\ \vdots \\ U_i^n \\ \vdots \\ U_{M}^n \end{array} \CC$ \ e \ $\vv{F}_n=\OO \begin{array}{c} f(t_n,x_1) \\ \vdots \\ f(t_n,x_i) \\ \vdots \\ f(t_n,x_M) \end{array} \CC$ \skipp\\
+Posso scriviamo gli schemi in formulazione puntuale e matriciale:\skipp\\
+• EAC, Eulero in avanti centrato:
+\[
+\frac{1}{\tau} (U_i^{n+1}- U_i^n) + \frac{a}{2h} (U^{n}_{i+1} - U_{i-1}^{n}) = f(t_{n},x_i)
+\]
+\[
+\vv{U}_{n+1}=(\II - \frac{1}{2}a\lambda T)\vv{U}_n + \tau F_n \skipp
+\]
+
+• EIC, Eulero all'indietro centrato:
+\[
+\frac{1}{\tau} (U_i^{n+1}- U_i^n) + \frac{a}{2h} (U^{n+1}_{i+1} - U_{i-1}^{n+1}) = f(t_{n+1},x_i)
+\]
+\[
+\vv{U}_{n+1}=(\II + \frac{1}{2}a\lambda T)^{-1}\vv{U}_n + \tau F_{n+1} \skipp
+\]
+
+• Upwind con $a>0$, Eulero in avanti decentrato:
+\[
+\frac{1}{\tau}(U_i^{n+1}-U_i^n) + \frac{a}{h}(U_i^n-U_{i-1}^n) = f(t_n,x_i)
+\]
+\[
+\vv{U}_{n+1} = (\II-a\lambda T^-)\vv{U}_n + \tau F_n \skipp
+\]
+
+• Upwind con $a<0$, Eulero in avanti decentrato:
+\[
+\frac{1}{\tau}(U_i^{n+1}-U_i^n) + \frac{a}{h}(U_{i+1}^n-U_i^n) = f(t_n,x_i)
+\]
+\[
+\vv{U}_{n+1} = (\II-a\lambda T^+)\vv{U}_n + \tau F_n \skipp
+\]
+
+\[
+\text{Dove } \ \lambda=\frac{\tau}{h} \ \ \ \ 
+ T=\OO\begin{array}{ccc}
+     0 & +1 &  \\
+     -1 & \ddots & \ddots \\
+     & \ddots & \ddots
+\end{array}\CC \ \ \ \ T^-= \OO\begin{array}{ccc}
+     +1 & 0 &  \\
+     -1 & \ddots & \ddots \\
+     & \ddots & \ddots
+\end{array}\CC \ \ \ \ T^+ = \OO\begin{array}{ccc}
+     -1 & +1 &  \\
+     0 & \ddots & \ddots \\
+     & \ddots & \ddots
+\end{array}\CC
+\]
+
+\phantom{}
+
+Tutti questi schemi possono essere rappresentati nella forma $\vv{U}_{n+1} = C_h^{\tau}\vv{U}_n + \tau \tilde{F}(t_*)$\\
+
+
+\subsection{Forma generale degli schemi in avanti}
+
+Iniziamo ricavando una formula unica per il metodo Upwind
+\[
+(a>0) \ \ \ \frac{1}{h} (U_i^n-U_{i-1}^n) = D^-_x U_i^n = D_x^C U_i^n -\frac{h}{2} D^2_{xx} U_i^n
+\]
+\[
+(a<0) \ \ \ \frac{1}{h} (U_{i+1}^n-U_i^n) = D^+_x U_i^n = D_x^C U_i^n +\frac{h}{2} D^2_{xx} U_i^n\skipp
+\]
+
+Applichiamo queste formule al metodo upwind
+\[
+\frac{1}{\tau}(U_i^{n+1}-U_i^n) + \begin{cases} aD_x^- U_i^n \ \ (a>0)\\
+aD_x^+ U_i^n \ \ (a<0)
+\end{cases} = f(t_n,x_i) \ \implies \ \frac{1}{\tau}(U_i^{n+1}-U_i^n) + aD_x^C U_i^n \pm a \frac{h}{2} D_{xx}^2 U_i^n = f(t_n,x_i)\skipp
+\]
+
+Forma generale del metodo upwind:
+\[
+\frac{1}{\tau}(U_i^{n+1}-U_i^n) + a\frac{1}{2h} (U_{i+1}^n-U_{i-1}^n) - |a| \frac{h}{2} \frac{1}{h^2} (U_{i+1}^n - 2U_i^n + U_{i-1}^n) = f(t_n,x_i)
+\]
+Può essere visto come EAC con una correzione che "stabilizza"\\
+
+Partendo da questa forma otteniamo quella generale degli schemi espliciti:
+\[
+U_i^{n+1} - U_i^n + \frac{1}{2} a \frac{\tau}{h} (U_{i+1}^n-U_{i-1}^n) - \frac12 K \frac{1}{h^2}(U_{i+1}^n - 2U_i^n + U_{i-1}^n) = \tau f(t_n,x_i)\skipp
+\]
+
+EAC: $K=0$ \ \ \ Upwind $K=|a|\tau h$ \ \ \ Lax-Friedrichs $K=h^2$ \ \ \ Lax-Wendroff $K=a^2\tau^2$ \\
+
+
+\subsection{Consistenza}
+
+Per studiare la consistenza facciamo l'analisi dell'errore di troncamento locale\\
+
+In generale si riconoscono e si sostituiscono le approssimazioni delle derivate in spazio e tempo, successivamente si sfrutta il fatto che la soluzione $u(t,x)$ risolva l'equazione del trasporto\\
+
+Vediamo l'esempio della forma generale  di uno schema esplicito:
+\[
+\tau LTE(t_n,x_i) = \UB{(1)}{u(t_{n+1},x_i) - u(t_n,x_i)} + \UB{(2)}{\frac{1}{2} a \frac{\tau}{h}\big(u(t_n,x_{i+1}) - u(t_n,x_{i-1})\big)} - \UB{(3)}{ \frac12 K \frac{1}{h^2} \big(u(t_n,x_{i+1}) - 2u(t_n,x_i) + u(t_n,x_{i-1})\big) }
+\]
+\[
+(1) = \tau \OO \partial_t u(t_n,x_i) + \Oc(\tau) \CC
+\]
+\[
+(2) = a \tau \OO \partial_x u(t_n,x_i) + \Oc (h^2) \CC
+\]
+\[
+(3) = -\frac12 K \OO \partial_{xx} u(t_n,x_i) + \Oc (h^2) \CC \skipp
+\]
+\[
+\tau LTE(t_n,x_i) = \tau \UB{0}{\OO \partial_t u(t_n,x_i) + a\partial_x u(t_n,x_i) - f(t_n,x_i) \CC} - \frac12 K\partial_{xx} u(t_n,x_i) + \tau \Oc(\tau) + \tau \Oc(h^2)
+\]
+\[
+LTE(t_n,x_i) = - \frac12 \frac{K}{\tau}\partial_{xx} u(t_n,x_i) + \Oc(\tau) + \Oc(h^2) \skipp
+\]
+
+Sostituendo $K$ nella formula otteniamo\\
+EAC: $\Oc(\tau)+ \Oc(h^2)$ \ \ \ \ \ \ Upwind: $\Oc(\tau) + \Oc(h)$ \ \ \ \ \ \ LF: $\Oc(\tau) + \Oc(h)$\\
+
+Osservazioni:\\
+• L'approssimazione in spazio ha $\Oc(h^2)$ quando $\Delta x=2h$, ma con $\Delta x=h$ (come per Upwind) ha $\Oc(h)$\\
+• In generale nel limite $\tau, h \to 0$, il rapporto $\lambda$ è costante\\
+
+• Questa analisi non funziona per LW, dove non dobbiamo sostituire la derivata in tempo\\
+Quindi trasformeremo le derivate spaziali in temporali sfruttando l'equazione di trasporto: \ \ $\partial_t u= -a\partial_x u$\\
+E derivando in tempo: \ \ $\partial_{tt} u = -a\partial_t\partial_x u = - a\partial_x\partial_t u = a^2 \partial_{xx} u $\\
+Infine uso lo sviluppo di Taylor: \ \ $u(t_{n+1},x_i)= u(t_n,x_i) + \tau \partial_t u(t_n,x_i) + \frac12 \tau^2 \partial_{tt}^2 u(t_n,x_i) + \Oc(\tau^3)$\\
+Ottengo: $LTE(t_n,x_i) = \Oc(\tau^2) + \Oc(h^2)$\\
+
+
+
+
+\subsection{Condizione CFL e convergenza}
+
+La condizione CFL richiede che la velocità, ovvero la pendenza della linea caratteristica, dello schema sia maggiore o uguale di quella del modello
+\[
+\frac{h}{\tau} \ge |a| \Longleftrightarrow \tau \le \frac{h}{|a|} \ \Longleftrightarrow \ \lambda\cdot |a| \le 1 
+\]
+\phantom{}
+
+Possiamo riformulare la condizione CFL, richiede che il dominio di dipendenza della soluzione numerica contenga quella del modello\\
+
+Il dominio di dipendenza è l'insieme dei punti dello stato iniziale che influenzano la soluzione\\
+Per l'equazione del trasporto c'è solo un punto che si trova risalendo la linea caratteristica del modello\\
+Il dominio di dipendenza della soluzione $u(x,t)$ per il punto $(x_i,t^{n+1})$ è $D={x^*}={x_i-at^{n+1}}$\\
+Invece il dominio di dipendenza della soluzione numerica $u_i^{n+1}(x,t)$ per il punto $(x_i,t^{n+1})$ è: \[D^{n+1}_i = \{ x\in\R \, : \, |x-x_i|\le h(n+1) \}\]
+\[
+CFL \Longleftrightarrow D(t_{n+1},x_i)\subseteq D_i^{n+1}
+\]
+
+\phantom{}
+
+La condizione CFL è necessaria per la convergenza
+
+Quindi no CFL $\implies$ no convergenza\\
+Per dimostrarlo, poniamo un dominio di dipendenza del modello non incluso nel dominio dello schema\\
+Studiamo una perturbazione dello stato iniziale $\hat{u}_0(x)=u_0(x)+\eps(x)$ tale che il supporto della perturbazione non si intersechi il dominio dello schema\\
+A questo punto ho una perturbazione che si propaga nel tempo invariata $\implies \hat{u}(t_{n+1},x_i) = u(t_{n+1},x_i) + \eps(x)$\\
+Inoltre i nodi del dominio dello schema non vedono la perturbazione $\implies\hat{U}_i^{n+1}=U_i^{n+1}$
+
+Qualunque sia il comportamento asintotico dello schema, l'errore del problema perturbato, rimane $\hat{e}(t_{n+1},x_i)= e(t_{n+1},x_i) + \UB{\ne 0}{\eps(x_i-at_{n+1})}$ che non converge a zero per $h,\tau \to 0$
+
+In conclusione se CFL non è soddisfatta, lo schema numerico non converge \\
+
+
+\subsection{Condizione CFL e stabilità}
+
+Uno schema $\vv{U}_{n+1}=C_h^{\tau}\vv{U}_n$ è stabile se esiste $C_s>0$ indipendente da $h,\tau$ \, tc \, $\|\vv{U}_{n+1}\|\le C_s \|\vv{U}_0\|$\\
+Inoltre se $C_s\le 1$ allora lo schema si dice \textbf{fortemente stabile}\\
+
+Ripasso delle possibili norme:
+\[
+\|\vv{U}\|_{h,1} = h \sum_i |U_i|
+\hspace{30pt}
+\|\vv{U}\|_{h,2} = \O h \sum_i U_i^2\C^{\tfrac{1}{2}}
+\hspace{25pt}
+\|\vv{U}\|_{h,p} = \O h \sum_i U_i^p\C^{\tfrac{1}{p}}
+\]
+Se $p\to\infty$ si ottiene la norma del massimo: 
+\[
+\|\vv{U}\|_{h,\infty} = \max_i |U_i|
+\]
+\phantom{}
+
+Studiamo la relazione tra CFL e stabilità\\
+Proprietà 1: \\ Se la condizione CFL è soddisfatta, allora gli schemi UW, LF e LW sono fortemente stabili nella norma 1\\
+Proprietà 2: \\ Lo schema EIC è fortemente stabile nella norma 2, senza alcuna condizione sul passo $\tau$\\
+Proprietà 3: \\ Lo schema EAC non è mai fortemente stabile. Tuttavia è stabile se $\tau \le \O\frac{h}{a}\C^2$\\
+
+
+Vediamo la dimostrazione nel caso UW con $a>0$\\
+UW: \ $U_i^{n+1} = (1-a\lambda)U_i^n + a \lambda U_{i-1}^n$ \ \ a cui ci applichiamo la norma
+\[
+h \sum_i |U_i^{n+1}|= h\sum_i |(1-a\lambda)U_i^n + a \lambda U_{i-1}^n|\le h \sum_i |(1-a\lambda)U_i^n|+ h \sum_i |a\lambda U_{i-1}^n|
+\]
+A questo punto CFL $\Longleftrightarrow |a\lambda|\le 1 \implies 1-a\lambda\ge 0$\\
+Quindi \ $|(1-a\lambda)U_i^n|=(1-a\lambda)|U_i^n|$ \ e \ $|a\lambda U_{i-1}^n|= a\lambda|U_{i-1}^n|$\\
+Otteniamo \ $\|\vv{U}_{n+1}\|_{h,1}\le h (1-a\lambda)\Sum{i}{}|U_i^n|+ha\lambda\Sum{i}{}|U_{i-1}^n|$\\
+Inoltre dato che lavoriamo su tutto $\R$ si ha che $\Sum{i=-\infty}{+\infty}\alpha_i = \Sum{i=-\infty}{+\infty}\alpha_{i-1}$
+\[
+\|\vv{U}_{n+1}\|_{h,1}\le (1-a\lambda + a \lambda) \|\vv{U}_n\|_{h,1} = \|\vv{U}_n\|_{h,1}
+\]
+\phantom{}
+
+Per dimostrare la proprietà 2 si usa il metodo dell'energia, ovvero si moltiplica per la soluzione numerica\\
+EIC: \ $U_i^{n+1} - U_i^n + \frac12 a \lambda (U_{i+1}^{n+1} - U_{i-1}^{n+1})=0$\\
+Moltiplico per $U_i^{n+1}$ e applico la norma
+\[
+\UB{(I)}{h\sum_i (U_i^{n+1}-U_i^n)U_i^{n+1}} + \UB{(II)}{\frac12 a \lambda h \sum_i (U_{i+1}^{n+1}-U_{i-1}^{n+1})U_i^{n+1}}=0
+\]
+Sulla $(I)$ si applica l'identità algebrica \ $(B-A)B=\frac12 (B^2-A^2+(B-A)^2)$
+\[
+h\sum_i (U_i^{n+1}-U_i^n)U_i^{n+1} = \frac{h}{2} \sum_i \O (U_i^{n+2})- (U_i^n)^2 + (U_i^{n+1}-U_i^n)^2 \C \ge\]
+\[
+\ge\frac{h}{2} \sum_i \O (U_i^{n+1})^2 - (U_i^n)^2 \C = \frac12 \|U_{n+1}\|_{h,2}^2 - \frac12 \|U_n\|^2_{h,2}
+\]
+Invece riconosco $(II)$ come una serie telescopica che quindi è nulla\\
+Dalla formula iniziale otteniamo $\frac12 \|U_{n+1}\|_{h,2}^2 - \frac12 \|U_n\|^2_{h,2} \le 0 \implies \|U_{n+1}\|_{h,2}\le \|U_n\|_{h,2}$ e quindi EIC è incondizionatamente fortemente stabile\\
+
+La proprietà 3 si dimostra anch'essa con il metodo dell'energia, però è complicato e non lo vediamo\\
+Oss. EAC è condizionatamente stabile è una richiesta più stringente di CFL \ $\tau\le \frac{h^2}{a^2}\le \frac{h}{a}$ \\
+
+\subsection{Condizioni al bordo}
+
+In base alla direzione della velocità del modello $\vv{a}$ si definiscono i bordi di inflow e outflow
+\[
+\text{Inflow: } \{x\in\partial\Omega \, : \, \vv{a}\cdot \vv{n} <0 \}
+\]
+Le condizioni al bordo per l'equazione di trasporto devono essere imposte solo su un bordo, se ($a>0$) sulla frontiera inflow\\
+Mentre i valori outflow sono determinati dall'equazione stessa\\
+Il problema di trasporto con condizione al bordo e $a>0$ è:
+\[
+\begin{cases}
+    \partial_t u + a \partial_x u = f \ \ \ x\in (0,1), t>0\\
+    u(t=0,x)=u_0(x) \ \ \ t=0, x\in (0,1) \ \ \text{ (condizioni iniziali)}\\ 
+    u(t,x=0)=\Phi \ \ \ x=0, t>0 \ \ \text{ (Inflow)}
+\end{cases}  
+\]
+\phantom{}
+
+Per discretizzare la condizione al bordo inflow dovrò semplicemente sostituire $U_0^n=\Phi$\\
+
+Invece ho problemi a discretizzare al bordo outflow perché mi servirebbe $U_{M+1}^n$ che non è definito, dovrò quindi approssimare questo valore con formule di estrapolazione\\
+Lineare: \ $f(x+h)=2f(x)-f(x-h)+\Oc(h^2)$ ovvero $U_{M+1}^n=2U_M^n - U_{M-1}^n$ \\ Però questo mi da un'approssimazione solo del I ordine, per evitarlo posso usare quella quadratica: \\
+$f(x+h)=3f(x)-3f(x-h)+ f(x-2h)+ \Oc(h^3)$ ovvero $U_{M+1}^n = 3U_M^n - 3U_{M-1}^n+U_{M-2}^n$\\
+
+
+\newpage
+
+
+\section{FEM}
+
+Metodi per la risoluzione delle EDP e proprietà fondamentali\\
+
+• \ Differenze finite:
+\phantom{} \ \ - Formulazione classica\\
+\phantom{} \ \ - Discretizzazione regolare su nodi $x_{ij}$\\
+
+• \ Elementi finiti:
+\phantom{} \ \ - Formulazione variazionale\\
+\phantom{} \ \ - Griglie generali, partizione di $\om$ in elementi\\
+\phantom{} \ \ - La soluzione è una funzione : $\om\to \R$\\
+
+
+
+
+\subsection{Metodo di Galerkin}
+
+Ripassiamo il PVA, problema variazionele astratto:\\
+Dati $V$ uno spazio di Hilbert,  $F:V'\to \R$ funzionale lineare continuo e $a(\cdot,\cdot) : V\times V \to \R$  una forma bilineare continua e coerciva, trovare $u\in V$ t.c. $a(u,v)=F(v) \ \forall v\in V$\\
+
+Il metodo di Galerkin, o MG, determina una soluzione approssimata e discreta del PVA attraverso la proiezione di $u$ su un sottospazio a dimensione finita di $V$\\
+
+Per ricavare la formulazione del MG supponiamo che $a(\cdot,\cdot)$ sia equivalente ad un prodotto scalare, poi varrà anche se quest'ipotesi non è rispettata.\\
+Usiamo $a(\cdot,\cdot)$ per fare la proiezione sul sottospazio $V_k$\\
+Avremmo $a(u_k,v_k)=a(u,v_k) \ \forall v_k\in V_k$ però per il PVA vale $a(u,v)=F(v) \ \forall v\in V$  e $V_k\subset V$, allora possiamo formulare il metodo di Galerkin nel seguente modo:\\
+
+Dato $V_k\subset V$ un sottospazio con $dim(V_k)=k< +\infty$. Trovare $u_k\in V_k$ funzione $u_k:\om\to\R$ t.c.
+\[
+a(u_k,v_k)=F(v_k) \ \ \forall v_k\in V_k
+\]
+
+
+\subsection{Formulazione matriciale del metodo di Galerkin}
+
+Posta $k=dim(V_k)$ la dimensione di $V_k$
+
+Le equazioni del metodo sono: \ $a(u_k,v_k)=F(v_k) \ \forall v_k\in V_k$\\
+Ovvero ci sono tante equazioni quante sono le funzioni linearmente indipendenti di $V_k$, queste funzioni sono una base $\{\phi_i(x)\}_{i=1}^k$ di $V_k$ e sono $k=$ dimensione di $V_k$\\
+Quindi le equazioni sono equivalenti a:  \ $a(u_k,\phi_i)=F(\phi_i) \ \forall i=1...k$
+
+L'incognita del metodo è la funzione $u_k\in V_k$\\
+Se conosco una base di $V_k$, allora $u_k(x)= \Sum{i=1}{k} U_i\phi_i(x)$\\
+Quindi le incognite sono i coefficienti $\{U_i\}_{i=1}^{k}$\\
+
+Riscriviamo le equazioni con le nuove incognite:
+\[
+a\Big( \Sum{j=1}{k} U_j\phi_j(x), \phi_i(x) \Big) = F(\phi_i(x)) \ \forall i=1...k
+\]
+Dato che $a(\cdot,\cdot)$ è bilineare e $U_j$ non dipendono da $x$
+\[
+\Sum{j=1}{k} U_j\,a\O \phi_j(x), \phi_i(x) \C = F(\phi_i(x)) \ \forall i=1...k
+\]
+
+Il metodo di Galerkin è equivalente a un sistema lineare di $k$ equazioni in $k$ incognite: \ \ $A \vv{U}=\vv{F}$\\
+Dove $A_{ij}=a(\phi_j(x),\phi_i(x))$ \ \ $(\vv{U})_i=U_i$ \ \ $(\vv{F})_i= F(\phi_i(x))$ \ \ per $i=1...k$\\
+
+
+Il metodo degli elementi finiti è un caso particolare del MG in cui il sottospazio $V_k$ è definito come spazio di funzioni continue e polinomiali a tratti su una partizione del dominio $\om$ in "elementi"\\
+
+Per i metodi FEM partendo dal parametro di discretizzazione $h$ si userà il sottospazio discreto $V_h$ con $dim(V_h)=N_h$ dove $N_h$ è proporzionale al numero di elementi della partizione\\
+
+
+
+
+\subsection{FEM di grado 1 (lineare)}
+
+
+Supponiamo $\om=(0,1)$, la partizione sarà in sottointervalli $(x_i,x_{i+1})$\\
+I punti $x_i=ih$ sono detti vertici e hanno passo di discretizzazione $h=\frac{1}{N}$\\
+
+Lo spazio per le FEM di ordine 1 è:
+\[
+V_h = X_h^1(0,1) = \Big\{v_h\in C^0(0,1) \, : \, v_h(x)\Big|_{x_i}^{x_{i+1}} \in \PP^1 (x_i,x_{i+1}) \ i=0...N-1 \Big\}
+\]
+ovvero la restrizione $\Big|_{x_i}^{x_{i+1}}$ di $v_h$ è un polinomio di grado 1\\
+
+Questa definizione si può estendere ai gradi $r\ge1$\\
+
+Definiamo la base $\{\phi_i(x)\}_{i=0}^{N}$ dello spazio FEM lineare\\
+Gli elementi della base $\phi_i(x)\in X_h^1(0,1)$ valgono 1 nel nodo $x_i$ e zero in tutti gli altri nodi, quindi\\
+• \ $\phi_i(x)$ hanno supporto compatto $(x_{i-1},x_{i+1})$, in questo modo sarà più facile calcolare $a(\phi_i,\phi_j)$\\
+• \ $\phi_i(x_j)=\begin{cases}
+    1 \ \ \text{ se }i=j\\
+    0 \  \ \text{ se }i\ne j
+\end{cases} = \delta_{ij}$ e quindi è una base lagrangiana\\
+
+
+Vale la seguente proprietà: \ $u_h(x_i)=U_i$
+\begin{Dim}
+\[
+u_h(x_i)=\Sum{j=0}{N} U_j \phi_j (x_i) = \Sum{j=0}{N} U_j\delta_{ji} = U_i \]
+\end{Dim}
+Ovvero risolvendo il sistema lineare ottengo i valori nodali della funzione elementi finiti\\
+
+Conseguenza: $u_h(x)=\Sum{j=0}{N} u_h(x_j)\phi_j(x)$
+
+
+\fg[]{0.85}{4.png}
+
+Cambiando uno di questi ingredienti cambia il FEM, per questo ci sono tantissimi FEM\\
+
+
+\subsubsection*{Assemblaggio matrice FEM 1D}
+
+
+Formulazione variazionale di Poisson:
+\[
+a(u,v)=(\nabla u, \nabla v) = \int_{\om}\nabla u(x)\cdot \nabla v(x) \, dx  \ \ \ F(v)=(f,v)=\int_{\om} fv\, dx
+\]
+Formulazione matriciale:
+\[
+A\vv{u} = \vv{f} \ \ \  A_{ij}=a(\phi_j,\phi_i) \ \ \ f_i=\int_{\om} f\phi_i\, dx
+\]
+\phantom{}
+
+Notiamo subito che A è tridiagonale per FEM $\PP^1$ in 1D\\
+Infatti posta la base come vista sopra, il supporto di $\phi_i$ ha intersezione non nulla solo con $\phi_{i-1}$ e $\phi_{i+1}$\\
+
+Vogliamo automatizzare il calcolo dei coefficienti della matrice e del termine noto di moto da poter riscrivere il modello in un algoritmo\\
+
+\fg[]{0.4}{5.png}
+
+L'idea è quella di costruire un elemento di riferimento e trasformare le basi su di esso\\
+
+L'elemento di riferimento è l'intervallo $(0,1)$.\\ Definiamo:
+La mappa $x= \Phi(\xi)=x_i+\xi(x_{i+1}-x_i) \ \ \Phi: \xi \in (0,1) \mapsto x\in (x_i,x_{i+1})$\\
+E la mappa inversa $\xi=\Phi^{-1}(x)=\frac{x-x_i}{x_{i+1}-x_i} \ \ \Phi^{-1}: x \mapsto \xi$\\
+
+Definiamo le basi sull'intervallo di riferimento \ \ $\hat{\phi}_0=1-\xi \  \ \hat{\phi}_1=\xi$\\
+Elenchiamo dei risultati che saranno utili per calcolare gli integrali:
+\[
+\phi_i(x)\Big|_{x_i}^{x_{i+1}}= \hat{\phi}_0(\Phi^{-1}(x)) \hspace{30pt} \phi_{i+1}(x)\Big|_{x_i}^{x_{i+1}}= \hat{\phi}_1(\Phi^{-1}(x))
+\]
+\[
+dx=h\,d\xi \hspace{30pt} d\xi = h^{-1} \,dx \hspace{30pt} \text{ dove } h=x_{i+1}-x_i
+\]
+\[
+\frac{d\hat{\phi}_0}{d\xi}=-1 \hspace{30pt} \frac{d\hat{\phi}_1}{d\xi}=1
+\]
+Calcoliamo un elemento della matrice, gli altri due sono analoghi
+\[
+A_{i,i+1}=\int_{x_i}^{x_{i+1}} \phi'_{i+1}\phi'_i \, dx =\int_{x_i}^{x_{i+1}}\frac{d\phi_{i+1}}{dx}\cdot\frac{d\phi_i}{dx}\,dx = \int_{x_i}^{x_{i+1}} \frac{d \hat{\phi}_1(\Phi^{-1}(x))}{dx} \frac{\hat{\phi}_0(\Phi^{-1}(x))}{dx} \, dx =\]
+\[ = \int_0^1 \frac{d \hat{\phi}_1(\xi)}{d\xi}\frac{d\xi}{dx}\,\cdot\, \frac{d \hat{\phi}_0(\xi)}{d\xi}\frac{d\xi}{dx}\, h \, d\xi = \int_0^1 - \frac{1}{h}\, d\xi = -\frac{1}{h}\skipp
+\]
+Si ottiene che $A=\frac{1}{h}\, tridiag[-1,2,-1]$\\
+
+Invece per F, sappiamo che $f=cost \ \implies \ \int_{x_{i-1}}^{x_{i+1}}f\phi_i(x)\,dx=hf \ \implies \ F=hf[1,1...] $\\
+
+
+
+\subsection{FEM di grado 2}
+
+Dati due elementi diversi della partizione 2D, si richiede che:
+\[
+K_i\ne K_j \implies K_i\cap K_j = \begin{cases}
+    \empty \ \text{ insieme vuoto}\\
+    \text{un vertice}\\
+    \text{un intero lato di } K_i \text{ e } K_j
+\end{cases}
+\]
+\phantom{}
+
+Controesempio non ammissibile perché $K_i$ condivide lati non interi con altri elementi:
+\fg[]{0.25}{6.jpeg}
+\phantom{}\\
+
+Definizione del parametro h:\\
+Per ogni triangolo $K$ definiamo $diam(K)$ come il diametro del cerchio circoscritto\\
+Allora $h=\displaystyle \max_{k\in T_h} diam(K)$ \ \ dove $T_h$ indica l'insieme degli elementi\\
+Inoltre posto $\rho(K)$ il diametro del cerchio inscritto\\
+La griglia si dice quasi-uniforme se $\exists c>0$ indipendente dai triangoli t.c. $c<\frac{\rho(K)}{diam(K)}<1 \ \forall K\in T_h$\\
+Questo garantisce che non ci siano triangoli estremamente difformi\\
+
+
+\subsubsection*{Assemblaggio matrice FEM 2D}
+
+Per assemblare la matrice, bisogna:\\
+1. \ scorrere tutti gli elementi\\
+2. \ per ciascuno di essi calcolare la matrice locale, per cui sarà necessario calcolare $B_K$\\
+3. \ mappare i coefficienti di $A_{loc}$ in $A$ usando la trasformazione da elemento corrente a elemento di riferimento \\
+
+Prendiamo l'elemento di riferimento come il triangolo unitario con coordinate di riferimento $\xi,\eta$\\
+Poniamo $F_K$ la trasformazione dal riferimento al corrente, univocamente determinata dai vertici di K\\
+Infine sia $B_K$ la matrice jacobiana di questa trasformazione $F_K$\\
+
+Dobbiamo calcolarci i coefficienti locali $A_{ij}^K=\int_K \nabla \phi_j \cdot \nabla \phi_i\, dx$ \\
+Sappiamo che $dx= det(B_K)\,d\hat{x}$\\
+
+Inoltre per trovare i gradienti "generalizziamo" il caso 1D: \ \ $\frac{d \phi_i}{dx} = \frac{d\hat{\phi}_i}{d\xi}\frac{d\xi}{dx}$ \ ovvero:
+\[
+gradiente \ corrente = gradiente\ di\ riferimento \cdot inversa \ matrice \ jacobiana \]
+\[ \implies \ \nabla_{x,y} \phi_i(x,y) = B_K^{-T} \cdot \hat{\nabla}_{\xi,\eta} \hat{\phi}_i(\xi,\eta)\]
+
+\[
+A_{i,j}^K = \int_K \nabla \phi_j \cdot \nabla \phi_i\, dx = \int_K \nabla \hat{\phi}_j \big( F_K^{-1}(x,y) \big)\cdot \nabla \hat{\phi}_i\big(F_K^{-1}(x,y)\big)\,dx\,dy= \]\[= \int_{\hat{K}} \Big(B_K^{-T}\hat{\nabla}_{\xi,\eta}\hat{\phi}_j(\xi,\eta)\Big)\cdot\Big(B_K^{-T}\hat{\nabla}_{\xi,\eta}\hat{\phi}_i(\xi,\eta)\Big)\, det(B_K)\, d\xi\, d\eta\skipp
+\]
+
+Nel caso degli elementi finiti lineari $B_K^{-T}$ e $\hat{\nabla}_{\xi,\eta}\hat{\phi}_i$\, sono costanti, quindi posso portare tutto fuori dall'integrale e mi rimane l'integrale di $\hat{K}$ che, essendo triangolo unitario, so essere $|\hat{K}|=\tfrac12$, ottengo:
+\[
+A_{ij}^K = \frac{det(B_K)}{2}\, \Big(B_K^{-T}\hat{\nabla}_{\xi,\eta}\hat{\phi}_j(\xi,\eta)\Big)\cdot\Big(B_K^{-T}\hat{\nabla}_{\xi,\eta}\hat{\phi}_i(\xi,\eta)\Big) 
+\]
+Osservo che la dipendenza da $K$ si manifesta solo attraverso $B_K$\\
+
+
+\newpage
+
+
+\section{Analisi del metodo di Galerkin}
+
+\subsection{Proprietà del metodo di Galerkin}
+
+Il MG è un caso particolare del PVA, di conseguenza:\\
+$V_h$ è uno spazio di Hilbert perché $V_h\subset V$\\
+$a(\cdot,\cdot)$ è bilineare, continua e coerciva\\
+$F(\cdot)$ è un funzionale lineare e continuo\\
+
+Quindi per MG: trovare $u_h\in V_h$ tc $a(u_h,v_h)=F(v_h) \ \forall v_h\in V_h$, vale il teorema di Lax-Milgram.\\
+$\implies$ Il problema è ben posto, $\exists!$ soluzione e vale la stima $\|u_h\|_V\le \frac{1}{\alpha} \|F\|_{V'}$\\
+
+Vediamo meglio queste proprietà:\\
+
+
+
+\begin{teo}
+La matrice A associata alla discretizzazione del problema ellittico $A\vv{u}=\vv{f}$ con forma bilineare $a(\cdot,\cdot)$ coerciva è definita positiva
+\end{teo}
+
+\begin{Dim}
+\[
+\forall \vv{V}\in \R^{N_h} \ \ \ \ \vv{V}^TA\vv{V} = \Sum{j=1}{N_h} \Sum{i=1}{N_h} V_j A_{ji} V_i = \Sum{i,j=1}{N_h} V_j a(\phi_j(x),\phi_i(x))V_i = \{a \text{ è bilineare }\} =\]
+\[ = a\Big( \Sum{j=1}{N_h} V_j\phi_j(x), \Sum{i=1}{N_h} V_i \phi_i(x) \Big) = \OOO \begin{array}{c}
+     v(x)= \Sum{i=1}{N_h} V_i\phi_i(x) \\
+     v(x)\in V_h
+\end{array} \CCC = a(v(x),v(x)) \overset{\text{coerciva}}{\ \ge \ }
+\alpha \|v(x)\|_V^2 \ge 0
+\]
+Ma essendo una norma vale anche che $\vv{V}\in \R^{N_h} \ \vv{V}^TA\vv{V}=0 \Leftrightarrow v(x)=0 \Leftrightarrow \vv{V}=0$\\
+\end{Dim}
+
+Proprietà: La matrice A è simmetrica se e solo se la forma bilineare $a(\cdot,\cdot)$ è simmetrica\\
+Corollario: La soluzione del problema di Galerkin esiste ed è unica\\
+
+\subsection{Stabilità del MG}
+
+Corollario di Lax-Milgram: Il MG è stabile, uniformemente rispetto ad h, in quanto vale la maggiorazione $\|u_h\|_V\le \frac{1}{\alpha} \|F\|_{V'}$ \ dove $\alpha$ è la costante di coercività ed è indipendente da h
+
+\begin{Dim}
+    Usiamo $v_h=u_h$ come funzione test nel MG
+    \[ 
+    \alpha \|u_h\|_V^2 \overset{a \text{ coerciva}}{\ \le \ } a(u_h,u_h) = F(u_h) \overset{F \text{ limitata}}{\ \le \ } \|F\|_{V'}\cdot \|u_h\|_V
+    \]
+    E poi divido per $\alpha\|u_h\|_V$
+\end{Dim}
+\phantom{}
+
+\subsection{Consistenza del MG}
+
+
+Per analizzare la consistenza valutiamo il residuo che si ottiene sostituendo $u$ (soluzione del PVA) nel MG\\
+Sappiamo che, in generale, $u\in V$ ma $u\not\in V_h$\\
+Per definizione del PVA $a(u,v)=F(v) \ \forall v\in V$, ma $v_h\in V_h\subset V \implies a(u,v_h)=F(v_h)$\\
+Di conseguenza sostituendo $u$ nel MG: $a(u_h,v_h)=F(v_h)$ si ottiene che il residuo è nullo $a(u,v_h)-F(v_h)=0$\\
+
+Si dice che il MG è \textbf{fortemente consistente}, ovvero è consistente indipendentemente dal numero di basi e quindi dalla dimensione di $V_h$\\
+
+Metodo di Galerkin come metodo di Proiezione:\\
+Facendo la differenza tra il residuo $a(u,v_h)=F(v_h)$ e il MG $a(u_h,v_h)=F(v_h)$ si ottiene
+\[
+a(u-u_h,v_h)=0 \ \forall v_h\in V_h \ \ \ \ \text{ dove } u-u_h \text{ è l'errore}
+\]
+Questa proprietà è detta \textbf{ortogonalità di Galerkin} ed è equivalente alla consistenza\\
+
+Quindi se la forma bilineare $a(\cdot,\cdot)$ è un prodotto scalare allora $(u-u_h) \perp v_h\in V_h$\\
+Si può quindi vedere la soluzione di MG come la proiezione rispetto ad $a(\cdot,\cdot)$ di $u$ su $V_h$\\
+Ovvero $u_h$ è la funzione di $V_h$ più vicina a $u$ nella distanza definita da $a(\cdot,\cdot)$
+\[
+\|u-u_h\|_{a} = \inf_{v_h\in V_h} \|u-v_h\|_a
+\]
+
+Possiamo concludere che sotto le ipotesi: $a(\cdot,\cdot)$ prodotto scalare e $\|\cdot\|_a\ne \|\cdot\|_V$ il metodo di Galerkin ha proprietà di approssimazione ottimale nello spazio $V_h$\\
+
+
+\newpage
+\subsection{Convergenza del MG}
+
+
+\begin{teo}[Lemma di Ceà]
+    \[
+    \|u-u_h\|_1 \le \frac{M}{\alpha} \inf_{v_h\in V_h} \|u-v_h\|_1 \ \ \ \ \ \text{ dove } \|\cdot\|_1 \equiv \|\cdot\|_{H^1}
+    \]
+\end{teo}
+
+Notiamo che $M$ e $\alpha$ sono, rispettivamente le costanti di continuità e coercività di $a(\cdot,\cdot)$, che $\frac{M}{\alpha}$ è indipendente da h e che, in generale,  $\frac{M}{\alpha}\ge 1$\\
+
+\begin{Dim}
+    Applico la coercività all'errore $u-u_h$:
+    \[
+    a(u-u_h,u-u_h)\ge \alpha \|u-u_h\|_1^2
+    \]
+    Inoltre vale:
+    \[
+    a(u-u_h,u-u_h) = a(u-u_h,u-v_h +v_h -u_h) = a(u-u_h,u-v_h) + a(u-u_h,v_h-u_h) \ \ \forall v_h\in V_h
+    \]
+    Per l'ortogonalità di Galerkin vale che \ $a(u-u_h,v_h-u_h)=0$ perchè $v_h-u_h \in V_h$\\
+    Infine per la continuità di $a(\cdot,\cdot)$ \ $a(u-u_h,u-v_h)\le M\|u-u_h\|_1 \cdot \|u-v_h\|_1$\\
+    Abbiamo quindi ottenuto che
+    \[
+    \alpha \|u-u_h\|_1^2 \le a(u-u_h,u-u_h) \le M\|u-u_h\|_1 \|u-v_h\|_1 \ \ \forall v_h\in V_h
+    \]
+    Quindi divido per $\alpha \|u-u_h\|_1$ e al posto del per ogni pongo la condizione equivalente con inf
+    \[
+    \|u-u_h\|_1 \le \frac{M}{\alpha} \inf_{v_h\in V_h}\|u-v_h\|_1
+    \]
+\end{Dim}
+
+
+Possiamo vedere questo lemma come un principio di equivalenza per MG, infatti la coercività implica la stabilità e l'ortogonalità equivale alla consistenza, quindi \ \ stabilità + consistenza $\implies $ convergenza\\
+
+Per valutare effettivamente la convergenza dobbiamo porre $\underset{\underset{N_h\to \infty}{h\to 0}}{lim}\|u-u_h\|_1=0$ e per il lemma di CEA chiediamo $\underset{\underset{N_h\to \infty}{h\to 0}}{lim}\, \underset{v_h\in V_h}{inf}\, \|u-v_h\|_1=0$\\
+
+Questa proprietà è vera se $\underset{\underset{N_h\to \infty}{h\to 0}}{lim} V_h$ è denso in $V$, ovvero se al limite per $h\to0, N_h\to \infty$, data $u$, in ogni intorno di $u$ esiste una funzione $v_h\in V_h$\\
+
+Quindi per verificare la convergenza è necessario considerare una definizione specifica di $V_h$ %ci vorrebbe //
+\newpage
+
+\subsection{Analisi FEM}
+
+Valutiamo $\displaystyle \inf_{v_h\in V_h}\|u-v_h\|_1$ nel caso di FEM 1D, dove $V_h\equiv X_N^r$\\
+Per fare ciò valutiamo tre funzioni:\\
+• \ la soluzione $u$ del PVA  \ • \ la soluzione $u_h$ di MG con FEM $\PP^r$ \ • \ $\Pi_h^r u$ l'interpolante $\PP^r$ di u\\
+
+Sappiamo che $\displaystyle \inf_{v_h\in V_h}\|u-v_h\|_1\le \|u-v_h\| \ \forall v_h\in V_h$ \ ma $\Pi_h^r u \in V_h$\\
+Possiamo quindi maggiorare l'errore FEM con l'errore di interpolazione:
+\[
+\|u-u_h\|_1\le\frac{M}{\alpha}\inf_{v_h\in V_h}\|u-v_h\|_1 \le \frac{M}{\alpha}\|u-\Pi_h^r u\|_1
+\]
+\phantom{}
+
+Conosciamo l'errore di interpolazione con norma del massimo su funzioni $C^{r+1}$, vogliamo generalizzare per norma $H^1$ su funzioni $u\in H^1$, vale il seguente:
+
+\begin{teo}[Piecewise lagrangian interpolation]
+    Sia $v\in H^{r+1}$ per $r\ge 1$ e sia $\Pi_h^r v\in X_h^r$ la sua funzione interpolante, allora
+    \[
+    |v-\Pi_h^r v|_{H^k(I)}\le C_{k,r} h^{r+1-k} |v|_{H^{r+1}(I)} \ \ \text{ per } k=0,1
+    \]
+    Dove le costanti $C_{k,r}$ sono indipendenti da v ed h
+\end{teo}
+
+Ricordiamo che:\\
+Norma $H^s$ : $\|v\|_{H^s}^2 = \Sum{i=0}{s} \|\partial_x^{(i)}v\|_{L^2}^2$\\
+Seminorma $H^s$ : $|v|_{H^s}^2= \|\partial_x^{(s)}v\|^2_{L^2}$ ovvero ha solo la norma della derivata di ordine massimo\\
+
+Oss. Quindi servirà $k=0$ per stimare la norma $L^2$ e la somma di $k=0$ e $k=1$ per la norma $H^1$\\
+
+Esempio: Stima dell'errore di interpolazione per FEM $\PP^1$ in $H^1$, presa $u\in H^2$
+\[
+\|u-\Pi_h^1 u\|_{H^1}^2 = \|u-\Pi_h^1 u\|_{L^2}^2 + \|\partial_x(u-\Pi_h^1 u)\|_{L^2}^2 \le C_{0,1}^2 h^4 |u|^2_{H^2} + C_{1,1}h^2|u|^2_{H^2} \le C\,h^2|u|_{H^2}^2 
+\]
+\[
+\overset{\text{sotto radice}}{ \ \implies \ } \ \|u-\Pi_h^1 u\|_{H^1} \le C \, h |u|_{H^2}
+\]
+L'interpolante FEM $\PP^1$ converge linearmente a u per $h\to0$
+\[
+\overset{\text{Per Ceà}}{\implies} \ \|u-u_h\|_{H^1}\le \frac{M}{\alpha}\ \|u-\Pi_h^1 u\|_{H^1} \le \frac{M}{\alpha}C \, h |u|_{H^2}
+\]
+Quindi se $u\in H^2(\om)$ il metodo degli elementi finiti lineari in 1D converge linearmente in norma $H^1$\\
+
+
+Generalizziamo al caso FEM $\PP^r$ con il seguente:
+
+\begin{teo}
+    Siano $u\in V$ la soluzione esatta del PVA, $u_h$ la sua soluzione approssimata con FEM di grado r, ovvero $u_h\in V_h = X_h^r\cap V$.  Sia inoltre $u\in H^{p+1}$ per un $p\ge r$, allora
+    \[
+    \|u-u_h\|_{H^1} \le \frac{M}{\alpha} C h^r |u|_{H^{r+1}} \ \ \ \ \text{ con } C \text{ indipendente da } u \text{ ed } h
+    \]
+\end{teo}
+
+
+Invece nel caso in cui $p<r$, vale il seguente:
+
+\begin{teo}
+    Se $u\in H^{p+1}$, per un $p>0$, allora esiste una costante $C$ indipendente da u ed h tale che
+    \[
+    \|u-u_h\|_{H^1} \le \frac{M}{\alpha} C h^s |u|_{H^{s+1}} \ \ \ \ \text{ con } s=min\{r,p\}
+    \]
+\end{teo}
+
+Questo vuol dire che la regolarità di u è una barriera per l'ordine di convergenza di FEM
+
+\fg[]{0.6}{7.jpeg}
+
+Si ha convergenza ottimale se $p\ge r$ e quindi $s=r$\\
+Convergenza sotto ottimale se $p<r$ e quindi $s=p$\\
+Invece nel caso $u\in H^1$ si può dire che il metodo FEM converge $\displaystyle\lim_{h\to0} \|u-u_h\|_{H^1}=0$ ma non è possibile caratterizzare un ordine di convergenza\\
+
+Oss. I risultati di convergenza del metodo FEM non dipendono dalla dimensionalità del dominio\\ 
+
+\subsection{Stima dell'errore in L2}
+
+Per la convergenza in norma $L^2$ si ha $\|u-u_h\|_{L^2}\le \|u-u_h\|_{H^1}\le \frac{M}{\alpha} C h^r|u|_{H^{r+1}}$\\
+Però questa disuguaglianza non è ottimale, si può ottenere un ordine superiore con una norma più debole\\
+
+\begin{teo}
+    Siano $u\in V$ la soluzione esatta del PVA ed $u_h$ la sua soluzione approssimata da FEM di grado r. Sia inoltre $u\in C^0(\overline{\om})\cap H^{p+1}(\om)$ per un $p>0$, allora
+    \[
+    \|u-u_h\|_{L^2(\om)}\le C h^{s+1}|u|_{H^{s+1}(\om)} \ \ \ \text{ con } s=min\{r,p\} \text{ e } C \text{ indipendente da $u$ ed $h$}
+    \]
+\end{teo}
+
+\newpage
+
+\section{FEM Varie}
+
+\subsection{Condizioni al bordo}
+
+Si vuole analizzare un problema di Cauchy non omogeneo con FEM:
+\[
+\begin{cases}
+    -\nabla u = f \ \ \text{ in } \om\\
+    u=g \ \ \text{ su } \partial \om
+\end{cases}
+\]
+
+In formulazione variazionale: \ \ Trovare $u\in \{v\in H^1(\om) : v|_{\partial\om} = g\}$ tc $a(u,v)=(f,v) \ \forall v\in H^1_0(\om)$\\
+Non si può apllicare L.M. perché lo spazio delle soluzioni è diverso dallo spazio delle funzioni test\\
+
+Si applica il metodo del rilevamento della traccia per trasformare le condizioni al bordo\\
+Si cerca una funzione $R(g)\in H^1(\om)$ che assume $g$ su $\partial\om$\\
+In questo modo si risolve il PVA con un'incognita ausiliaria $w\in H_0^1(0,1)$ tc la soluzione sia $u=w+R(g)$\\
+Dovremo risolvere: \ \ Trovare $w\in H_0^1(\om)$ tc $a(u,v)=(f,v)-a(R(g),v) \ \forall v\in H_0^1$\\
+
+Per il rilevamento del dato al bordo con FEM, l'idea è quella di usare le basi che valgono 1 sul singolo vertice del bordo e 0 negli altri vertici\\
+Si prende $R_h(g)=(I_h(g))=\Sum{i=1}{N_h^b} g(x_i)\phi_i(x)$ dove $N_h^b$ è il numero di nodi al bordo e $R_h(g)\in H^1(\om)$ perché è combinazione delle basi che sono funzioni $H^1(\om)$\\
+
+\subsection{FEM 2D}
+
+Per approssimare la soluzione con polinomi di secondo grado a tratti, avrò bisogno di più nodi perché una parabola è identificata univocamente con 3 punti. Di conseguenza si introducono nuovi nodi, ovvero i punti medi per ogni sotto intervallo\\
+Sarà necessario definire le basi su tutti i nodi quindi sia sui vertici che sui punti medi. Si osserva che le basi dei punti medi, invece che essere definite su due sotto intervalli, sono definite su un solo sotto intervalli, per questo sono dette bolle
+
+\fg[Esempio di base lineare e quadratica, che è nulla nei punti medi\\
+\phantom{Figure 1: }Inoltre tratteggiate sono le due basi dei punti medi]{0.7}{8.jpeg}
+
+\phantom{}
+
+Inoltre si nota che rispetto al caso 1D, dove la matrice locale era $2\times2$, nel caso 2D la matrice locale è $3\times3$\\
+La matrice globale sarà a banda con banda 5, aumentando la dimensione si peggiora la sparsità della matrice\\
+
+
+
+\newpage
+
+
+
+
+
+\section{FEM diffusione e trasporto}
+
+\subsection{Introduzione}
+
+
+Analizziamo il problema omogeneo di diffusione e trasporto nel caso unidimensionale e stazionario
+\[
+\begin{cases}
+    -\eps u'' + \beta u' =0 \ \ 0<x<1\\
+    u(0)=0; \ \ u(1)=1
+\end{cases} 
+\]
+Questo problema essendo stazionario ha $\eps$ e $\beta$ costanti nel tempo. La soluzione sarà unica e costante nel tempo\\
+
+In questo particolare il problema equivale a una EDO lineare ai limiti con coefficienti costanti\\ possiamo calcolarne la soluzione:
+
+\fg[]{0.9}{9.jpeg}
+
+
+
+\[u(x)=\frac{e^{\tfrac{\beta x}{\eps}}-1}{e^{\tfrac{\beta}{\eps}}-1}\]
+
+La soluzione del problema dipende dai parametri $\eps$ e $\beta$, per capirne l'effetto su $u$ vediamo i casi limite:\\
+
+• \ $\eps >> \beta$ \ diffusione dominante \ \ $\begin{cases}
+    -\eps u'' =0 \ \ \ 0<x<1\\
+    u(0)=0; \ \ u(1)=1
+\end{cases}$ \\ avendo derivata seconda nulla, la soluzione è una retta\\
+
+• \ $\beta >> \eps$ \ trasporto dominante \ \ $\begin{cases}
+    -\beta u' =0 \ \ \ 0<x<1\\
+    u(0)=0
+\end{cases}$ \\ avendo derivata prima nulla, la soluzione è costante\\
+Si nota che lo stesso problema con anche $u(1)=1$ non è ben posto\\
+
+La regione dove la soluzione risente della diffusione si chiama strato limite e ha spessore $\delta \simeq \frac{\beta}{\eps}$\\
+
+\subsection{Formulazione variazionale}
+
+Dato il problema:
+\[
+\begin{cases}
+    -\eps u'' + \beta u' = f \ \ \text{ in } (0,1)\\
+    u(0)=u(1)=0
+\end{cases}
+\]
+Supponendo che $\eps, \beta\in \R$ siano costanti e $\eps>0$\\
+
+Si trova la formulazione variazionale moltiplicando per la funzione test e integrando per parti\\
+
+PVA: trovare $u\in H_0^1(0,1)$ tc
+\[
+\eps \int_0^1 u'v' \, dx + \beta \int_0^1 u' v \, dx = \int_0^1 fv \, dx
+\]
+
+Per analizzare la forma bilineare la separo: \[
+a(u,v)=a_{\eps}(u,v) + a_{\beta}(u,v) \ \forall u,v \ \ \text{ dove } a_{\eps}=\eps\int_0^1u'v'\, dx \text{ e } a_{\beta}=\beta \int_0^1 u' v \, dx
+\]
+
+Si vuol verificare la buona posizione del problema, per fare ciò serve verificare le ipotesi di Lax-Milgram, ovvero se $a(\cdot\, ,\cdot)$ è coerciva e continua \\
+
+
+Per la coercività si usa la disuguaglianza di Poincarè
+\[
+\|v\|_{L^2} \le C_p \|v'\|_{L^2} \ \forall v\in H_0^1(0,1) \ \implies \ \|v\|_{H^1}^2 \le (1+C^2_p)\|v'\|^2_{L^2}
+\]
+\[
+a_{\eps}(v,v) = \int_0^1 \eps (v')^2\, dx = \eps \|v'\|^2_{L^2} \ge \frac{\eps}{1+C_p^2}\|v\|_{H^1}^2
+\]
+Quindi $a_{\eps}$ è coerciva con costante $\frac{\eps}{1+C_p^2}$
+
+\[
+a_{\beta}(v,v)=\int_0^1 \beta v'v\, dx = - \int_0^1 \beta v v'\, dx  \ \ \forall v\in H_0^1
+\]
+Ma essendo uguale al suo opposto $a_{\beta}(v,v)=0$\\
+
+In conclusione $a(v,v) = a_{\eps}(v,v) + a_{\beta}(v,v) \ge \frac{\eps}{1+C_p^2}\|v\|^2_{H^1}$\\
+Quindi $a(\cdot\, , \cdot)$ è coerciva con costante $\alpha = \frac{\eps}{1+C_p^2}$\\
+
+Si osserva che $a_{\beta}(\cdot\, , \cdot)$ non è coerciva, quindi il problema con solo trasporto non è ben posto\\
+
+Per la continuità si applica la disuguaglianza di Cauchy-Schwarz
+\[
+a(u,v)= \int_0^1 (\eps u'v' + \beta u'v)\, dx \le \eps \|u'\|_{L^2}\|v'\|_{L^2} + |\beta|\|u'\|_{L^2}\|v\|_{L^2} \le (\eps + |\beta|)\|u\|_{H^1}\|v\|_{H^1}
+\]
+Quindi $a(\cdot\, ,\cdot)$ è continua con costante $M=\eps+|\beta|$\\
+
+
+
+
+
+Grazie a Lax-Milgram sappiamo anche che per la stabilità vale $\|u\|_{H^1}\le \frac{1}{\alpha} \|f\|_{L^2}$ \ \ dove $\alpha=\frac{1+C_p^2}{\eps}=C_s$\\
+Ma per $\eps\to 0$ abbiamo $C_s\to \infty$ questo potrebbe generare instabilità\\
+
+Analizzando l'approssimazione FEM lineari \ \ $\|u-u_h\|_{H^1}\le C\frac{M}{\alpha}h\|u\|_{H^1}$ \ \ dove $\frac{M}{\alpha}=\frac{\eps+|\beta|}{\eps}(1+C_p^2)$\\
+Quindi nei casi a trasporto dominante\, $|\beta|>> \eps$\, si ha $\frac{M}{\alpha}>>1  \ \implies$ instabilità nel metodo FEM\\
+
+\subsection{Formulazione matriciale}
+
+Metodo di Galerkin - FEM $\PP^1$ per la discretizzazione di $\begin{cases}
+    -\eps u'' + \beta u' = f\\
+    u(0)=u(1)=0
+\end{cases}$\\
+Trovare la soluzione $u_h\in V_h = X_h^1(0,1)\subset H_0^1(0,1)$ tc $a(u_h,v_h)=(f,v_h) \ \forall v_h\in V_h$\\
+Equivale a risolvere $A\vv{U}=\vv{F}$ dove $A_{ij}=a(\phi_j(x),\phi_i(x))=a_{\eps}(\phi_j,\phi_i) + a_{\beta}(\phi_j,\phi_i)$
+\[a_{\eps}(\phi_j,\phi_i)=(A_{\eps})_{ij} = \eps \int_0^1 \phi_j'\phi_i'\, dx \hspace{30pt} a_{\beta}(\phi_j,\phi_i)= (A_{\beta})_{ij} = \beta \int_0^1 \phi_j'\phi_i\, dx \]
+\phantom{}
+
+Fissata la riga i-esima $(A\vv{U})_{i,\cdot} = \int_0^1 \eps u'_h \phi_i'\, dx + \int_0^1 \beta u_h' \phi_i\, dx$\\
+Cerchiamo la soluzione della forma $u_h(x)=\Sum{j=0}{n} u_j \phi_j(x)$ quindi si ottiene
+\[
+\int_0^1 \eps u'_h \phi_i'\, dx = \eps \Bigg[ u_{i-1} \int_{x_{i-1}}^{x_i} \phi_{i-1}'\phi'_i \, dx + u_i \int_{x_{i-1}}^{x_{i+1}} (\phi'_i)^2\, dx + u_{i+1} \int_{x_i}^{x_{i+1}} \phi_i'\phi'_{i+1} \, dx \Bigg]
+\]
+\[
+\int_0^1 \beta u_h' \phi_i\, dx=\beta \Bigg[ u_{i-1} \int_{x_{i-1}}^{x_i} \phi_{i-1}'\phi_i \, dx + u_i \int_{x_{i-1}}^{x_{i+1}} \phi'_i\phi_i\, dx + u_{i+1} \int_{x_i}^{x_{i+1}} \phi_{i+1}'\phi_{i} \, dx \Bigg]
+\]
+
+\fg[]{0.8}{10.jpeg}
+
+\[
+\int_{x_{i-1}}^{x_{i}}\phi_{i-1}'\phi_{i}'\, dx = -\frac{1}{h} \cdot \frac{1}{h} \cdot \int_{x_{i-1}}^{x_{i}} \, dx = -\frac{1}{h} 
+\]
+\[
+\text{Analogamente } \ \ \ \int_{x_{i-1}}^{x_{i+1}}(\phi_{i}')^2\, dx = 2h \cdot \frac{1}{h^2} \ \ \ \ \int_{x_{i}}^{x_{i+1}}\phi_{i}'\phi_{i+1}'\, dx = -h\cdot \frac{1}{h}\frac{1}{h}
+\]
+
+\[
+\int_{x_{i-1}}^{x_{i}}\phi_{i-1}'\phi_{i}\, dx = -\frac{1}{h} \int_{x{i-1}}^{x_i}\phi_i\, dx = -\frac{1}{h}\frac{h}{2} = -\frac{1}{2}
+\]
+\[
+\text{Analogamente } \ \ \ \int_{x_{i}}^{x_{i+1}}\phi_{i+1}'\phi_{i}\, dx = \frac12
+\]
+\[
+\int_{x_{i-1}}^{x_{i+1}}\phi_{i}'\phi_{i}\, dx = 0 \ \ \text{ per simmetria, dato che } \phi_i \text{ è simmetrica e } \phi_i' \text{ è antisimmetrica}
+\]
+
+\[
+\text{Si ottiene la i-esima riga di } A\vv{U}: \ \ \ -\frac{\eps}{h} (u_{i+1}-2u_i + u_{i-1}) + \frac{1}{2} \beta (u_{i+1}-u_{i-1}) = hf
+\]
+Il termine noto vale $hf$ perché $f=cost$ e quindi esce dall'integrale\\
+
+Si ottiene uno schema equivalente alla discretizzazione DF centrate:
+\[
+A= - \frac{\eps}{h} \tridiag{-1}{2}{-1} +\beta \tridiag{-1}{0}{+1}
+\]
+\phantom{}
+
+Se ci fosse stato anche il termine di reazione: \ \ $-\eps u'' + \beta u' + \gamma u = f \ \ \text{ in } (0,1)$
+\[
+a_{\gamma}(u,v)= \gamma \int_0^1 uv\, dx \hspace{30pt} A_{\gamma} = \frac{1}{6} \gamma h \tridiag{1}{4}{1}
+\]
+\phantom{}
+
+
+\subsection{FEM con diffusione artificiale}
+
+Abbiamo visto che per il problema $\begin{cases}
+    -\eps u'' + \beta u' =0 \ \ \text{ in } (0,1)\\
+    u(0)=0; \ u(1)=1
+\end{cases}$ \\
+nel caso di trasporto dominante ci può essere instabilità\\
+Infatti usando FEM-centrato, per alcuni valori di $\frac{\beta}{\eps}$ la soluzione numerica oscilla:
+\fg[]{0.4}{11.jpeg}
+
+A partire dal problema $-\frac{\eps}{h^2} (u_{i+1}-2u_i + u_{i-1}) + \frac{1}{2} \frac{\beta}{h} (u_{i+1}-u_{i-1}) = 0 ; \ u_0=0; \ u_N=1$\\
+Definiamo il numero di Peclet locale $Pe=\frac{|\beta|h}{2\eps}$, allora lo schema "centrato" è equivalente a:
+\[
+\begin{cases}
+    (Pe-1)u_{i+1} + 2u_i - (Pe+1)u_{i-1}=0\\
+    u_0=0; \ u_N=1
+\end{cases}
+\]
+\phantom{}
+
+Per ottenere una formula esplicita per la soluzione numerica di $u_i$ si cercano le radici dell'equazione caratteristica e poi si impongono le condizioni ai limiti
+\[
+u_i=\frac{\O\frac{1+Pe}{1-Pe}\C^i -1}{\O\frac{1+Pe}{1-Pe}\C^N -1}
+\]
+\phantom{}
+
+Nel caso di diffusione dominante $\frac{|\beta| h}{2\eps}<1$ si ottiene $\O\frac{1+Pe}{1-Pe}\C>1$ per cui la soluzione numerica ha andamento monotono crescente\\
+Invece per trasporto dominante $\frac{|\beta| h}{2\eps}>1$ per cui $\O\frac{1+Pe}{1-Pe}\C < -1 \implies \O\frac{1+Pe}{1-Pe}\C^i  \begin{array}{l}
+    >0 \ \ \text{ se i pari}\\
+    <0 \ \ \text{ se i dispari}
+\end{array}$\\
+
+Per risolvere questo problema si potrebbe prendere $h$ sufficientemente piccolo:
+\[
+h<h^* \ \ \text{ con } \ \frac{|\beta|h^*}{2\eps}=1 \ \implies \ h^*=\frac{2\eps}{|\beta|}
+\]
+In questo modo $Pe < 1$ però per alcuni problemi reali si ottengono numeri irrealizzabili\\
+
+L'alternativa per stabilizzare il metodo FEM per problemi a trasporto dominante è cercare uno schema decentrato, ovvero che se $\beta>0$ allora la soluzione $u_i$ non dipende da $x_{i+1}$ e viceversa\\
+
+Scriviamo lo schema decentrato upwind in funzione dello schema centrato
+
+\[
+\beta>0 \ \ \ \frac{1}{h}(U_i-U_{i-1})= D_x^- U_i = D_x^c U_i - \frac{h}{2} D_{xx}^2U_i = \frac{1}{2h} (U_{i+1}-U_{i-1})-\frac{h}{2}\frac{1}{h^2}(U_{i+1}-2U_i+U_{i-1})
+\]
+\[
+\beta<0 \ \ \ \frac{1}{h}(U_{i+1}-U_i)= D_x^+ U_i = D_x^c U_i + \frac{h}{2} D_{xx}^2U_i = \frac{1}{2h} (U_{i+1}-U_{i-1})+\frac{h}{2}\frac{1}{h^2}(U_{i+1}-2U_i+U_{i-1})
+\]
+\[
+\text{In generale } \ \ \beta D_x^{UP}U_i = \beta D_x^c U_i - \frac{h}{2} |\beta| D_{xx}^2 U_i
+\]
+\phantom{}
+
+Applichiamo questa formula a FEM usando il metodo della diffusione artificiale:
+\[
+-\eps D_{xx}^2
+U_i + \beta D_x^{UP}U_i = \UB{\text{FEM }\PP^1}{-\eps D_{xx}^2 U_i  + \beta D_x^c U_i} - \frac{1}{2}h|\beta|D_{xx}^2 U_i\]
+\phantom{}
+
+A livello variazionale il nuovo metodo FEM con diffusione artificiale è:
+\[
+a_{h}(u_h,v_h)= a(u_h,v_h) + \frac{h}{2}|\beta|\int_0^1 u_h'v_h'\, dx =  a_{\eps}(u_h,v_h)+ a_{\beta}(u_h,v_h) + b_{h}(u_h,v_h)
+\]
+
+Per analizzare il metodo rappresentiamo la stessa forma bilineare con una perturbazione di $\eps$
+\[
+a_{h}(u_h,v_h)=  a_{\eps_h}(u_h,v_h)+ a_{\beta}(u_h,v_h) \ \ \ \text{ con } \eps_h = \eps + \frac12 h|\beta| = \eps (1+Pe)
+\]
+
+Il numero di Peclet del problema perturbato è $\hat{Pe}= \frac{|\beta|h}{2\eps_h}=\frac{Pe}{Pe+1}<1$\\
+Questa relazione garantisce che FEM con diffusione artificiale non presenti oscillazioni ed instabilità perché equivale a uno schema di tipo centrato con $\hat{Pe}<1$\\
+
+
+
+\subsection{FEM stabilizzati}
+
+FEM con diffusione artificiale:
+\[
+a_h(u_h,v_h)=(f,v_h) \ \ \forall v_h\in V_h \subset V
+\]
+Si perde la consistenza del metodo di Galerkin, valutiamo la consistenza:
+\[
+\text{Residuo } = a_{h}(u,v_h)-(f,v_h)=a(u,v_h) + b_h(u,v_h) - (f,v_h)
+\]
+Per la consistenza forte del MG otteniamo Residuo $= b_h(u,v_h)=\frac12 h|\beta|\int_0^1 u'v_h'\, dx$\\
+
+Si vuole studiare l'asintotica stabilità, per fare ciò dobbiamo togliere la dipendenza del residuo da $v_h$ variabile
+\[
+\text{Residuo normalizzato } = R_h(u) \sup_{v_h\in V_h}\frac{a_{h}(u,v_h)-(f,v)}{\|v_h\|_{H^1}} = \sup_{v_h\in V_h}\frac{b_h(u,v_h)}{\|v_h\|_{H^1}}
+\]
+$b_h(\cdot,\cdot)$ è continua, infatti $b_h(u,v)=\frac12h|\beta| \int_0^1u'v'\, dx \le \frac12 h|\beta|\|u'\|_{L^2}\|v'\|_{L^2}\le \frac12 h|\beta|\|u'\|_{H^1}\|v'\|_{H^1}$
+\[
+\implies R_h(u)= \sup_{v_h\in V_h}\frac{b_h(u,v_h)}{\|v_h\|_{H^1}} \le \sup_{v_h\in V_h} \frac12 h |\beta| \frac{\|u\|_{H^1}\|v_h\|_{H^1}}{\|v_h\|_{H^1}}
+\]
+\[
+R_h(u)\le \frac12 h|\beta|\|u\|_{H^1} \implies \lim_{h\to0} R_h(u)=0 \ \ \text{ con } R_h(u)\simeq \Oc(h)
+\]
+Quindi il metodo FEM-diffusione artificiale è asintoticamente consistente di ordine 1\\ \\
+
+Applicando Lax-Milgram al problema con trasporto dominante avevamo visto che la soluzione può presentare oscillazioni perché $C_s\to \infty$ per $\eps \to0$, si dice che il metodo non è robusto rispetto a $\eps$\\
+
+Applicando LM a FEM con diffusione artificiale otteniamo
+\[
+\|\hat{u}_h\|_{H^1}\le \frac{1}{\alpha_h}\|f\|_{L^2} \ \ \text{ con } \alpha_h = \frac{\eps_h}{1+C_p^2} \implies C_s = \frac{1+C_p^2}{\eps_h}= \frac{1+C_p^2}{\eps + \frac12 h|\beta|}
+\]
+$C_s$ è limitata superiormente per $\eps\to0$ e quindi il metodo è robusto per $\eps\to0$\\ \\
+
+In questo caso non è valido il lemma di CEA, quindi per valutare la convergenza si usa il lemma di Strang:
+\[
+\|u-u_h\|_1 \le \O1+ \frac{M_h}{\alpha_h}\C \inf_{v_h\in V_h}\|u-v_h\|_1 + \frac{1}{\alpha_h}\sup_{v_h\in V_h} \frac{|a_h(u,v_h)-(f,v_h)|}{\|v_h\|_1}\skipp
+\]
+La parima parte equivale al lemma di CEA e quindi è il contributo dell'errore dovuto alle proprietà di approssimazione dello spazio $V_h$\\
+La seconda parte equivale al residuo normalizzato, ovvero il contributo della consistenza asintotica dell'errore globale. Questa parte sappiamo essere essere asintoticamente convergente con ordine 1: $R_h(u)=\Oc(h)$\\
+
+In conclusione il metodo FEM - diffusione artificiale stabilizza le oscillazioni quando $Pe>1$, ma pone un limite superiore all'ordine di convergenza per qualunque grado polinomiale \\
+
+
+
+
+
+
+
+\end{document}

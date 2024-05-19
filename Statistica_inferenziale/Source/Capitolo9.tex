@@ -1,0 +1,385 @@
+\Lezione{22/05/23}
+
+Si vogliono estendere i modelli lineari a casi in cui la variabile dipendente $Y$ non è necessariamente gaussiana, ma $Y\in EF$, famiglia esponenziale\\
+Quindi studieremo $Y \sim $ Bernoulli, $Y \sim$ Poisson, $Y\sim$ multinomiale ...\\
+
+Si vuole quindi modellare $\E{Y}$, o una sua funzione, in base alle covariate\\
+
+Oss. Avremo un set di variabili per spiegare una funzione della media della risposta\\
+Come al solito gli obbiettivi sono capire la relazione tra $Y$ e $Z$ oppure fare previsione\\
+
+Sarà necessario specificare 3 componenti:\\
+1) Random component, ovvero $Y$ risposta dipendente aleatoria (specificarne quindi la legge)\\
+2) Componente sistematica, ovvero $\ZZ$ matrice dei predittori\\
+3) Link function $g(\cdot)$ che specifica quale funzione della media voglio modellare con $\ZZ$\\
+
+Per la famiglia esponenziale possiamo scrivere $f(y_i,\theta_i)=a(\theta_i)b(y_i)\, exp[y_i Q(\theta_i)]$\\
+Dove $Q(\theta_i)$ è detta parametro naturale\\
+Oss. Spesso sceglieremo la link function $g\equiv Q$\\
+
+Vediamo i casi più comuni:
+
+\[
+Y_i \sim Be(p_i) \ \ \ \ p_i=\E{Y_i}
+\]
+\[
+f(y_i,p_i)=p_i^{y_i}(1-p_i)^{1-y_i} \II_{\{0,1\}}(y_i)= (1-p_i)\II_{\{0,1\}}(y_i) \, exp \OOO y_i\, log \O\frac{p_i}{1-p_i}\C \CCC\]
+
+Parametro naturale per $y_i \sim Be(p_i)$ è \ \ $log\O\frac{p_i}{1-p_i}\C = logit(p_i)$\\
+Oss. Quindi andremo a studiare il $logit(\E{Y_i})$, \ inoltre $logit(\cdot):[0,1]\to \R$.
+Questo ci risolve problemi di non invertibilità. La link serve invertibile per poter stimare i $\beta$ a partire da stime di $\mu$
+
+\[
+Y_i \sim P(\lambda_i) \ \ \ \ f(y_i,\lambda_i) = \frac{e^{-\lambda}\lambda_i^{y_i}}{y_i!} \II_{\NN}(y_i) = \frac{e^{-\lambda}\II_{\NN}(y_i)}{y_i!} \, exp\{y_i\, log(\lambda_i)\}
+\]
+\[
+\implies \text{ parametro naturale è } log(\lambda_i)
+\]
+Anche qui avevamo $\lambda_i$ solo positivo, però $log(\cdot):[0,+\infty]\to \R$\\ \\
+
+
+
+La componente sistematica, n generale, sarà $\ZZ \vv{\beta} = (\eta_1,...,\eta_n)^T$ \ \ \ $\ZZ = \OO \begin{array}{c}
+     1  \\
+     \vdots  \\
+     1
+\end{array} \begin{array}{c}
+     Z_{11}  \\
+     \vdots  \\
+     Z_{n1}
+\end{array}  \begin{array}{c}
+     \dots  \\
+      \dots \\
+     \dots
+\end{array} \begin{array}{c}
+     Z_{1r}  \\
+     \vdots  \\
+     Z_{nr}
+\end{array} \CC$\\
+
+Dove $\eta_i= \Sum{j}{} \beta_jZ_{ij} = \beta_0 + \beta_{i1} + ... + \beta_rZ_{ir}$ \ \ predittore lineare\\
+$\vv{\beta}$ è incognito e vorremo trovargli degli stimatori\\
+
+Si vuole trovare link function tale che $g(\mu_i)= \eta_i = \beta_0 + \beta_{i1} + ... + \beta_rZ_{ir}$ \ \ dove $\mu_i=\E{Y_i}$ \\ Tendenzialmente si sceglierà $g(\mu_i)$= parametro naturale, che viene chimata link function canonica\\
+
+
+Vediamo il caso della Bernoulli \ \ $Y_i \sim Be(p_i)$\\
+Link function canonica è $logit(p_i)$
+\[
+logit\O\frac{p_i}{1-p_i}\C= \eta_i= \beta_0 + \beta_{i1} + ... + \beta_rZ_{ir}
+\]
+
+In questo caso $p_i \in [0,1]$ mentre $logit(p_i) \in \R$ quindi si può invertire
+\[
+logit(p_i) \Longleftrightarrow log\O\frac{p_i}{1-p_i}\C = \eta_i \Longleftrightarrow \frac{p_i}{1-p_i} = exp(\eta_i) \Longleftrightarrow p_i = (1-p_i)\, exp(\eta_i) \Longleftrightarrow p_i (1+exp(\eta_i)) = exp(\eta_i)
+\]
+\[
+\implies p_i=\frac{exp[\beta_0+\beta_1Z_{i1}+ ... + \beta_r Z_{ir}]}{1 + exp[\beta_0+\beta_1Z_{i1}+ ... + \beta_r Z_{ir}]}
+\]
+
+Nel caso in cui $r=1$ avremo $p_i=\frac{exp[\beta_0+\beta_1Z_{i1}]}{1 + exp[\beta_0+\beta_1Z_{i1}]}$ \ che in base al segno di $\beta_1$ avrà andamento del tipo:
+\fg[]{0.3}{Figura15.jpeg}
+
+Il segno di $\beta_1$ dice come cambia la probabilità $p_1$ al variare della covariata\\
+Oss. Se $\beta_1$ è positiva allora aumentando la covariata allora aumenterà la probabilità che la risposta sia $1$\\
+
+Vediamo il caso della Poisson \ \ $Y_i \sim P(\lambda_i)$\\
+Avremo la link function canonica $g=log(\lambda_i)$
+\[
+log(\lambda_i)=\eta_i \ \ \ \lambda_i = exp\{\eta_i\} = \exp\{\beta_0+\beta_1Z_{i1}+...+\beta_rZ_{ir}\}
+\]
+
+
+\subsection{Devianza}
+
+Oss. La devianza è l'indice più usato per confrontare modelli\\
+
+Dati un modello lineare generalizzato $(y_1...y_n)^T$ e la log-likelihood $l(\vv{\mu},\vv{y})$,pensata come funzione di $\vv{\mu}$\\
+Supponiamo di avere i $\hat{\vv{\beta}}_{ML}$, allora $l(\hat{\vv{\mu}},\vv{y}) = $ log-likelihood del modello in cui uso gli stimatori $\hat{\vv{\mu}}$
+\[
+\mu=g^{-1}(\eta_i) \ \implies \ \hat{\mu}=g^{-1}\big(\hat{\eta}_i) = g^{-1}(\hat{\beta}_0+\hat{\beta}_1Z_{i1}+...+\hat{\beta}_rZ_{ir}\big)
+\]
+
+
+Tra tutti i possibili modelli, ovvero tutti i possibili modi in cui mettere dentro $\hat{\vv{\mu}}$, la log-likelihood è masssimizzata dal modello saturato ovvero $l(\vv{y},\vv{y})$, dove come stima dei parametri ho posto le osservazioni\\
+
+
+Tra tutti i possibili modelli, ovvero tutti i possibili modi in cui mettere dentro $\hat{\vv{\mu}}$, la log-likelihood è masssimizzata dal modello saturato ovvero $l(\vv{y},\vv{y})$, dove come stima dei parametri ho posto le osservazioni\\
+
+Oss. La devianza sarà la differenza tra la log-likelihood massima e quella del modello\\
+
+\begin{defi}
+    Devianza = $-2\big[ l(\hat{\vv{\mu}},\vv{y}) - l(\vv{y},\vv{y}) \big] = - log \big[ \text{ rapporto tra likelihood modello fittato e modello saturato } \big]$
+\end{defi}
+\phantom{}
+
+\subsection{Exponential dispertion family}
+
+
+Vogliamo trovare un metodo per stimare i parametri incogniti $\vv{\beta}$\\
+
+
+La famiglia EDF è del tipo $f(y_i,\theta_i,\phi) = exp\OO \frac{(y_i\theta_i - b(\theta_i))}{a(\phi)} + c(y_i,\phi) \CC$\\
+
+Scrivendo in questo modo avremo che $\phi$ è il parametro di dispersione e $\theta_i$ è il parametro naturale
+
+In questa famiglia abbiamo:
+\[
+L = \Prod{i=1}{n} f(y_i,\theta_i,\phi) \ \ \ \ \ \ log\, L = l = \Sum{i=1}{n} l_i = \Sum{i=1}{n} log\, f(y_i,\theta_i,\phi) \ \ \ \ \ l_i =  \frac{[y_i\theta_i - b(\theta_i)]}{a(\phi)} + c(y_i,\phi)
+\]
+
+\[
+\frac{\partial l_i}{\partial \theta_i} = \frac{y_i - b'(\theta_i)}{a(\phi)} \ \ \ \ \frac{\partial^2 l_i}{\partial^2 \theta_i} = -\frac{b''(\theta_i)}{a(\phi)}
+\]
+\[
+\E{\frac{\partial l_i}{\partial \theta_i}}=0 \Longleftrightarrow \E{Y_i}=b'(\theta_i)
+\]
+\[
+\E{-\frac{\partial^2 l_i}{\partial^2 \theta_i}} = \E{\O\frac{\partial l_i}{\partial \theta_i}\C^2} \implies \frac{b''(\theta_i)}{a(\phi)}=\E{-\frac{\partial^2 l_i}{\partial^2 \theta_i}} = \E{\frac{Y_i - b'(\theta_i)}{a(\phi)}} = \frac{1}{a(\phi)^2} \E{(Y_i - b'(\theta_i))^2} = \frac{\var{Y_i}}{a(\phi)^2}
+\]
+\[
+\text{In conclusione abbiamo: \ } \begin{cases}
+    \E{Y_i}= b'(\theta_i)\\
+    \var{Y_i} = b''(\theta_i)a(\phi)
+\end{cases}
+\]
+
+\phantom{}
+
+
+Applichiamo questo risultato nel caso della Poisson e della Bernoulli
+
+\[
+Y_i \sim P(\mu_i) \ \ \ \ f(y_i, \theta_i) = \frac{e^{-\mu_i}\mu_i^{y_i}}{y_i!} = exp\{y_i\, log(\mu_i) - \mu_i - log(y_i!)\}
+\]
+\[
+\implies \theta_i=log(\mu_i) \ \ \ b(\theta_i)=exp(\theta_i)
+\]
+\[
+\implies E{Y_i} = b'(\theta_i) = exp(\theta_i)=\mu_i \ \ \ \ \var{Y_i} = b''(\theta_i) = exp(\theta_i)=\mu_i
+\]
+Oss. Quindi le Poisson hanno media e varianza uguali perché il parametro $b(\cdot)$ è l'esponenziale\\
+\[
+Y_i\sim Be(p_i) \ \ \ \ f(y_i, \theta_i)= p_i^{y_i} (1-p_i)^{1-y_i} = exp \OOO y_i\, log \O\frac{p_i}{1-p_i}\C + log(1-p_i) \CCC = exp\OOO y_i\theta_i - b(\theta_i)\CCC
+\]
+\[
+\implies \ \theta_i= log\O\frac{p_i}{1-p_i}\C \ \ \ log(1-p_i)=-log(1+exp(\theta_i)) = -log\O 1+ \frac{p_i}{1-p_i}\C \ \implies \ b(\theta_i) = log (1+exp(\theta_i))
+\]
+\[
+\implies  \ \ E{Y_i}= b'(\theta_i) = \frac{exp(\theta_i)}{1+exp(\theta_i)} = p_i \ \ \ \var{Y_i} = b''(\theta_i) = \frac{exp(\theta_i)}{(1+exp(\theta_i))^2} = \frac{exp(\theta_i)}{1+exp(\theta_i)}\cdot \frac{1}{1+exp(\theta_i)} = p_i (1-p_i)
+\]
+
+\phantom{}
+
+Oss. tutto questo per ricavare cose che sapevamo già, ma almeno le abbiamo legate alla componente $b$ della famiglia \\
+
+
+
+\Lezione{23/05/23}
+
+
+\subsection{Equazioni di verosimiglianza}
+
+Per trovare gli stimatori usiamo le equazioni per trovare i massimi della verosimiglianza
+\[
+\frac{\partial l}{\partial \beta_j} = \Sum{i=1}{n}\frac{\partial l_i}{\partial \beta_j}=0 \ \ \ \forall j \ \  \ \ \ \text{ con } l_i =  \frac{[y_i\theta_i - b(\theta_i)]}{a(\phi)} + c(y_i,\phi)
+\]
+\[
+\frac{\partial l_i}{\partial \beta_j} = \frac{\partial l_i}{\partial \theta_i}\cdot \frac{\partial \theta_i}{\partial \mu_i} \cdot \frac{\partial \mu_i}{\partial \eta_i} \cdot \frac{\partial \eta_i}{\partial \beta_j}
+\]
+\[
+\frac{l_i}{\theta_i} = \frac{y_i - b'(\theta_i)}{a(\phi)} = \frac{y_i-\mu_i}{a(\phi)}
+\]
+\[
+\frac{\partial \mu_i}{\partial\theta_i} = \frac{\partial b'(\theta_i)}{\partial \theta_i} = b''(\theta_i) = \frac{\var{Y_i}}{a(\phi)}
+\]
+\[
+\frac{\eta_i}{\beta_j}=z_{ij}
+\]
+
+$\frac{\mu_i}{\eta_i}$ dipende dallaa $g$ (link function) \ \ \ $\mu_i=g^{-1}(\eta_i)$
+
+
+\[
+\implies \frac{\partial l_i}{\partial \beta_j} = \frac{y_i-\mu_i}{a(\phi)}\cdot \frac{a(\phi)}{\var{Y_i}}\cdot\frac{\partial \mu_i}{\partial \eta_i}\cdot z_{ij} = \frac{(y_i-\mu_i)\cdot z_{ij}}{\var{Y_i}}\cdot \frac{\partial \mu_i}{\partial \eta_i}\]
+
+\[
+\Sum{i=1}{n} \O\frac{y_i-\mu_i}{\var{Y_i}}\C\cdot z_{ij} \cdot \frac{\partial \mu_i}{\partial \eta_i} =0 \ \ \ \forall j=0...r
+\]
+\phantom{}
+
+Applichiamo alle Bernuolli e Poisson
+
+\[
+Y_i\sim Be(p_i) \ \  \text{ conn } \mu_i=p_i
+\]
+\[
+\Sum{i=1}{n} \O\frac{y_i-p_i}{p_i(1-p_i)}\C\cdot z_{ij} \cdot \frac{\partial p_i}{\partial \eta_i} =0 \ \ \ \forall j=0...r
+\]
+\[
+logit(p_i)=\eta_i \implies \text{ invertendo la } logit() \ \ p_i=\frac{exp(\eta_i)}{1+exp(\eta_i)}
+\]
+\[
+\frac{\partial p_i}{\partial \eta_i} = \frac{exp(\eta_i)}{(1+exp(\eta_i))^2} = \frac{exp(\eta_i)}{1+exp(\eta_i)} = p_i(1-p_i)
+\]
+\[
+\Sum{i=1}{n} \O\frac{y_i-p_i}{\cancel{p_i(1-p_i)}}\C\cdot z_{ij} \cdot \cancel{p_i(1-p_i)} =0 \ \ \ \forall j=0...r
+\]
+\[
+\Sum{i=1}{n} \O y_i - \frac{exp\O\sum_j \beta_j z_{ij}\C}{1+exp\O\sum_j \beta_j z_{ij}\C} \C =0 \ \ \ \forall j=0..r
+\]
+È difficile trovare le soluzioni in forma chiusa, quindi dovrò trovare le soluzioni con un metodo numerico.\\
+I $\hat{\beta}_{ML}$ sono le soluzioni numeriche di queste equazioni \\
+
+
+\[
+Y_i\sim P(\lambda_i) \ \ \ \text{ con } \mu_i=\lambda_i
+\]
+\[
+log(\mu_i)=\eta_i \ \implies \ \mu_i=exp(\eta_i) \ \implies \ \frac{\partial\mu_i}{\partial\eta_i} = exp(\eta_i)=\mu_i
+\]
+
+\[
+\Sum{i=1}{n}\frac{y_i-\mu_i}{\cancel{\var{y_i}}}\cdot z_{ij}\cdot \cancel{\mu_i} = \Sum{i=1}{n} \O y_i-exp(\sum_j \beta_jz_{ij}) \C\cdot z_{ij}=0 \ \ \ \forall j=0...r
+\]
+Anche qui cercherò le soluzioni con metodi numerici\\
+
+Ora devo ricordarmi che gli stimatori ML $\hat{\beta}_{ML}$ sono asintoticamente gaussiani e asintoticamente efficienti\\
+Per questo motivo, in R,  nell'output, per esempio del modelli logistici, compare lo $z-value$\\
+
+
+Lo $z-value$ è dato test $\begin{cases}
+    H_0 : \beta_j=0\\
+    H_1 : \beta_j\ne 0
+\end{cases}$ su cui viene usata la statistica $\frac{\hat{\beta}_j}{SE(\hat{\beta}_j)}$\\
+Viene chiamato $Z$ perché sotto $H_0$ questa statistica è asintoticamente gaussiana\\
+
+
+Vediamo come trova lo standard error\\
+Abbiamo $Cov(\hat{\vv{\beta}}_{ML}) = \big(\ZZ^T \hat{W} \ZZ\big)^{-1}$ \ \ \ dove $W$ è una martrice diagonale con $W_{ii}=\frac{\O\frac{\partial \mu_i}{\partial\eta_i}\C}{\var{Y_i}}$ e $\hat{W}$ è $W$ calcolata facendo plug in dei $\hat{\beta}$\\
+
+Per le Bernoulli abbiamo $Cov(\hat{\vv{\beta}})=\O\ZZ^T \, diag(\hat{p}_i(1-\hat{p}_i))\ZZ\C^{-1}$ \ \ con  $\hat{p}_i = \frac{exp\O\sum_j z_{ij}\hat{\beta}_j\C}{1+esp\O\sum_j z_{ij}\hat{\beta}_j\C}$\\
+
+Per le Poisson abbiamo \ $W_{ii}=\mu_i$ \ \ \ $Cov(\hat{\vv{\beta}})=\O\ZZ^T diag(\hat{\mu})\ZZ\C^{-1}$ \ \ \ $\hat{\mu}_i= esp\O\sum_j \hat{\beta}_jz_{ij}\C$\\
+
+Con questi risultati potremo fare solo inferenza asintotica\\ \\
+
+
+Supponiamo di avere dei modelli annidati ovvero dei sotto modello $M_0$ di modelli completi $M_1$ a cui abbiamo tolto covariate\\
+Quindi in generale $l(\hat{\vv{\mu}}_0,\vv{y})\le l(\hat{\vv{\mu}}_1,\vv{y})$
+
+Vediamo l'ordinamento della devianza = $-2\big[ l(\hat{\vv{\mu}},\vv{y}) - l(\vv{y},\vv{y}) \big]$ dei modelli annidati
+\[
+D(\hat{\vv{\mu}}_1,\vv{y}) = -2\big[ l(\hat{\vv{\mu}_1},\vv{y}) - l(\vv{y},\vv{y}) \big] \le -2\big[ l(\hat{\vv{\mu}_0},\vv{y}) - l(\vv{y},\vv{y}) \big] = D(\hat{\vv{\mu}}_0,\vv{y})
+\]
+\phantom{}
+
+Vogliamo valutare questa perdita di devianza e capirne l'entità
+\[
+D(\hat{\vv{\mu}}_1,\vv{y})-D(\hat{\vv{\mu}}_0,\vv{y}) = -2\big[ l(\hat{\vv{\mu}_1},\vv{y}) - l(\hat{\vv{\mu}}_0,\vv{y}) \big] = -2log \O\hat{\lambda}\C = \frac{L(\hat{\vv{\mu}}_0,\vv{y})}{L(\hat{\vv{\mu}}_1,\vv{y})}
+\]
+\phantom{}
+
+Faremo un test asintotico su $-2log(\lambda)$, ovvero un test $\Chi^2$\\
+Con $p-value$ alti i modelli sono equivalenti, se invece $p-value$ bassi allora i modelli non sono equivalenti\\
+
+
+
+\subsection{Regressione logistica semplice}
+
+\[
+p_i = \frac{exp\OOO\sum_j\beta_jz_{ij}\CCC}{1+exp\OOO\sum_j\beta_jz_{ij}\CCC}
+\]
+
+Supponiamo di avere delle osservazioni $(z_i,y_i)$, che saranno $0$ o $1$ essendo per un sistema generalizzato, vogliamo stimare la media al variare di $z_i$\\
+Se avessimo tantissime osservazioni basterebbe fissare $z_i$ e fare la media. Questo in generale non si fa, suddivideremo in  bande la covariata e valuteremo la media in ognuna di queste
+
+\fg[]{0.4}{Figura16.jpeg}
+
+Se $\beta_1>0$ allora al crescere della covariata $Z_1$, cresce la probabilità di successo $(y=1)$\\
+Se invece $\beta_1<0$ allora al crescere della covariata $Z_1$, decresce la probabilità di una risposta 1\\
+
+Oss. In questo modello è più difficile interpretare quantitativamente il $\beta$, però il parametro non parametrizza proprio la variazione della probabilità, ma più che altro l'ODDS\\
+
+Data una probabilità $p$, $ODDS=\frac{p}{1-p}$\\
+Date due probabilità $p_1, p_2$, l'Odds Ratio è il rapporto tra gli odds $\frac{\tfrac{p_1}{1-p_1}}{\tfrac{p_2}{1-p_2}}$\\
+
+Cerchiamo una relazione tra Odds Ratio e i $\beta_j$\\
+Supponiamo di avere $Z$ continua e di avere $p=\frac{exp(\eta)}{1-exp(\eta)}$\\
+Vogliamo confrontare $p(z+1)$ e $p(z)$:
+\[
+ODDS = \frac{\ \ \frac{exp(\beta_0+\beta_1(Z+1))}{1+exp(\beta_0+\beta_1(Z+1))} \ \ }{\frac{1}{1+exp(\beta_0+\beta_1(Z+1))}} = exp(\beta_0+\beta_1(Z+1))
+\]
+\[
+\implies ODDS \ RATIO = OR = \frac{exp(\beta_0+\beta_1(Z+1))}{exp(\beta_0+\beta_1Z)}= exp(\beta_1)
+\]
+
+Quindi $OR$ nell'incrementare di 1 la covariata continua è $e^{\beta_j}$, se invece la covariata fosse categorica avremmo $OR$ per passare da una categoria alla successiva è $e^{\beta_j}$\\
+
+Diremo che $e^{\beta_j}$ è l'OR relativo alla $Z_j$\\
+Possiamo costruire un IC per l'OR\\
+$IC$ asintotico di livello $1-\alpha$ per $\beta_j$ è $[\hat{\beta}_j \pm z_{1-\tfrac{\alpha}{2}} \, se(\hat{\beta}_j)]$\\
+$\implies$ IC asintotico di livello $1-\alpha$ per $e^{\beta_j}$ è $[exp\{\hat{\beta}_j \pm z_{1-\tfrac{\alpha}{2}} \, se(\hat{\beta}_j)\}]$\\
+
+Per poter usare questo modello serve "almeno" per ogni predittore 10 zeri e 10 uni, perché se i dati sono molto sbilanciati, ovvero prevalenza di zeri o uni, in questo caso è difficile far previsione\\
+
+Anche qui per confrontare due modelli diversi si usa AIC\\
+
+Esempio di indici di Goodness of fit è Breierscore $=\frac{1}{n}\Sum{i=1}{n}(y_i-\hat{p}_i)$, questa mi dice quanto dista l'osservazione dalla probabilità stimata\\
+
+
+
+\Lezione{24/05/23}
+
+\subsection{Regressione logistica come classificatore}
+
+
+
+A partire dalle stime di $\theta_i$ vogliamo prevedere le stime $\hat{y}_i \in \{0,1\}$\\
+Nel pratico troveremo un valore di soglia $p_0=\frac12$, se $\hat{p}_i\ge p_0 \implies \hat{y}_i =1$ invece se $\hat{p}_i\le p_0 \implies \hat{y}_i =0$\\
+
+Valutiamo la bontà di queste stime\\
+
+$\hat{y},y \in \{0,1\}$ quindi divido in quattro casi: 
+\[
+\begin{array}{c|c|c}
+   \hat{y} \,\backslash\, y  & 0 & 1\\
+   \hline
+   0  & n_{00} & n_{01} \\
+   \hline
+   1 & n_{10} & n_{11} \\
+\end{array}
+\]
+
+Nei casi $n_{00}$ e $n_{11}$ la stima è giusta, invece in $n_{01}$ e $n_{10}$ ci sono errori:
+
+Errore di misclassificazione $=\frac{n_{01}+n_{10}}{n}$\skipp\\
+Rate dei corretti classificati $=\frac{n_{00}+n_{11}}{n}$\\
+
+
+Sensibilità $=\prob{\hat{y}=1 | y=1} = \frac{n_{11}}{n_{n_{11}+n_{01}}}$\skipp\\
+Specificità $=\prob{\hat{y}=0 | y=0} = \frac{n_{00}}{n_{n_{00}+n_{10}}}$\\
+
+
+Oss. È più importante massimizzare la sensibilità, perché i falsi negativi sono più gravi dei falsi positivi\\
+
+\textbf{Curva ROC:} receiver operating curve\\
+$\forall p_0\in [0,1]$ calcolo la sensibilità e la specificità\\
+
+Esempio, per $p_0=0$ avrò sens=0 e spec=1, invece per $p_0=1$ avrò  sen=1 e spe=0
+
+Plotto (1-specificità)$\times$(sensibilità)
+
+\fg[]{0.4}{Figura17.jpeg}
+
+Indice AUC, area sotto la curva, preferirò classificatori con AUC massima, perché hanno sensibilità maggiore\\
+
+Come $p_0$ andremo a scegliere il punto che massimizza la sensibilità e minimizza 1-specificità\\
+
+Applichiamo il classificatore ad un test diagnostico che può avere un test positivo $T_+$ o negativo $T_-$\\
+Si valuta la probabilità di essere effettivamente malati quando si riceve un test positivo
+\[
+\prob{M|T_+} = \frac{\prob{T_+|M}\prob{M}}{\prob{T_+|M}\prob{M} + \prob{T_|M^c}\prob{M^c}}
+\]
+Dove $\prob{T_+|M}\prob{M}$ è la sensibilità e $\prob{T_+|M^c}\prob{M^c}$ è la 1-specificità\\
+

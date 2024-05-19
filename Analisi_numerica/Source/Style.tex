@@ -1,0 +1,331 @@
+\usepackage{hyperref}
+\usepackage[utf8]{inputenc}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{dsfont} % for using \mathds{1} characteristic function
+\usepackage{tikz}
+\usepackage{bbm}
+\usepackage{relsize}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepackage{scalerel}
+\usepackage{wrapfig}
+\usepackage[T1]{fontenc}       % change font encoding to T1
+\usepackage[framed,numbered]{matlab-prettifier}
+
+
+%toglie lo spazio dato dal doppio invio
+\setlength{\parindent}{0cm} 
+
+%distanza dal numero di pagina
+\setlength{\footskip}{1.3cm}
+
+
+\usepackage[
+	left=2.5cm, % inner
+	right=2.5cm, % outer
+	top=2.3cm,
+	bottom=2.8cm,
+	%showframe,
+	]{geometry}
+
+
+
+
+
+
+
+\renewcommand{\contentsname}{Indice}
+
+
+
+\title{Modelli e Metodi delle EDP}
+\author{Simone Paloschi}
+\date{INGMTM \ \ A.A. 2022/2023}
+\linespread{1.5}
+
+\DeclareRobustCommand{\Chi}{{\mathpalette\irchi\relax}}
+\newcommand{\irchi}[2]{\raisebox{\depth}{$#1\chi$}} % inner command, used by \Chi
+
+
+\newcommand{\EE}{\mathbb E}
+\newcommand{\NN}{\mathbb N}
+\newcommand{\PP}{\mathbb P}
+\newcommand{\R}{\mathbb R}
+\newcommand{\ZZ}{\mathbb Z}
+
+\newcommand{\Ac}{\mathcal A}
+\newcommand{\Bc}{\mathcal B}
+\newcommand{\Cc}{\mathcal C}
+\newcommand{\Ec}{\mathcal E}
+\newcommand{\Fc}{\mathcal F}
+\newcommand{\Gc}{\mathcal G}
+\newcommand{\Hc}{\mathcal H}
+\newcommand{\Lc}{\mathcal L}
+\newcommand{\Nc}{\mathcal N}
+\newcommand{\Pc}{\mathcal P}
+\newcommand{\Uc}{\mathcal U}
+\newcommand{\Vc}{\mathcal V}
+\newcommand{\Oc}{\mathcal O}
+\newcommand{\Tau}{\mathcal T}
+
+\usepackage{esvect}
+
+%%%%% shortcuts
+
+\newcommand{\eps}{\varepsilon}
+\renewcommand{\phi}{\varphi}
+
+
+
+%displaystyle frazione e integrale
+\renewcommand{\frac}{\dfrac}
+
+\let \INT \int 
+\renewcommand{\int}{\displaystyle\INT}
+
+
+\newcommand{\ind}{\perp \!\!\! \perp} % indipendenza
+
+%displaystyle sommatoria e prod
+\newcommand{\Sum}[2]{\sum\limits_{#1}^{#2}} 
+
+\newcommand{\Prod}[2]{\prod\limits_{#1}^{#2}}
+
+
+
+%displaystyle parentesi
+
+\renewcommand{\O}{\left(}
+\newcommand{\C}{\right)}
+
+\newcommand{\OO}{\left[}
+\newcommand{\CC}{\right]}
+
+\newcommand{\OOO}{\left\{}
+\newcommand{\CCC}{\right\}}
+
+
+%matrice indicatrice
+\newcommand{\II}{\mathds{1}}
+
+%insieme vuoto
+\renewcommand{\empty}{\emptyset}
+
+
+\renewcommand{\hat}[1]{\widehat{#1}}
+\renewcommand{\tilde}[1]{\widetilde{#1}}
+
+
+ \newcommand{\Asterisk}{\mathop{\scalebox{1.5}{\raisebox{-0.2ex}{$\ast$}}}} %for big * 
+
+
+
+
+
+%per farmi aprire le parentesi da \vv
+%\renewcommand{\vv}{\vv}
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%AMBIENTI TEOREMI
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\usepackage{amsthm}
+\definecolor{Green}{RGB}{0,210,100}
+\definecolor{Black}{RGB}{0,0,0}
+\definecolor{Blue}{RGB}{0,120,245}
+\newtheoremstyle{DEFstyle} % Theorem style name
+{0pt}% Space above
+{0pt}% Space below
+{\normalfont}% Body font
+{}% Indent amount
+{\bf\scshape}% Theorem head font --- {\small\bf}
+{.\\}% Punctuation after theorem head
+{0em}% Space after theorem head
+{\small\thmname{#1}% Theorem text (e.g. Theorem 2.1)
+%{\small\thmname{#1}% Theorem text (e.g. Theorem)
+\thmnote{:\nobreakspace\normalfont\bfseries \nobreakspace#3}}% Optional theorem note
+
+
+
+\newtheoremstyle{DIMstyle} % Theorem style name
+{0pt}% Space above
+{0pt}% Space below
+{\normalfont}% Body font
+{}% Indent amount
+{\bf\scshape}% Theorem head font --- {\small\bf}
+{\\}% Punctuation after theorem head
+{0em}% Space after theorem head
+{\small\thmname{#1}.% Theorem text (e.g. Theorem 2.1)
+%{\small\thmname{#1}% Theorem text (e.g. Theorem)
+\thmnote{\nobreakspace\normalfont\nobreakspace(#3)}}% Optional theorem note
+
+\newtheoremstyle{RIPstyle} % Theorem style name
+{0pt}% Space above
+{0pt}% Space below
+{\normalfont}% Body font
+{}% Indent amount
+{\bf\scshape}% Theorem head font --- {\small\bf}
+{\\}% Punctuation after theorem head
+{0em}% Space after theorem head
+{\small\thmname{#1}:% Theorem text (e.g. Theorem 2.1)
+%{\small\thmname{#1}% Theorem text (e.g. Theorem)
+\thmnote{\nobreakspace\normalfont\nobreakspace#3}}% Optional theorem note
+
+
+
+\newtheoremstyle{CORstyle} % Theorem style name
+{0pt}% Space above
+{0pt}% Space below
+{\normalfont}% Body font
+{}% Indent amount
+{\bf\scshape}% Theorem head font --- {\small\bf}
+{\\}% Punctuation after theorem head
+{0em}% Space after theorem head
+{\small\thmname{#1}\,\thmnumber{#2}:% Theorem text (e.g. Theorem 2.1)
+%{\small\thmname{#1}% Theorem text (e.g. Theorem)
+\thmnote{\nobreakspace\normalfont \nobreakspace#3}}% Optional theorem note
+
+
+
+\theoremstyle{DEFstyle}
+\newtheorem* {theoremT}{Definizione}
+\newtheorem* {theoremT1}{Teorema}
+\theoremstyle{DIMstyle}
+\newtheorem* {theoremT2}{Dim}
+\theoremstyle{RIPstyle}
+\newtheorem* {theoremT3}{Ripasso}
+
+\theoremstyle{CORstyle}
+\newtheorem{theoremT4}{Corollario}
+
+%per cambiare il numero che appare a 6 serve \setcounter{theoremT4}{5}
+
+
+\RequirePackage[framemethod=default]{mdframed} % Required for creating the theorem, definition, exercise and corollary boxes
+% green box
+\newmdenv[skipabove=7pt,
+skipbelow=7pt,
+rightline=false,
+leftline=true,
+topline=false,
+bottomline=false,
+linecolor=Green,
+backgroundcolor=green!0,
+innerleftmargin=5pt,
+innerrightmargin=5pt,
+innertopmargin=5pt,
+leftmargin=0cm,
+rightmargin=0cm,
+linewidth=2pt,
+innerbottommargin=5pt]{gBox}
+
+
+\newmdenv[skipabove=7pt,
+skipbelow=7pt,
+rightline=false,
+leftline=true,
+topline=false,
+bottomline=false,
+linecolor=Blue,
+backgroundcolor=green!0,
+innerleftmargin=5pt,
+innerrightmargin=5pt,
+innertopmargin=5pt,
+leftmargin=0cm,
+rightmargin=0cm,
+linewidth=2pt,
+innerbottommargin=5pt]{bBox}
+
+
+\newmdenv[skipabove=7pt,
+skipbelow=20pt,
+rightline=false,
+leftline=true,
+topline=false,
+bottomline=false,
+linecolor=Black,
+backgroundcolor=green!0,
+innerleftmargin=5pt,
+innerrightmargin=5pt,
+innertopmargin=3pt,
+leftmargin=0cm,
+rightmargin=0cm,
+linewidth=0.5pt,
+innerbottommargin=5pt]{dimBox}
+
+
+\newmdenv[skipabove=7pt,
+skipbelow=20pt,
+rightline=false,
+leftline=true,
+topline=false,
+bottomline=false,
+linecolor=Black,
+backgroundcolor=green!0,
+innerleftmargin=10pt,
+innerrightmargin=5pt,
+innertopmargin=3pt,
+leftmargin=0cm,
+rightmargin=0cm,
+linewidth=0.5pt,
+innerbottommargin=17pt]{ripBox}
+
+
+\newenvironment{defi}{\begin{gBox}\begin{theoremT}}{\end{theoremT}\end{gBox}}
+\newenvironment{teo}{\begin{bBox}\begin{theoremT1}}{\end{theoremT1}\end{bBox}}
+\newenvironment{Dim}{\begin{dimBox}\begin{theoremT2}}{\phantom{}\hfill$\qed$\end{theoremT2} \end{dimBox} }
+\newenvironment{RIP}{\begin{ripBox}\begin{theoremT3}}{\end{theoremT3}\end{ripBox}}
+\newenvironment{cor}{\begin{bBox}\begin{theoremT4}}{\end{theoremT4}\end{bBox}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%FIGURA CENTRALE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage{caption}\captionsetup{belowskip=12pt,aboveskip=4pt}
+
+\graphicspath{ {./images/} }
+
+\usepackage{placeins} % The placeins package gives the command \FloatBarrier, which will make sure any floats will be put in before this point
+\usepackage{flafter}  % The flafter package ensures that floats don't appear until after they appear in the code.
+
+\usepackage{graphicx}
+\usepackage{float}
+
+%chiamata:   \fg[ "caption" ]{0.5}{figure.jpeg}
+%senza caption non viene \fg{0.5}{figure.jpeg}
+\newcommand{\fg}[3][\relax]{%
+  \begin{figure}[H]%[htp]%
+    \centering
+    \captionsetup{width=0.7\textwidth}
+      \includegraphics[width = #2\textwidth]{#3}%
+      \ifx\relax#1\else\caption{#1}\fi
+      \label{#3}
+  \end{figure}%
+  \FloatBarrier%
+}
+
+
+
+
+
+
+
+\usepackage{cancel} %per usare \cancel e \bcancel
+
+\newcommand{\skipp}{\smallskip\smallskip}
+
+
+
+%per mettere la graffa sotto al testo
+\newcommand{\UB}[2]{\underset{#1}{\underbrace{#2}}}
+
+

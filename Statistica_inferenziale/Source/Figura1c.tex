@@ -1,0 +1,25 @@
+\begin{wrapfigure}{r}{3cm}
+\begin{tikzpicture}
+    \begin{axis}[
+        axis lines = center,
+        ymax = 3.5,
+        ymin = -0.25,
+        xmin=-2.5,
+        xmax=2.5,
+    ]
+    \addplot [
+        domain=-2:2, 
+        samples=400, 
+        color=red,
+    ]
+    {2};
+    
+    \addplot [
+        domain=-2:2, 
+        samples=400, 
+        color=blue,
+    ]
+    {x^2+0.5};
+    \end{axis}
+\end{tikzpicture}
+\end{wrapfigure}
