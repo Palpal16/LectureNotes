@@ -1,4 +1,3 @@
-# Analisi III
 
 
 ![PDF Preview](first_page.png)
