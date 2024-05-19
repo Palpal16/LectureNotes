@@ -1,4 +1,4 @@
-# Lecture-Notes
+# LectureNotes
 I have been taking notes in $\LaTeX$ for the past few years. Here you can find the main courses of mathematical engineer for the third and fourth years. (More are coming)
 
 ## Partial Differential Equations
